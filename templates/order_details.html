@@ -1,0 +1,56 @@
+<style type="text/css">
+    #ordermgmt_buttonbar, #orderCreated {
+        float: right;
+    }
+    h1.orderHeader {
+        text-align: center;
+        padding: 5px 0 5px 0;
+        margin: 5px 0 5px 0;
+    }
+    table.order_details tr {
+        height: 2em;
+    }
+    table.order_details td {
+        padding: 6px 2em;
+    }
+    .component_total {
+        float: right;
+    }
+</style>
+<a class="button" href="?m=ordermgmt"><span>Back to Order List</span></a>
+<form action="?m=ordermgmt&order_id=[order.id]" method="POST" accept-charset="utf-8">
+    <span colspan="2" align="right" id="ordermgmt_buttonbar">
+        <!--<input class="button" type="button" id="topdfButton" name="topdfButton" value="Create PDF" />
+        <input class="button" type="button" id="componentButton" name="componentButton" value="New Component" />
+        <input class="button" type="button" id="deleteButton" name="deleteButton" value="Delete" />-->
+    </span>
+    <table class="tbl order_details" width="100%" border="0" cellpadding="0" cellspacing="1">
+        <tr>
+            <td colspan="6">
+                <span id="orderCreated"></span>
+                <h1 class="orderHeader">Order # [order.id;block=strong] :: [order.created;block=td]</h1>
+            </td></tr>
+        <tr>
+            <td><strong>Company:</strong></td><td><strong><a href="?m=companies&a=view&company_id=[order.company.company_id]">[order.company.company_name; block=a]</a></strong></td>
+            <td><strong>Creator:</strong></td><td><strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong></td>
+            <td><strong>Project:</strong></td><td><strong><a href="?m=projects&a=view&project_id=[order.project.project_id]">[order.project.project_name; block=a]</a></strong></td>
+        </tr>
+        <tr><th colspan="6">Components in order</th></tr>
+        <tr class="orderComponent"><td colspan="6">[component.amount; block=tr]x [component.description; block=tr] ([component.price; block=tr] kr)<span class="component_total">Total: [component.total; block=tr]kr</span></td></tr>
+        <tr><td colspan="6"><strong class="component_total">Total: [order.getOrderTotal] kr</strong></td></tr>
+        <tr><th colspan="6">Order History</th></tr>
+        <tr><td colspan="6">[history.created; block=tr] :: <strong>&#91;[history.statusName; block=tr]&#93;</strong> :: [history.comments; block=tr], [history.creatorName; block=tr]</td></tr>
+        <tr><th colspan="6">Attached files</th></tr>
+        <tr><td>Filename: <a href="fileviewer.php?file_id=[file.file_id]">[file.file_name; block=tr]</a></td><td colspan="5">Description: [file.file_description; block=tr]</td></tr>
+        <tr><th colspan="6">Update Order</th></tr>
+        <tr><td colspan="6">
+                <label for="statusCombo">Requisition status</label>
+                <select id="statusCombo" name="statusCombo">
+                    <option value="[status.requisition_status_info_id;block=option]">[status.status_title;block=option]</option>
+                </select><hr />
+                <label for="orderComment">Comment:</label><br />
+                <div id="textwrapper"><textarea id="orderComment" name="orderComment" placeholder="Write a comment on the requisition here" style="width: 100%"></textarea></div>
+                <input class="button" type="submit" name="status_submit" id="orderSubmit" value="Update Order" style="float: right;" />
+            </td></tr>
+    </table>
+</form>

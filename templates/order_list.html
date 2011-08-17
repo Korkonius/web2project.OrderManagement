@@ -1,0 +1,31 @@
+<style type="text/css">
+    table.orderlist td {
+        background-color: transparent;
+    }
+    table.orderlist tr {
+        cursor: pointer;
+        border-bottom: 1px #DDD solid;
+        background-color: white;
+    }
+    table.orderlist tr:hover {
+        background-color: #ccc;
+    }
+    table.orderlist {
+        border: 0px;
+        border-collapse: collapse;
+    }
+</style>
+<table class="tbl orderlist" width="100%">
+    <thead>
+        <th colspan="5">Order List</th>
+    </thead>
+    <tbody>
+        <tr id="orderId_[order.id; block=tr]" onclick="window.location = '?m=ordermgmt&order_id=[order.id]'">
+            <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 1px #AAA solid"><img src="[order.latestStatus.iconPath; block=tr;]" alt="[order.latestStatus.statusName; block=tr]"/></td>
+            <td style="width: 15em"><strong>Status: </strong>[order.latestStatus.statusName; block=tr;]</td>
+            <td style="width: 5em"><strong>Id: </strong>[order.id; block=tr]</td>
+            <td><strong>Company:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.company.company_name; block=tr]</td>
+            <td><strong>Project:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.project.project_name; block=tr;]</td>
+        </tr>
+    </tbody>
+</table>
