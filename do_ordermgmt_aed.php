@@ -15,6 +15,7 @@ $addStatus = w2PgetParam($_POST, 'status_submit'); // TODO CSRF token protection
 $addOrder = w2PgetParam($_POST, 'orderSubmit');
 $orderDeleteId = w2PgetParam($_GET, 'deleteOrder');
 $addComponents = w2PgetParam($_POST, 'componentSubmit');
+$removeComponent = w2PgetParam($_GET, 'removeComponent');
 
 // If a new status is submitted
 if (!empty($addStatus)) {
@@ -111,5 +112,16 @@ if(!empty($addComponents)) {
     }
     
     $AppUI->setMsg("Components where added to order number $orderId!", UI_MSG_OK, true);
+}
+
+// Remove component from order
+if(!empty($removeComponent)) {
+    
+    // Validate input
+    $componentId = $removeComponent;
+    $filter->patternVerification($componentId, CInputFilter::W2P_FILTER_NUMBERS);
+    
+    COrderComponent::deleteComponent($componentId);
+    $AppUI->setMsg("Component with id $componentId was removed!", UI_MSG_OK, true);
 }
 ?>

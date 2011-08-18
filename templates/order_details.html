@@ -1,5 +1,5 @@
 <style type="text/css">
-    #ordermgmt_buttonbar, #orderCreated {
+    #ordermgmt_buttonbar, #orderCreated, .orderButtonPane {
         float: right;
     }
     h1.orderHeader {
@@ -11,13 +11,14 @@
         height: 2em;
     }
     table.order_details td {
-        padding: 6px 2em;
+        padding: 6px 0em;
     }
     .component_total {
         float: right;
     }
-    .orderButtonPane {
-        float: right;
+    .componentButtonPane {
+        float: left;
+        margin: 0px 2em 0px 6px;
     }
 </style>
 <a class="button" href="?m=ordermgmt"><span>Back to Order List</span></a>
@@ -34,9 +35,9 @@
                 <h1 class="orderHeader">Order # [order.id;block=strong] :: [order.created;block=td]</h1>
             </td></tr>
         <tr>
-            <td><strong>Company:</strong></td><td><strong><a href="?m=companies&a=view&company_id=[order.company.company_id]">[order.company.company_name; block=a]</a></strong></td>
-            <td><strong>Creator:</strong></td><td><strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong></td>
-            <td><strong>Project:</strong></td><td><strong><a href="?m=projects&a=view&project_id=[order.project.project_id]">[order.project.project_name; block=a]</a></strong></td>
+            <td colspan="2"><strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=companies&a=view&company_id=[order.company.company_id]">[order.company.company_name; block=a]</a></strong></td>
+            <td colspan="2"><strong>Creator:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong></td>
+            <td colspan="2"><strong>Project:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=projects&a=view&project_id=[order.project.project_id]">[order.project.project_name; block=a]</a></strong></td>
         </tr>
         <tr>
             <th colspan="6">
@@ -46,7 +47,17 @@
                 </span>
             </th>
         </tr>
-        <tr class="orderComponent"><td colspan="6">[component.amount; block=tr]x [component.description; block=tr] ([component.price; block=tr] kr)<span class="component_total">Total: [component.total; block=tr]kr</span></td></tr>
+        <tr class="orderComponent">
+            <td colspan="6">
+                <div class="componentButtonPane">
+                    <a href="?m=ordermgmt&order_id=[order.id]&removeComponent=[component.id; block=tr]">
+                        <img src="./style/web2project/images/modules/ordermgmt/img/delete.png" alt="Delete" />
+                    </a>
+                </div>
+                [component.amount; block=tr]x [component.description; block=tr] ([component.price; block=tr] kr)
+                <span class="component_total">Total: [component.total; block=tr]kr</span>
+            </td>
+        </tr>
         <tr><td colspan="6"><strong class="component_total">Total: [order.getOrderTotal] kr</strong></td></tr>
         <tr>
             <th colspan="6">
