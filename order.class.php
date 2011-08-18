@@ -110,6 +110,39 @@ class COrder {
         end($a);
         return current($a);
     }
+    
+    /**
+     * Permanently removes this, and related components from the database.
+     * NOTE! Related files are not removed as these might be used by other
+     * components.
+     * 
+     * @return resource
+     */
+    public function delete() {
+        
+        // Loop through all related database object and delete them
+        $statuses = $this->getHistory();
+        foreach($statuses as $s) {
+            $s->delete();
+        }
+        
+        $components = $this->getComponents();
+        foreach($components as $c) {
+            $c->delete();
+        }
+        
+        // Dereference files
+        $q = new w2p_Database_Query();
+        $q->setDelete('requisition_files');
+        $q->addWhere("requisition_id = $this->id");
+        $q->exec();
+        $q->clear();
+        
+        // Remove self
+        $q->setDelete('requisitions');
+        $q->addWhere("requisition_id = $this->id");
+        return $q->exec();
+    }
 
     /**
      * Magic method that outputs this object.
@@ -347,6 +380,16 @@ class COrderStatus {
     }
     
     /**
+     * Permanently removes the component with the given id from the database.
+     * 
+     * @see deleteComponent()
+     * @return resource
+     */
+    public function delete() {
+        return COrderStatus::deleteComponent($this->id);
+    }
+    
+    /**
      * Simple local function to provide known status information to whoever requires it
      * 
      * @param Hash $const 
@@ -457,6 +500,21 @@ class COrderStatus {
         return $statuses;
     }
 
+    /**
+     * Permanently removes the component with the given id from the database.
+     * 
+     * @param Int $id
+     * @return resource 
+     */
+    public static function deleteComponent($id) {
+        
+        // Create and execute database query
+        $q = new w2p_Database_Query();
+        $q->setDelete('requisition_status');
+        $q->addWhere("requisition_status_id = $id");
+        
+        return $q->exec();
+    }
 }
 
 /**
@@ -492,6 +550,32 @@ class COrderComponent {
         $this->description = $description;
         $this->requisitionId = $requisitionId;
         $this->total = $amount * $price;
+    }
+    
+    /**
+     * Permanently removes the component with the given id from the database.
+     * 
+     * @see deleteComponent()
+     * @return resource
+     */
+    public function delete() {
+        return COrderComponent::deleteComponent($this->id);
+    }
+    
+    /**
+     * Permanently removes the component with the given id from the database.
+     * 
+     * @param Int $id
+     * @return resource 
+     */
+    public static function deleteComponent($id) {
+        
+        // Create and execute database query
+        $q = new w2p_Database_Query();
+        $q->setDelete('requisition_components');
+        $q->addWhere("component_id = $id");
+        
+        return $q->exec();
     }
     
     public static function createNewComponent($requisitionId, $price, $amount, $description) {
