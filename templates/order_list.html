@@ -1,4 +1,7 @@
 <style type="text/css">
+    table.orderlist {
+        width: 100%;
+    }
     table.orderlist td {
         background-color: transparent;
     }
@@ -15,9 +18,9 @@
         border-collapse: collapse;
     }
 </style>
-<table class="tbl orderlist" width="100%">
+<table class="tbl orderlist">
     <thead>
-        <th colspan="5">Order List</th>
+        <tr><th colspan="5">Order List</th></tr>
     </thead>
     <tbody>
         <tr id="orderId_[order.id; block=tr]" onclick="window.location = '?m=ordermgmt&order_id=[order.id]'">
