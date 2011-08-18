@@ -14,6 +14,7 @@ $filter = new CInputFilter();
 $addStatus = w2PgetParam($_POST, 'status_submit'); // TODO CSRF token protection
 $addOrder = w2PgetParam($_POST, 'orderSubmit');
 $orderDeleteId = w2PgetParam($_GET, 'deleteOrder');
+$addComponents = w2PgetParam($_POST, 'componentSubmit');
 
 // If a new status is submitted
 if (!empty($addStatus)) {
@@ -69,7 +70,7 @@ if (!empty($addOrder)) {
 
         // Validate parameters
         $filter->patternVerification($price, CInputFilter::W2P_FILTER_NUMBERS);
-        $filter->patternVerification($price, CInputFilter::W2P_FILTER_NUMBERS);
+        $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
         
         // TODO: Same issue as with the status comment
         $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
@@ -80,5 +81,35 @@ if (!empty($addOrder)) {
     }
 
     $AppUI->setMsg('Order was created!', UI_MSG_OK, true);
+}
+if(!empty($addComponents)) {
+    
+    // Fetch and validate order id
+    $orderId = w2PgetParam($_GET, 'orderId');
+    $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
+    
+    $cAmounts = w2PgetParam($_POST, 'componentAmount');
+    $cPrices = w2PgetParam($_POST, 'componentPrice');
+    $cLabels = w2PgetParam($_POST, 'componentLabel');
+    
+    // For each component add it to order
+    for ($i = 0; $i < count($cAmounts); $i++) {
+        $price = $cPrices[$i];
+        $amount = $cAmounts[$i];
+        $description = $cLabels[$i];
+
+        // Validate parameters
+        $filter->patternVerification($price, CInputFilter::W2P_FILTER_NUMBERS);
+        $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
+        
+        // TODO: Same issue as with the status comment
+        $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
+
+        if (!empty($price) && !empty($amount) && !empty($description)) {
+            COrderComponent::createNewComponent($orderId, $price, $amount, $description);
+        }
+    }
+    
+    $AppUI->setMsg("Components where added to order number $orderId!", UI_MSG_OK, true);
 }
 ?>

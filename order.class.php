@@ -221,7 +221,7 @@ class COrder {
         // Compute order id
         $q = new w2p_Database_Query();
         $q->addTable('requisitions');
-        $q->addQuery('count(requisition_id) as id');
+        $q->addQuery('max(requisition_id) as id');
         $r = $q->loadHash();
         $id = $r['id']+1;
         
@@ -426,7 +426,7 @@ class COrderStatus {
         // Find ID
         $q = new w2p_Database_Query();
         $q->addTable('requisition_status');
-        $q->addQuery('count(requisition_status_id) as num');
+        $q->addQuery('max(requisition_status_id) as num');
         $q->exec();
         $r = $q->loadHash();
         $id = $r['num']+1;
@@ -583,7 +583,7 @@ class COrderComponent {
         // Find ID
         $q = new w2p_Database_Query();
         $q->addTable('requisition_components');
-        $q->addQuery('count(component_id) as num');
+        $q->addQuery('max(component_id) as num');
         $q->exec();
         $r = $q->loadHash();
         $id = $r['num']+1;

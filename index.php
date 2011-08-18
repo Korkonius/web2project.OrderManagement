@@ -15,6 +15,7 @@ $filter = new CInputFilter();
 // Get parameters to act on input
 $orderId = w2PgetParam($_GET, 'order_id');
 $showNewOrderForm = w2PgetParam($_GET, 'newOrder'); // NOT validated. Never use directly!
+$newComponent = w2PgetParam($_GET, 'componentForm');
 
 // Verify that the parameters contain expected values
 $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
@@ -60,7 +61,21 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Output
     $tbs->Show(TBS_OUTPUT);
-} else if (empty($orderId)) {
+} else if (!empty($newComponent)) {
+    
+    // Validate input
+    $filter->patternVerification($newComponent, CInputFilter::W2P_FILTER_NUMBERS);
+    
+    // Show the new component form
+    // Set up the title block
+    $titleBlock = new CTitleBlock('Order Management :: Add Components to order # '. $newComponent, 'folder5.png', $m, "$m.$a");
+    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
+    $titleBlock->show();
+    
+    $tbs->LoadTemplate(dirname(__FILE__) . '/templates/component_form.html');
+    $tbs->MergeField('orderid', $newComponent);
+    $tbs->Show(TBS_OUTPUT);
+} else {
 
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management', 'folder5.png', $m, "$m.$a");

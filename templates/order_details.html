@@ -16,6 +16,9 @@
     .component_total {
         float: right;
     }
+    .orderButtonPane {
+        float: right;
+    }
 </style>
 <a class="button" href="?m=ordermgmt"><span>Back to Order List</span></a>
 <form action="?m=ordermgmt&order_id=[order.id]" method="POST" accept-charset="utf-8">
@@ -35,10 +38,21 @@
             <td><strong>Creator:</strong></td><td><strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong></td>
             <td><strong>Project:</strong></td><td><strong><a href="?m=projects&a=view&project_id=[order.project.project_id]">[order.project.project_name; block=a]</a></strong></td>
         </tr>
-        <tr><th colspan="6">Components in order</th></tr>
+        <tr>
+            <th colspan="6">
+                Components in order
+                <span class="orderButtonPane">
+                    <a href="?m=ordermgmt&componentForm=[order.id]"><img src="./style/web2project/images/modules/ordermgmt/img/table_add.png" /></a>
+                </span>
+            </th>
+        </tr>
         <tr class="orderComponent"><td colspan="6">[component.amount; block=tr]x [component.description; block=tr] ([component.price; block=tr] kr)<span class="component_total">Total: [component.total; block=tr]kr</span></td></tr>
         <tr><td colspan="6"><strong class="component_total">Total: [order.getOrderTotal] kr</strong></td></tr>
-        <tr><th colspan="6">Order History</th></tr>
+        <tr>
+            <th colspan="6">
+                Order History
+            </th>
+        </tr>
         <tr><td colspan="6">[history.created; block=tr] :: <strong>&#91;[history.statusName; block=tr]&#93;</strong> :: [history.comments; block=tr], [history.creatorName; block=tr]</td></tr>
         <tr><th colspan="6">Attached files</th></tr>
         <tr><td>Filename: <a href="fileviewer.php?file_id=[file.file_id]">[file.file_name; block=tr]</a></td><td colspan="5">Description: [file.file_description; block=tr]</td></tr>
