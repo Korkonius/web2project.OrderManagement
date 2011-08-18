@@ -36,7 +36,8 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Set up the title block
     $titleBlock = new CTitleBlock("Order Management :: Order #$o->id :: $o->created", 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<input type="submit" class="button" value="New Requisition">', '', '<form action="?m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
+    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
+    $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$o->id\"><span>Delete Order</span></a>", '', '', '');
     $titleBlock->show();
 
     $tbs->Show(TBS_OUTPUT);
@@ -45,7 +46,7 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
     // Show the new order form
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management :: New Order', 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="?m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
+    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
     $titleBlock->show();
 
     // Prepare template
@@ -63,7 +64,7 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="?m=ordermgmt&newOrder=1" method="POST" accept-charset="utf-8">', '</form>');
+    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
     $titleBlock->show();
 
     $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');

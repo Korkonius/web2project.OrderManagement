@@ -13,10 +13,11 @@ $filter = new CInputFilter();
 // Check to see if data has been posted to page
 $addStatus = w2PgetParam($_POST, 'status_submit'); // TODO CSRF token protection
 $addOrder = w2PgetParam($_POST, 'orderSubmit');
+$orderDeleteId = w2PgetParam($_GET, 'deleteOrder');
 
 // If a new status is submitted
 if (!empty($addStatus)) {
-    $requisitionId = w2PgetParam($_GET, 'order_id'); // TODO Proper data filtering
+    $requisitionId = w2PgetParam($_GET, 'order_id');
     $statusId = w2PgetParam($_POST, 'statusCombo');
     $comment = w2PgetParam($_POST, 'orderComment');
 
@@ -30,6 +31,19 @@ if (!empty($addStatus)) {
 
     COrderStatus::createNewStatus($requisitionId, $statusId, $comment);
     $AppUI->setMsg('Order status was updated!', UI_MSG_OK, true);
+}
+
+// If an order is to be deleted
+if(!empty($orderDeleteId)) {
+    
+    // Validate parameter
+    $filter->patternVerification($orderDeleteId, CInputFilter::W2P_FILTER_NUMBERS);
+    
+    // Id sanitized, delete order
+    $order = COrder::createFromDatabase($orderDeleteId);
+    $order->delete();
+    
+    $AppUI->setMsg("Order #$order->id was deleted!", UI_MSG_OK, true);
 }
 
 // If a new order is submitted
