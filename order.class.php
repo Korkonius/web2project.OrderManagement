@@ -32,6 +32,7 @@ class COrder {
     public $filesBuffered = false;
     public $owner = null;
     public $ownerId = null;
+    public $ownerName = null;
     public $company = null;
     public $project = null;
     
@@ -60,8 +61,10 @@ class COrder {
 
         $this->id = $id;
         $this->created = $created;
-        $this->ownerName = CContact::getContactByUserid($ownerId);
+        $this->owner = new CContact();
+        $this->owner->load($ownerId);
         $this->ownerId = $ownerId;
+        $this->ownerName = $this->owner->contact_first_name . ' ' . $this->owner->contact_last_name;
 
         // Load company information
         $c = new CCompany();
@@ -318,6 +321,19 @@ class COrder {
         return $tot;
     }
 
+    public static function getOwnerOfId($requisitionId) {
+        
+        // Query database for the owner of the given requisition id
+        $q = new w2p_Database_Query();
+        $q->addTable('requisitions');
+        $q->addQuery('*');
+        $q->addWhere("requisition_id = $requisitionId");
+        $r = $q->loadHash();
+        
+        $owner = new CContact();
+        $owner->load($r['requisitioned_by']);
+        return $owner;
+    }
 }
 
 /**
@@ -407,15 +423,17 @@ class COrderStatus {
     /**
      * Creates a new COrderStatus in the database by requiering a minimum of
      * developer input. The rest of the values are looked up and filled in
-     * programmaticly.
+     * programmaticly. $silent specifies if the owner of the requisition should
+     * be notified of the status change.
      * 
-     * @global type $AppUI
-     * @param type $requisitionId
-     * @param type $statusId
-     * @param type $comment
-     * @return type 
+     * @global CAppUI $AppUI
+     * @param Int $requisitionId
+     * @param Int $statusId
+     * @param String $comment
+     * @param Bool $silent
+     * @return COrderStatus
      */
-    public static function createNewStatus($requisitionId, $statusId, $comment) {
+    public static function createNewStatus($requisitionId, $statusId, $comment, $silent=false) {
 
         global $AppUI;
         
@@ -443,8 +461,38 @@ class COrderStatus {
         $q->clear();
         $q->insertArray('requisition_status', $insert);
         
+        $newStatus = COrderStatus::createFromDb($id);
+        
+        // Attempt to use TinyButStrong to generate an e-mail
+        if(include_once(dirname(__FILE__) . '/lib/tbs_class.php')) {
+            
+            // Get owner data
+            $owner = COrder::getOwnerOfId($requisitionId);
+            $url = W2P_BASE_URL . "?m=ordermgmt&order_id=$requisitionId";
+            
+            // Generate e-mail
+            $tbs = new clsTinyButStrong();
+            $tbs->LoadTemplate(dirname(__FILE__) . '/templates/emailStatusChange.tmpl');
+            $tbs->MergeField('status', $newStatus->statusName);
+            $tbs->MergeField('editor', $newStatus->creatorName);
+            $tbs->MergeField('comment', $newStatus->comments);
+            $tbs->MergeField('url', $url);
+            $tbs->Show(TBS_NOTHING);
+            
+            // Send e-mail to owner
+            $mailer = new w2p_Utilities_Mail();
+            $mailer->To($owner->contact_email);
+            $mailer->From('admin@web2project.com');
+            $mailer->Subject("Status of order # $requisitionId has been updated");
+            $mailer->Body($tbs->Source);
+            file_put_contents(dirname(__FILE__) . '/testmail.txt', $mailer->Get());
+            
+        } else {
+            // NOTHING! Templater not found so cant generate e-mail
+        }
+        
         // Return the new order status
-        return COrderStatus::createFromDb($id);
+        return $newStatus;
     }
 
     /**

@@ -1,5 +1,5 @@
 <style type="text/css">
-    #ordermgmt_buttonbar, #orderCreated {
+    .ordermgmt_buttonbar, #orderCreated {
         float: right;
     }
     .orderButtonPane {
@@ -26,7 +26,7 @@
 </style>
 <a class="button" href="?m=ordermgmt"><span>Back to Order List</span></a>
 <form action="?m=ordermgmt&order_id=[order.id]" method="POST" accept-charset="utf-8">
-    <span colspan="2" align="right" id="ordermgmt_buttonbar">
+    <span colspan="2" align="right" class="ordermgmt_buttonbar">
         <!--<input class="button" type="button" id="topdfButton" name="topdfButton" value="Create PDF" />
         <input class="button" type="button" id="componentButton" name="componentButton" value="New Component" />
         <input class="button" type="button" id="deleteButton" name="deleteButton" value="Delete" />-->
@@ -38,8 +38,20 @@
                 <h1 class="orderHeader">Order # [order.id;block=strong] :: [order.created;block=td]</h1>
             </td></tr>
         <tr>
-            <td colspan="2"><strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=companies&a=view&company_id=[order.company.company_id]">[order.company.company_name; block=a]</a></strong></td>
-            <td colspan="2"><strong>Creator:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong></td>
+            <td colspan="2">
+                <strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+                <strong><a href="?m=companies&a=view&company_id=[order.company.company_id]">[order.company.company_name; block=a]</a></strong>
+                <a href="mailto:[order.company.company_email]">
+                    <img src="./style/web2project/images/modules/ordermgmt/img/email_go.png" alt="Send E-mail" title="Send E-mail"/>
+                </a>
+            </td>
+            <td colspan="2">
+                <strong>Creator:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+                <strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong>
+                <a href="mailto:[order.owner.contact_email]">
+                    <img src="./style/web2project/images/modules/ordermgmt/img/email_go.png" alt="Send E-mail" title="Send E-mail"/>
+                </a>
+            </td>
             <td colspan="2"><strong>Project:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=projects&a=view&project_id=[order.project.project_id]">[order.project.project_name; block=a]</a></strong></td>
         </tr>
         <tr>
