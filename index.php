@@ -17,10 +17,7 @@ $orderId = w2PgetParam($_GET, 'order_id');
 $showNewOrderForm = w2PgetParam($_GET, 'newOrder'); // NOT validated. Never use directly!
 
 // Verify that the parameters contain expected values
-if (!$filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS)) {
-    $AppUI->setMsg('Poisoning attempt to the URL detected. Issue logged.', UI_MSG_ALERT);
-    $AppUI->redirect('m=public&a=access_denied');
-}
+$filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
 
 // Create template object
 $tbs = & new clsTinyButStrong();

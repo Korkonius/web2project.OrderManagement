@@ -14,21 +14,30 @@ class CInputFilter {
     const W2P_FILTER_LETTERS = '/^[a-zæøåA-ZÆØÅ]*$/';
     const W2P_FILTER_LETTERS_OR_NUMBERS = '/^[a-zæøåA-ZÆØÅ\.\ 0-9]*$/';
     const W2P_FILTER_NUMBERS = '/^[0-9]*$/';
-    
+
     /**
      * Checks the given string against the specified pattern using preg_match.
      * Returns true if match is found, and false if string did not match the
-     * pattern.
+     * pattern. The strict variable is used to specify if the function should
+     * handle termination of the script immediatly if no match is found.
      * 
      * @param String $input
      * @param String $pattern
+     * @param Bool $strict
      * @return Bool
      */
-    public function patternVerification($input, $pattern) {
+    public function patternVerification($input, $pattern, $strict=true) {
         if (preg_match($pattern, $input))
             return true;
-        else
-            return false;
+        else {
+            if ($strict) {
+                $AppUI->setMsg('Poisoning attempt to the URL detected. Issue logged.', UI_MSG_ALERT);
+                $AppUI->redirect('m=public&a=access_denied');
+            }
+            else {
+                return false;
+            }
+        }
     }
 
     /**
