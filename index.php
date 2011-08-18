@@ -10,16 +10,23 @@ require(dirname(__FILE__) . '/order.class.php');
 include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be someway to do this automaticly
 
 $AppUI->savePlace();
+$filter = new CInputFilter();
 
 // Get parameters to act on input
 $orderId = w2PgetParam($_GET, 'order_id');
-$showNewOrderForm = w2PgetParam($_GET, 'newOrder');
+$showNewOrderForm = w2PgetParam($_GET, 'newOrder'); // NOT validated. Never use directly!
+
+// Verify that the parameters contain expected values
+if (!$filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS)) {
+    $AppUI->setMsg('Poisoning attempt to the URL detected. Issue logged.', UI_MSG_ALERT);
+    $AppUI->redirect('m=public&a=access_denied');
+}
 
 // Create template object
 $tbs = & new clsTinyButStrong();
 
 // List template test
-if (!empty($orderId) && empty($showNewOrderForm)){
+if (!empty($orderId) && empty($showNewOrderForm)) {
 
 // Detail template test
     $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_details.html');
@@ -36,25 +43,25 @@ if (!empty($orderId) && empty($showNewOrderForm)){
     $titleBlock->show();
 
     $tbs->Show(TBS_OUTPUT);
-} else if(!empty($showNewOrderForm)) {
-    
+} else if (!empty($showNewOrderForm)) {
+
+    // Show the new order form
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management :: New Order', 'folder5.png', $m, "$m.$a");
     $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
     $titleBlock->show();
-    
+
     // Prepare template
     $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_form.html');
-    
+
     // Load and merge company and project data
     $projects = new CProject;
     $tbs->MergeBlock('project', $projects->getAllowedProjects($AppUI->user_id));
     $companies = new CCompany;
     $tbs->MergeBlock('company', $companies->getCompanyList($AppUI));
-    
+
     // Output
     $tbs->Show(TBS_OUTPUT);
-    
 } else if (empty($orderId)) {
 
     // Set up the title block
