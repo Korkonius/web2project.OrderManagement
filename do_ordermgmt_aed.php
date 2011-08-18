@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__FILE__) . '/inputfilter.class.php');
+
 /* $Id$ $URL$ */
 if (!defined('W2P_BASE_DIR')) {
     die('You should not access this file directly.');
@@ -57,8 +59,6 @@ if (!empty($addOrder)) {
         
         // TODO: Same issue as with the status comment
         $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
-
-        echo "Found component $price $amount $description <br />";
 
         if (!empty($price) && !empty($amount) && !empty($description)) {
             $o->addComponent($price, $amount, $description);

@@ -4,8 +4,8 @@
   die('You should not access this file directly');
   } */
 
-require(dirname(__FILE__) . '/lib/tbs_class.php');
-require(dirname(__FILE__) . '/order.class.php');
+require_once(dirname(__FILE__) . '/lib/tbs_class.php');
+require_once(dirname(__FILE__) . '/order.class.php');
 
 include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be someway to do this automaticly
 
@@ -36,7 +36,7 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Set up the title block
     $titleBlock = new CTitleBlock("Order Management :: Order #$o->id :: $o->created", 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<input type="submit" class="button" value="New Requisition">', '', '<form action="m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
+    $titleBlock->addCell('<input type="submit" class="button" value="New Requisition">', '', '<form action="?m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
     $titleBlock->show();
 
     $tbs->Show(TBS_OUTPUT);
@@ -45,7 +45,7 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
     // Show the new order form
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management :: New Order', 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
+    $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="?m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
     $titleBlock->show();
 
     // Prepare template
@@ -63,7 +63,7 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="m=ordermgmt&a=addReq" method="POST" accept-charset="utf-8">', '</form>');
+    $titleBlock->addCell('<input type="submit" class="button" value="New Order">', '', '<form action="?m=ordermgmt&newOrder=1" method="POST" accept-charset="utf-8">', '</form>');
     $titleBlock->show();
 
     $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');

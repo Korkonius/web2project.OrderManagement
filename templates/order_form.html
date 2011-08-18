@@ -1,38 +1,64 @@
-<form action="?m=ordermgmt" method="POST" accept-charset="utf-8">
-    <label for="companySelect">Company:</label>
-    <select name="companySelect" id="companySelect">
-        <option value="[company.company_id;block=option]">[company.company_name;block=option]</option>
-    </select>
-    <label for="projectSelect">Project:</label>
-    <select name="projectSelect" id="projectSelect">
-        <option value="[project.project_id;block=option]">[project.project_name;block=option]</option>
-    </select>
-    <div class="componentFormList">
-        <div class="componentFormLine">
-            <input type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
-            <input type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
-            <input type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
+<style type="text/css">
+    div#orderFormContainer {
+        text-align: center;
+    }
+    form#orderForm {
+        width: 100%;
+    }
+    form#orderForm label{
+        font-weight: bold;
+        padding: 3px 0em 3px 2em;
+    }
+    input.componentAmount, input.componentPrice {
+        width: 4em;
+    }
+    input.componentLabel {
+        width: 50em;
+    }
+    .componentItems {
+        float:left;
+    }
+    input.button{
+        margin: 6px;
+    }
+</style>
+<div id="orderFormContainer">
+    <form id="orderForm" action="?m=ordermgmt" method="POST" accept-charset="utf-8">
+        <label for="companySelect">Company:</label>
+        <select name="companySelect" id="companySelect">
+            <option value="[company.company_id;block=option]">[company.company_name;block=option]</option>
+        </select>
+        <label for="projectSelect">Project:</label>
+        <select name="projectSelect" id="projectSelect">
+            <option value="[project.project_id;block=option]">[project.project_name;block=option]</option>
+        </select>
+        <div class="componentFormList">
+            <div class="componentFormLine">
+                <input class="componentAmount" type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
+                <input class="componentPrice" type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
+                <input class="componentLabel" type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
+            </div>
+            <div class="componentFormLine">
+                <input class="componentAmount" type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
+                <input class="componentPrice" type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
+                <input class="componentLabel" type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
+            </div>
+            <div class="componentFormLine">
+                <input class="componentAmount" type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
+                <input class="componentPrice" type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
+                <input class="componentLabel" type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
+            </div>
+            <div class="componentFormLine">
+                <input class="componentAmount" type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
+                <input class="componentPrice" type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
+                <input class="componentLabel" type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
+            </div>
+            <div class="componentFormLine">
+                <input class="componentAmount" type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
+                <input class="componentPrice" type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
+                <input class="componentLabel" type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
+            </div>
         </div>
-        <div class="componentFormLine">
-            <input type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
-            <input type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
-            <input type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
-        </div>
-        <div class="componentFormLine">
-            <input type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
-            <input type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
-            <input type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
-        </div>
-        <div class="componentFormLine">
-            <input type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
-            <input type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
-            <input type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
-        </div>
-        <div class="componentFormLine">
-            <input type="text" name="componentAmount[]" class="componentAmount" placeholder="Amount"/>
-            <input type="text" name="componentPrice[]" class="componentPrice" placeholder="Price"/>
-            <input type="text" name="componentLabel[]" class="componentLabel" placeholder="Description"/>
-        </div>
-    </div>
-    <input class="button" type="submit" name="orderSubmit" id="orderSubmit" value="Submit Order" />
-</form>
+        <input class="button" type="submit" name="orderSubmit" id="orderSubmit" value="Submit Order" />
+    </form>
+</div>
