@@ -8,15 +8,16 @@ global $AppUI;
 $uistyle = $AppUI->getPref('UISTYLE') ? $AppUI->getPref('UISTYLE') : w2PgetConfig('host_style');
 define('IMAGE_URL', "./style/$uistyle/images/modules/ordermgmt/img/");
 
-function aclCheck($op, $deniedStr, w2Pacl $acl) {
+function aclCheck($op, $deniedStr) {
+    
+    global $AppUI;
+    $acl = $AppUI->acl();
     
     // If op is allowed do nothing. If denied redirect.
     if($acl->checkModule('requisitions', $op)) {
         return true;
     }
     else {
-        
-        global $AppUI;
         $AppUI->setMsg("Access denied: $deniedStr");
         $AppUI->redirect('m=ordermgmt');
     }
