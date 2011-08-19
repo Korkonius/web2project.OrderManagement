@@ -8,6 +8,20 @@ global $AppUI;
 $uistyle = $AppUI->getPref('UISTYLE') ? $AppUI->getPref('UISTYLE') : w2PgetConfig('host_style');
 define('IMAGE_URL', "./style/$uistyle/images/modules/ordermgmt/img/");
 
+function aclCheck($op, $deniedStr, w2Pacl $acl) {
+    
+    // If op is allowed do nothing. If denied redirect.
+    if($acl->checkModule('requisitions', $op)) {
+        return true;
+    }
+    else {
+        
+        global $AppUI;
+        $AppUI->setMsg("Access denied: $deniedStr");
+        $AppUI->redirect('m=ordermgmt');
+    }
+}
+
 /**
  * This is the basic order class designed as an OO approach to creating the
  * module. The class contains all information about one particular order and
@@ -93,11 +107,17 @@ class COrder {
      */
     public function updateStatus($statusId, $comment) {
 
+        // Check acl
+        aclCheck('edit', "Insufficient permissions", $this->acl);
+        
         // Use status object to create new status
         return COrderStatus::createNewStatus($this->id, $statusId, $comment);
     }
     
     public function addComponent($price, $amount, $description) {
+        
+        // Check acl
+        aclCheck('edit', "Insufficient permissions", $this->acl);
         
         // Use component object to create new component
         return COrderComponent::createNewComponent($this->id, $price, $amount, $description);
@@ -109,6 +129,10 @@ class COrder {
      * @return COrderStatus
      */
     public function latestStatus() {
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
+        
         $a = $this->getHistory();
         end($a);
         return current($a);
@@ -122,6 +146,9 @@ class COrder {
      * @return resource
      */
     public function delete() {
+        
+        // Check acl
+        aclCheck('delete', "Insufficient permissions", $this->acl);
         
         // Loop through all related database object and delete them
         $statuses = $this->getHistory();
@@ -169,8 +196,11 @@ class COrder {
      * @return COrder 
      */
     public static function createFromDatabase($id) {
-
+        
         global $AppUI;
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $AppUI->acl());
         
         // Query the database for one object based on id
         $q = new w2p_database_query();
@@ -199,6 +229,11 @@ class COrder {
      * @return COrder[]
      */
     public static function createListFromDatabase($start=0, $limit=10) {
+        
+        global $AppUI;
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $AppUI->acl());
 
         // Query the database to fetch multiple objects
         $q = new w2p_database_query();
@@ -220,6 +255,9 @@ class COrder {
     public static function createNewOrder($companyId, $projectId) {
         
         global $AppUI;
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $AppUI->acl());
         
         // Compute order id
         $q = new w2p_Database_Query();
@@ -256,6 +294,9 @@ class COrder {
      * @return COrderStatus[]
      */
     public function getHistory() {
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
 
         // Check to see if history is already loaded
         if (!$this->historyBuffered) {
@@ -273,6 +314,9 @@ class COrder {
      * @return CFile[]
      */
     public function getFiles() {
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
 
         if (!$this->filesBuffered) {
             // Query database for files
@@ -296,6 +340,9 @@ class COrder {
      * @return COrderComponent[]
      */
     public function getComponents() {
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
 
         // Check to see if components are loaded
         if (!$this->componentsBuffered) {
@@ -313,6 +360,10 @@ class COrder {
      * @return Int
      */
     public function getOrderTotal() {
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
+        
         $tot = 0;
         foreach($this->getComponents() as $c) {
             $tot += $c->total;
@@ -322,6 +373,11 @@ class COrder {
     }
 
     public static function getOwnerOfId($requisitionId) {
+        
+        global $AppUI;
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $AppUI->acl());
         
         // Query database for the owner of the given requisition id
         $q = new w2p_Database_Query();
@@ -485,7 +541,7 @@ class COrderStatus {
             $mailer->From('admin@web2project.com');
             $mailer->Subject("Status of order # $requisitionId has been updated");
             $mailer->Body($tbs->Source);
-            file_put_contents(dirname(__FILE__) . '/testmail.txt', $mailer->Get());
+            $mailer->Send();
             
         } else {
             // NOTHING! Templater not found so cant generate e-mail

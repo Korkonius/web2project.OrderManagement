@@ -14,7 +14,7 @@ if (!defined('W2P_BASE_DIR')) {
 define(ORDERMGMT_DEBUG_DATA, true);
 
 $config = array();
-$config['mod_name'] = "OrderManagement";
+$config['mod_name'] = "Order Management";
 $config['mod_version'] = "0.1.0";
 $config['mod_directory'] = "ordermgmt";
 $config['mod_setup_class'] = "CSetupOrderMgmt";
@@ -24,9 +24,9 @@ $config['mod_ui_icon'] = "";
 $config['mod_description'] = "Basic order management and inventory control";
 $config['mod_config'] = false;
 $config['mod_main_class'] = "COrderMgmt";
-$config['permissions_item_table'] = 'orderMgmt';
-$config['permissions_item_field'] = 'orderMgmt_id';
-$config['permissions_item_label'] = 'orderMgmt_title';
+$config['permissions_item_table'] = 'requisitions';
+$config['permissions_item_field'] = 'requisition_id';
+$config['permissions_item_label'] = 'requisition_id';
 
 class CSetupOrderMgmt {
 
@@ -176,12 +176,10 @@ class CSetupOrderMgmt {
         $query->insertArray('requisition_status_info', $status6);
         $query->insertArray('requisition_status_info', $status7);
         print_r(mysql_error());
+        
         if (ORDERMGMT_DEBUG_DATA) {
             $this->debugData();
         }
-
-        //$perms = $AppUI->acl();
-        //$perms->registerModule('Order Management', 'requisitions');
 
         return (db_error() ? false : true);
     }
@@ -191,6 +189,8 @@ class CSetupOrderMgmt {
     }
 
     public function remove() {
+        
+        global $AppUI;
 
         // Remove tables defined by this module
         $query = new w2p_Database_Query();
@@ -213,6 +213,10 @@ class CSetupOrderMgmt {
         $query->dropTable("requisitions");
         $query->exec();
         $query->clear();
+        
+        $perms = $AppUI->acl();
+        $perms->unregisterModule('Order Management', 'requisitions');
+        
         return true;
     }
 

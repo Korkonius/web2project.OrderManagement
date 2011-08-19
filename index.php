@@ -1,8 +1,8 @@
 <?php
 
-/* if(!defined('W2P_BASE_DIR')) {
+if(!defined('W2P_BASE_DIR')) {
   die('You should not access this file directly');
-  } */
+  }
 
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/order.class.php');
