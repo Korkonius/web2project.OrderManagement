@@ -14,7 +14,7 @@
         height: 2em;
     }
     table.order_details td {
-        padding: 6px 0em;
+        padding: 6px 2em;
     }
     .component_total {
         float: right;
@@ -58,7 +58,7 @@
             <th colspan="6">
                 Components in order
                 <span class="orderButtonPane">
-                    <a href="?m=ordermgmt&componentForm=[order.id;block=span;when [order.canEdit] = 1]"><img src="./style/web2project/images/modules/ordermgmt/img/table_add.png" alt="Add Components" title="Add Components"/></a>
+                    <a href="?m=ordermgmt&componentForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./style/web2project/images/modules/ordermgmt/img/table_add.png" alt="Add Components" title="Add Components"/></a>
                 </span>
             </th>
         </tr>
@@ -66,6 +66,7 @@
             <td colspan="6">
                 <div class="componentButtonPane">
                     <a href="?m=ordermgmt&order_id=[order.id]&removeComponent=[component.id; block=tr]">
+                        [order.canEdit; magnet=a; ope=mok:1]
                         <img src="./style/web2project/images/modules/ordermgmt/img/delete.png" alt="Delete" title="Delete component # [component.id; block=tr]"/>
                     </a>
                 </div>
@@ -82,8 +83,13 @@
         <tr><td colspan="6">[history.created; block=tr] :: <strong>&#91;[history.statusName; block=tr]&#93;</strong> :: [history.comments; block=tr], <a href="?m=contacts&a=view&contact_id=[order.ownerId]">[history.creatorName; block=tr]</a></td></tr>
         <tr><th colspan="6">Attached files</th></tr>
         <tr><td>Filename: <a href="fileviewer.php?file_id=[file.file_id]">[file.file_name; block=tr]</a></td><td colspan="5">Description: [file.file_description; block=tr]</td></tr>
-        <tr><th colspan="6">Update Order</th></tr>
-        <tr><td colspan="6">
+        <tr>
+            [order.canEdit; magnet=tr; ope=mok:1]
+            <th colspan="6">Update Order</th>
+        </tr>
+        <tr>
+            [order.canEdit; magnet=tr; ope=mok:1]
+            <td colspan="6" class>
                 <label for="statusCombo">Requisition status</label>
                 <select id="statusCombo" name="statusCombo">
                     <option value="[status.requisition_status_info_id;block=option]">[status.status_title;block=option]</option>
@@ -91,6 +97,7 @@
                 <label for="orderComment">Comment:</label><br />
                 <div id="textwrapper"><textarea id="orderComment" name="orderComment" placeholder="Write a comment on the requisition here" style="width: 100%"></textarea></div>
                 <input class="button" type="submit" name="status_submit" id="orderSubmit" value="Update Order" style="float: right;" />
-            </td></tr>
+            </td>
+        </tr>
     </table>
 </form>
