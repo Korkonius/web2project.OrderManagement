@@ -267,6 +267,31 @@ class COrder {
         return $retArray;
     }
     
+    public static function createListFromProjectId($projectId, $start=0, $limit=10) {
+        
+        global $AppUI;
+        
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $AppUI->acl());
+
+        // Query the database to fetch multiple objects
+        $q = new w2p_database_query();
+        $q->addTable('requisitions', 'r');
+        $q->addQuery('*');
+        $q->addClause("LIMIT", "$start,$limit", false);
+        $q->addWhere("project = $projectId");
+        $q->exec();
+
+        // Parse results
+        $results = $q->loadList();
+        $retArray = array();
+        foreach ($results as $r) {
+            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['project']);
+        }
+
+        return $retArray;
+    }
+    
     public static function createNewOrder($companyId, $projectId) {
         
         global $AppUI;
