@@ -454,6 +454,8 @@ class COrderStatus {
      */
     public function __construct($id, $requisitionId, $creator, $status, $statusName, $created, $comments, $iconPath) {
        
+        aclCheck('view', 'Access denied');
+        
         // Set all internal variables
         $this->id = $id;
         $this->requisitionId = $requisitionId;
@@ -483,6 +485,8 @@ class COrderStatus {
      */
     public static function getAllStatusinfo() {
         
+        aclCheck('view', 'Access denied');
+        
         // Query database for known statuses
         $q = new w2p_Database_Query();
         $q->addTable('requisition_status_info');
@@ -507,6 +511,7 @@ class COrderStatus {
     public static function createNewStatus($requisitionId, $statusId, $comment, $silent=false) {
 
         global $AppUI;
+        aclCheck('edit', 'Access denied');
         
         // Complete status data using known values
         $creator = $AppUI->user_id;
@@ -573,6 +578,8 @@ class COrderStatus {
      * @return COrderStatus 
      */
     public static function createFromDb($id) {
+        
+        aclCheck('view', 'Access denied');
 
         // Query database
         $q = new w2p_database_query();
@@ -600,6 +607,8 @@ class COrderStatus {
      * @return COrderStatus[]
      */
     public static function createFromReqId($id) {
+        
+        aclCheck('view', 'Access denied');
 
         // Query database
         $q = new w2p_database_query();
@@ -626,6 +635,8 @@ class COrderStatus {
      * @return resource 
      */
     public static function deleteComponent($id) {
+        
+        aclCheck('delete', 'Access denied');
         
         // Create and execute database query
         $q = new w2p_Database_Query();
@@ -661,6 +672,8 @@ class COrderComponent {
      * @param Int $requisitionId 
      */
     public function __construct($id, $price, $amount, $description, $requisitionId) {
+        
+        aclCheck('view', 'Access denied');
 
         // Populate internal variables
         $this->id = $id;
@@ -689,6 +702,8 @@ class COrderComponent {
      */
     public static function deleteComponent($id) {
         
+        aclCheck('delete', 'Access denied');
+        
         // Create and execute database query
         $q = new w2p_Database_Query();
         $q->setDelete('requisition_components');
@@ -698,6 +713,8 @@ class COrderComponent {
     }
     
     public static function createNewComponent($requisitionId, $price, $amount, $description) {
+        
+        aclCheck('edit', 'Access denied');
         
         // Find ID
         $q = new w2p_Database_Query();
@@ -733,6 +750,8 @@ class COrderComponent {
     public static function createFromDb($id) {
 
         global $AppUI;
+        
+        aclCheck('view', 'Access denied');
 
         // Fetch single row containing the requested id
         $q = new w2p_database_query();
@@ -760,6 +779,8 @@ class COrderComponent {
      * @return COrderComponent 
      */
     public static function createFromReqId($id) {
+        
+        aclCheck('view', 'Access denied');
 
         // Fetch single row containing the requested id
         $q = new w2p_database_query();
