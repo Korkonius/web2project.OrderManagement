@@ -37,8 +37,8 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Set up the title block
     $titleBlock = new CTitleBlock("Order Management :: Order #$o->id :: $o->created", 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
-    $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$o->id\"><span>Delete Order</span></a>", '', '', '');
+    if(COrder::canAdd())$titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
+    if($o->canDelete()) $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$o->id\"><span>Delete Order</span></a>", '', '', '');
     $titleBlock->show();
 
     $tbs->Show(TBS_OUTPUT);
@@ -47,7 +47,6 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
     // Show the new order form
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management :: New Order', 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
     $titleBlock->show();
 
     // Prepare template
@@ -69,7 +68,6 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
     // Show the new component form
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management :: Add Components to order # '. $newComponent, 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
     $titleBlock->show();
     
     $tbs->LoadTemplate(dirname(__FILE__) . '/templates/component_form.html');
@@ -79,7 +77,7 @@ if (!empty($orderId) && empty($showNewOrderForm)) {
 
     // Set up the title block
     $titleBlock = new CTitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
-    $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
+    if(COrder::canAdd()) $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
     $titleBlock->show();
 
     $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');

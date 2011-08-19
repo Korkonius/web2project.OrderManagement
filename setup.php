@@ -3,6 +3,8 @@
 /**
  * Setup file for web2project addon OrderManagement for basic invoice and inventory control.
  * 
+ * TODO: Customize ACL table for more detailed module checks
+ * 
  * @author Eirik Ottesen
  * @copyright 2011
  */

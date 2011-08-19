@@ -18,7 +18,7 @@ function aclCheck($op, $deniedStr) {
         return true;
     }
     else {
-        $AppUI->setMsg("Access denied: $deniedStr");
+        $AppUI->setMsg("Access denied: $deniedStr", UI_MSG_ERROR);
         $AppUI->redirect('m=ordermgmt');
     }
 }
@@ -90,6 +90,20 @@ class COrder {
         $p = new CProject();
         $p->loadFull($AppUI, $projectId);
         $this->project = $p;
+    }
+    
+    public static function canAdd() {
+        
+        global $AppUI;
+        return $AppUI->acl()->checkModule('requisitions', 'add');
+    }
+    
+    public function canEdit() {
+        return $this->acl->checkModule('requisitions', 'edit');
+    }
+    
+    public function canDelete() {
+        return $this->acl->checkModule('requisitions', 'delete');
     }
 
     /**
