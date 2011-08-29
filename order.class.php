@@ -110,7 +110,8 @@ class COrder {
      * TODO: Implement this through core functionality
      * @param type $fileId 
      */
-    public function attachFile($fileId) {
+    public function addExistingFile($fileId) {
+        
     }
 
     /**
@@ -429,6 +430,20 @@ class COrder {
         $owner = new CContact();
         $owner->load($r['requisitioned_by']);
         return $owner;
+    }
+    
+    public static function attachFile($orderId, $fileId) {
+        
+        // Check acl
+        aclCheck('edit', "Unable to attach file to order #$orderId. Access denied");
+        
+        // Add a record to database connecting file and order
+        $q = new w2p_Database_Query();
+        $h = array(
+            'file_id' => $fileId,
+            'requisition_id' => $orderId
+        );
+        $q->insertArray('requisition_files', $h);
     }
 }
 
