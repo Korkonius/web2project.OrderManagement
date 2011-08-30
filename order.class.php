@@ -107,11 +107,16 @@ class COrder {
     }
 
     /**
-     * TODO: Implement this through core functionality
-     * @param type $fileId 
+     * Attaches a new CFile to this object. Returns the result of the database
+     * query.
+     * 
+     * @param Int $fileId
+     * @return Resource
      */
     public function addExistingFile($fileId) {
         
+        // Call static function to attach file to this object
+        return COrder::attachFile($this->orderId, $fileId);
     }
 
     /**
@@ -130,6 +135,15 @@ class COrder {
         return COrderStatus::createNewStatus($this->id, $statusId, $comment);
     }
     
+    /**
+     * Creates and adds a new component to this order with the given
+     * specifications.
+     * 
+     * @param Int $price
+     * @param Int $amount
+     * @param String $description
+     * @return COrderComponent
+     */
     public function addComponent($price, $amount, $description) {
         
         // Check acl
@@ -268,6 +282,17 @@ class COrder {
         return $retArray;
     }
     
+    /**
+     * Creates an array of COrders based on a project id. This function returns
+     * a number of orders specified by $limit and starting with record # $start
+     * belonging to the given project.
+     * 
+     * @global CAppUI $AppUI
+     * @param Int $projectId
+     * @param Int $start
+     * @param Int $limit
+     * @return COrder[]
+     */
     public static function createListFromProjectId($projectId, $start=0, $limit=10) {
         
         global $AppUI;
@@ -293,6 +318,15 @@ class COrder {
         return $retArray;
     }
     
+    /**
+     * This function creates a new order in the database belonging to the
+     * specified project and specified company.
+     * 
+     * @global CAppUI $AppUI
+     * @param Int $companyId
+     * @param Int $projectId
+     * @return COrder 
+     */
     public static function createNewOrder($companyId, $projectId) {
         
         global $AppUI;
@@ -413,6 +447,15 @@ class COrder {
         return $tot;
     }
 
+    /**
+     * Static function to fetch the owner of an order id without loading the
+     * entire order. Available so that it is not nessesary to load an entire
+     * order to learn the owner id.
+     * 
+     * @global CAppUI $AppUI
+     * @param Int $requisitionId
+     * @return CContact 
+     */
     public static function getOwnerOfId($requisitionId) {
         
         global $AppUI;
@@ -432,6 +475,16 @@ class COrder {
         return $owner;
     }
     
+    /**
+     * Static attach file function. This is available to simplify the process
+     * of adding a file to an order. It is not nessecary to load an entire
+     * order when the order id and file id is known. This is available to ease
+     * load in aed scripts.
+     * 
+     * @param Int $orderId
+     * @param Int $fileId
+     * @return resource
+     */
     public static function attachFile($orderId, $fileId) {
         
         // Check acl
@@ -443,7 +496,7 @@ class COrder {
             'file_id' => $fileId,
             'requisition_id' => $orderId
         );
-        $q->insertArray('requisition_files', $h);
+        return $q->insertArray('requisition_files', $h);
     }
 }
 
