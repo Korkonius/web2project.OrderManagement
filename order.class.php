@@ -14,7 +14,7 @@ function aclCheck($op, $deniedStr) {
     $acl = $AppUI->acl();
     
     // If op is allowed do nothing. If denied redirect.
-    if($acl->checkModule('requisitions', $op)) {
+    if($acl->checkModule('ordermgmt', $op)) {
         return true;
     }
     else {
@@ -95,15 +95,15 @@ class COrder {
     public static function canAdd() {
         
         global $AppUI;
-        return $AppUI->acl()->checkModule('requisitions', 'add');
+        return $AppUI->acl()->checkModule('ordermgmt', 'add');
     }
     
     public function canEdit() {
-        return $this->acl->checkModule('requisitions', 'edit');
+        return $this->acl->checkModule('ordermgmt', 'edit');
     }
     
     public function canDelete() {
-        return $this->acl->checkModule('requisitions', 'delete');
+        return $this->acl->checkModule('ordermgmt', 'delete');
     }
 
     /**
