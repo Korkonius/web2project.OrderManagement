@@ -6,18 +6,16 @@ if (!defined('W2P_BASE_DIR')) {
 global $AppUI;
 
 $uistyle = $AppUI->getPref('UISTYLE') ? $AppUI->getPref('UISTYLE') : w2PgetConfig('host_style');
-define('IMAGE_URL', "./style/$uistyle/images/modules/ordermgmt/img/");
 
 function aclCheck($op, $deniedStr) {
-    
+
     global $AppUI;
     $acl = $AppUI->acl();
-    
+
     // If op is allowed do nothing. If denied redirect.
-    if($acl->checkModule('ordermgmt', $op)) {
+    if ($acl->checkModule('ordermgmt', $op)) {
         return true;
-    }
-    else {
+    } else {
         $AppUI->setMsg("Access denied: $deniedStr", UI_MSG_ERROR);
         $AppUI->redirect('m=ordermgmt');
     }
@@ -50,7 +48,6 @@ class COrder {
     public $ownerName = null;
     public $company = null;
     public $project = null;
-    
     // Complex objects holding extra information
     protected $history = array();
     protected $files = array();
@@ -91,17 +88,17 @@ class COrder {
         $p->loadFull($AppUI, $projectId);
         $this->project = $p;
     }
-    
+
     public static function canAdd() {
-        
+
         global $AppUI;
         return $AppUI->acl()->checkModule('ordermgmt', 'add');
     }
-    
+
     public function canEdit() {
         return $this->acl->checkModule('ordermgmt', 'edit');
     }
-    
+
     public function canDelete() {
         return $this->acl->checkModule('ordermgmt', 'delete');
     }
@@ -114,7 +111,7 @@ class COrder {
      * @return Resource
      */
     public function addExistingFile($fileId) {
-        
+
         // Call static function to attach file to this object
         return COrder::attachFile($this->orderId, $fileId);
     }
@@ -130,11 +127,11 @@ class COrder {
 
         // Check acl
         aclCheck('edit', "Insufficient permissions", $this->acl);
-        
+
         // Use status object to create new status
         return COrderStatus::createNewStatus($this->id, $statusId, $comment);
     }
-    
+
     /**
      * Creates and adds a new component to this order with the given
      * specifications.
@@ -145,10 +142,10 @@ class COrder {
      * @return COrderComponent
      */
     public function addComponent($price, $amount, $description) {
-        
+
         // Check acl
         aclCheck('edit', "Insufficient permissions", $this->acl);
-        
+
         // Use component object to create new component
         return COrderComponent::createNewComponent($this->id, $price, $amount, $description);
     }
@@ -159,15 +156,15 @@ class COrder {
      * @return COrderStatus
      */
     public function latestStatus() {
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $this->acl);
-        
+
         $a = $this->getHistory();
         end($a);
         return current($a);
     }
-    
+
     /**
      * Permanently removes this, and related components from the database.
      * NOTE! Related files are not removed as these might be used by other
@@ -176,28 +173,28 @@ class COrder {
      * @return resource
      */
     public function delete() {
-        
+
         // Check acl
         aclCheck('delete', "Insufficient permissions", $this->acl);
-        
+
         // Loop through all related database object and delete them
         $statuses = $this->getHistory();
-        foreach($statuses as $s) {
+        foreach ($statuses as $s) {
             $s->delete();
         }
-        
+
         $components = $this->getComponents();
-        foreach($components as $c) {
+        foreach ($components as $c) {
             $c->delete();
         }
-        
+
         // Dereference files
         $q = new w2p_Database_Query();
         $q->setDelete('requisition_files');
         $q->addWhere("requisition_id = $this->id");
         $q->exec();
         $q->clear();
-        
+
         // Remove self
         $q->setDelete('requisitions');
         $q->addWhere("requisition_id = $this->id");
@@ -226,12 +223,12 @@ class COrder {
      * @return COrder 
      */
     public static function createFromDatabase($id) {
-        
+
         global $AppUI;
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $AppUI->acl());
-        
+
         // Query the database for one object based on id
         $q = new w2p_database_query();
         $q->addTable('requisitions', 'r');
@@ -259,9 +256,9 @@ class COrder {
      * @return COrder[]
      */
     public static function createListFromDatabase($start=0, $limit=10) {
-        
+
         global $AppUI;
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $AppUI->acl());
 
@@ -281,7 +278,7 @@ class COrder {
 
         return $retArray;
     }
-    
+
     /**
      * Creates an array of COrders based on a project id. This function returns
      * a number of orders specified by $limit and starting with record # $start
@@ -294,9 +291,9 @@ class COrder {
      * @return COrder[]
      */
     public static function createListFromProjectId($projectId, $start=0, $limit=10) {
-        
+
         global $AppUI;
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $AppUI->acl());
 
@@ -317,7 +314,7 @@ class COrder {
 
         return $retArray;
     }
-    
+
     /**
      * This function creates a new order in the database belonging to the
      * specified project and specified company.
@@ -328,23 +325,23 @@ class COrder {
      * @return COrder 
      */
     public static function createNewOrder($companyId, $projectId) {
-        
+
         global $AppUI;
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $AppUI->acl());
-        
+
         // Compute order id
         $q = new w2p_Database_Query();
         $q->addTable('requisitions');
         $q->addQuery('max(requisition_id) as id');
         $r = $q->loadHash();
-        $id = $r['id']+1;
-        
+        $id = $r['id'] + 1;
+
         // The rest of the fields
         $created = date('Y-m-d H:i:s', time());
         $userId = $AppUI->user_id;
-        
+
         // Generate hash and insert into database
         $a = array(
             'requisition_id' => $id,
@@ -355,9 +352,9 @@ class COrder {
         );
         $q->clear();
         $q->insertArray('requisitions', $a);
-        
+
         COrderStatus::createNewStatus($id, COrderStatus::ORDER_STATUS_NEW, 'New order');
-        
+
         // Return new order
         return COrder::createFromDatabase($id);
     }
@@ -369,7 +366,7 @@ class COrder {
      * @return COrderStatus[]
      */
     public function getHistory() {
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $this->acl);
 
@@ -389,7 +386,7 @@ class COrder {
      * @return CFile[]
      */
     public function getFiles() {
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $this->acl);
 
@@ -402,10 +399,10 @@ class COrder {
             $q->addWhere("rf.requisition_id = $this->id");
             $q->exec();
             $this->files = $q->loadList();
-            
+
             $this->filesBuffered = true;
         }
-        
+
         return $this->files;
     }
 
@@ -415,7 +412,7 @@ class COrder {
      * @return COrderComponent[]
      */
     public function getComponents() {
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $this->acl);
 
@@ -427,7 +424,7 @@ class COrder {
 
         return $this->components;
     }
-    
+
     /**
      * Returns the total price of the order. This is the sum of all component
      * prices.
@@ -435,15 +432,15 @@ class COrder {
      * @return Int
      */
     public function getOrderTotal() {
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $this->acl);
-        
+
         $tot = 0;
-        foreach($this->getComponents() as $c) {
+        foreach ($this->getComponents() as $c) {
             $tot += $c->total;
         }
-        
+
         return $tot;
     }
 
@@ -457,24 +454,24 @@ class COrder {
      * @return CContact 
      */
     public static function getOwnerOfId($requisitionId) {
-        
+
         global $AppUI;
-        
+
         // Check acl
         aclCheck('view', "Insufficient permissions", $AppUI->acl());
-        
+
         // Query database for the owner of the given requisition id
         $q = new w2p_Database_Query();
         $q->addTable('requisitions');
         $q->addQuery('*');
         $q->addWhere("requisition_id = $requisitionId");
         $r = $q->loadHash();
-        
+
         $owner = new CContact();
         $owner->load($r['requisitioned_by']);
         return $owner;
     }
-    
+
     /**
      * Static attach file function. This is available to simplify the process
      * of adding a file to an order. It is not nessecary to load an entire
@@ -486,10 +483,10 @@ class COrder {
      * @return resource
      */
     public static function attachFile($orderId, $fileId) {
-        
+
         // Check acl
         aclCheck('edit', "Unable to attach file to order #$orderId. Access denied");
-        
+
         // Add a record to database connecting file and order
         $q = new w2p_Database_Query();
         $h = array(
@@ -498,6 +495,7 @@ class COrder {
         );
         return $q->insertArray('requisition_files', $h);
     }
+
 }
 
 /**
@@ -521,7 +519,7 @@ class COrderStatus {
     public $iconPath;
     public $created;
     public $comments;
-    
+
     // Status constants
     const ORDER_STATUS_NEW = 1;
     const ORDER_STATUS_APPROVED = 2;
@@ -546,9 +544,9 @@ class COrderStatus {
      * @param String $iconPath 
      */
     public function __construct($id, $requisitionId, $creator, $status, $statusName, $created, $comments, $iconPath) {
-       
+
         aclCheck('view', 'Access denied');
-        
+
         // Set all internal variables
         $this->id = $id;
         $this->requisitionId = $requisitionId;
@@ -558,9 +556,9 @@ class COrderStatus {
         $this->statusName = $statusName;
         $this->created = $created;
         $this->comments = $comments;
-        $this->iconPath = IMAGE_URL . $iconPath;
+        $this->iconPath = $iconPath;
     }
-    
+
     /**
      * Permanently removes the component with the given id from the database.
      * 
@@ -570,24 +568,24 @@ class COrderStatus {
     public function delete() {
         return COrderStatus::deleteComponent($this->id);
     }
-    
+
     /**
      * Simple local function to provide known status information to whoever requires it
      * 
      * @param Hash $const 
      */
     public static function getAllStatusinfo() {
-        
+
         aclCheck('view', 'Access denied');
-        
+
         // Query database for known statuses
         $q = new w2p_Database_Query();
         $q->addTable('requisition_status_info');
         $q->addQuery('*');
-        
+
         return $q->loadList();
     }
-    
+
     /**
      * Creates a new COrderStatus in the database by requiering a minimum of
      * developer input. The rest of the values are looked up and filled in
@@ -605,19 +603,19 @@ class COrderStatus {
 
         global $AppUI;
         aclCheck('edit', 'Access denied');
-        
+
         // Complete status data using known values
         $creator = $AppUI->user_id;
         $created = date('Y-m-d H:i:s', time());
-        
+
         // Find ID
         $q = new w2p_Database_Query();
         $q->addTable('requisition_status');
         $q->addQuery('max(requisition_status_id) as num');
         $q->exec();
         $r = $q->loadHash();
-        $id = $r['num']+1;
-        
+        $id = $r['num'] + 1;
+
         // Required data known, insert data
         $insert = array(
             'requisition_status_id' => $id,
@@ -629,16 +627,16 @@ class COrderStatus {
         );
         $q->clear();
         $q->insertArray('requisition_status', $insert);
-        
+
         $newStatus = COrderStatus::createFromDb($id);
-        
+
         // Attempt to use TinyButStrong to generate an e-mail
-        if(include_once(dirname(__FILE__) . '/lib/tbs_class.php')) {
-            
+        if (include_once(dirname(__FILE__) . '/lib/tbs_class.php')) {
+
             // Get owner data
             $owner = COrder::getOwnerOfId($requisitionId);
             $url = W2P_BASE_URL . "?m=ordermgmt&order_id=$requisitionId";
-            
+
             // Generate e-mail
             $tbs = new clsTinyButStrong();
             $tbs->LoadTemplate(dirname(__FILE__) . '/templates/emailStatusChange.tmpl');
@@ -647,7 +645,7 @@ class COrderStatus {
             $tbs->MergeField('comment', $newStatus->comments);
             $tbs->MergeField('url', $url);
             $tbs->Show(TBS_NOTHING);
-            
+
             // Send e-mail to owner
             $mailer = new w2p_Utilities_Mail();
             $mailer->To($owner->contact_email);
@@ -655,11 +653,10 @@ class COrderStatus {
             $mailer->Subject("Status of order # $requisitionId has been updated");
             $mailer->Body($tbs->Source);
             $mailer->Send();
-            
         } else {
             // NOTHING! Templater not found so cant generate e-mail
         }
-        
+
         // Return the new order status
         return $newStatus;
     }
@@ -671,7 +668,7 @@ class COrderStatus {
      * @return COrderStatus 
      */
     public static function createFromDb($id) {
-        
+
         aclCheck('view', 'Access denied');
 
         // Query database
@@ -682,11 +679,14 @@ class COrderStatus {
         $q->addWhere("`requisition_status_id` = $id");
         $q->exec();
 
+        // Build icon path properly
+        $icon = w2PfindImage($r['icon_path'], 'ordermgmt');
+
         // Parse results
         $results = $q->loadList();
         if (count($results) == 1) {
             $r = $results[0];
-            return new COrderStatus($r['requisition_status_id'], $r['requisition_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $r['icon_path']);
+            return new COrderStatus($r['requisition_status_id'], $r['requisition_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
         } else {
             $AppUI->setMsg("Failed to create COrderStatus from database. Multiple rows selected from same id. Database corrupt?");
             return false;
@@ -700,7 +700,7 @@ class COrderStatus {
      * @return COrderStatus[]
      */
     public static function createFromReqId($id) {
-        
+
         aclCheck('view', 'Access denied');
 
         // Query database
@@ -715,7 +715,11 @@ class COrderStatus {
         $results = $q->loadList();
         $statuses = array();
         foreach ($results as $r) {
-            $statuses[] = new COrderStatus($r['requisition_status_id'], $r['requisition_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $r['icon_path']);
+
+            // Build icon path properly
+            $icon = w2PfindImage($r['icon_path'], 'ordermgmt');
+
+            $statuses[] = new COrderStatus($r['requisition_status_id'], $r['requisition_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
         }
 
         return $statuses;
@@ -728,16 +732,17 @@ class COrderStatus {
      * @return resource 
      */
     public static function deleteComponent($id) {
-        
+
         aclCheck('delete', 'Access denied');
-        
+
         // Create and execute database query
         $q = new w2p_Database_Query();
         $q->setDelete('requisition_status');
         $q->addWhere("requisition_status_id = $id");
-        
+
         return $q->exec();
     }
+
 }
 
 /**
@@ -765,7 +770,7 @@ class COrderComponent {
      * @param Int $requisitionId 
      */
     public function __construct($id, $price, $amount, $description, $requisitionId) {
-        
+
         aclCheck('view', 'Access denied');
 
         // Populate internal variables
@@ -776,7 +781,7 @@ class COrderComponent {
         $this->requisitionId = $requisitionId;
         $this->total = $amount * $price;
     }
-    
+
     /**
      * Permanently removes the component with the given id from the database.
      * 
@@ -786,7 +791,7 @@ class COrderComponent {
     public function delete() {
         return COrderComponent::deleteComponent($this->id);
     }
-    
+
     /**
      * Permanently removes the component with the given id from the database.
      * 
@@ -794,29 +799,29 @@ class COrderComponent {
      * @return resource 
      */
     public static function deleteComponent($id) {
-        
+
         aclCheck('delete', 'Access denied');
-        
+
         // Create and execute database query
         $q = new w2p_Database_Query();
         $q->setDelete('requisition_components');
         $q->addWhere("component_id = $id");
-        
+
         return $q->exec();
     }
-    
+
     public static function createNewComponent($requisitionId, $price, $amount, $description) {
-        
+
         aclCheck('edit', 'Access denied');
-        
+
         // Find ID
         $q = new w2p_Database_Query();
         $q->addTable('requisition_components');
         $q->addQuery('max(component_id) as num');
         $q->exec();
         $r = $q->loadHash();
-        $id = $r['num']+1;
-        
+        $id = $r['num'] + 1;
+
         // Generate hash and insert into database
         $a = array(
             'component_id' => $id,
@@ -827,7 +832,7 @@ class COrderComponent {
         );
         $q->clear();
         $q->insertArray('requisition_components', $a);
-        
+
         // Return new component
         return COrderComponent::createFromDb($id);
     }
@@ -843,7 +848,7 @@ class COrderComponent {
     public static function createFromDb($id) {
 
         global $AppUI;
-        
+
         aclCheck('view', 'Access denied');
 
         // Fetch single row containing the requested id
@@ -872,7 +877,7 @@ class COrderComponent {
      * @return COrderComponent 
      */
     public static function createFromReqId($id) {
-        
+
         aclCheck('view', 'Access denied');
 
         // Fetch single row containing the requested id
