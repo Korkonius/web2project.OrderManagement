@@ -45,14 +45,14 @@
                 <strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong><a href="?m=companies&a=view&company_id=[order.company.company_id]">[order.company.company_name; block=a]</a></strong>
                 <a href="mailto:[order.company.company_email]">
-                    <img src="./style/web2project/images/modules/ordermgmt/img/email_go.png" alt="Send E-mail" title="Send E-mail"/>
+                    <img src="./modules/ordermgmt/images/email_go.png" alt="Send E-mail" title="Send E-mail"/>
                 </a>
             </td>
             <td colspan="2">
                 <strong>Creator:</strong>&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong><a href="?m=contacts&a=view&contact_id=[order.ownerId]">[order.ownerName; block=a]</a></strong>
                 <a href="mailto:[order.owner.contact_email]">
-                    <img src="./style/web2project/images/modules/ordermgmt/img/email_go.png" alt="Send E-mail" title="Send E-mail"/>
+                    <img src="./modules/ordermgmt/images/email_go.png" alt="Send E-mail" title="Send E-mail"/>
                 </a>
             </td>
             <td colspan="2"><strong>Project:</strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong><a href="?m=projects&a=view&project_id=[order.project.project_id]">[order.project.project_name; block=a]</a></strong></td>
@@ -61,7 +61,7 @@
             <th colspan="6">
                 Components in order
                 <span class="orderButtonPane">
-                    <a href="?m=ordermgmt&componentForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./style/web2project/images/modules/ordermgmt/img/table_add.png" alt="Add Components" title="Add Components"/></a>
+                    <a href="?m=ordermgmt&componentForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./modules/ordermgmt/images/table_add.png" alt="Add Components" title="Add Components"/></a>
                 </span>
             </th>
         </tr>
@@ -70,7 +70,7 @@
                 <div class="componentButtonPane">
                     <a href="?m=ordermgmt&order_id=[order.id]&removeComponent=[component.id; block=tr]">
                         [order.canEdit; magnet=a; ope=mok:1]
-                        <img src="./style/web2project/images/modules/ordermgmt/img/delete.png" alt="Delete" title="Delete component # [component.id; block=tr]"/>
+                        <img src="./modules/ordermgmt/images/delete.png" alt="Delete" title="Delete component # [component.id; block=tr]"/>
                     </a>
                 </div>
                 [component.amount; block=tr]x [component.description; block=tr] ([component.price; block=tr] kr)
@@ -88,8 +88,8 @@
             <th colspan="6">
                 Attached files
                 <span class="orderButtonPane">
-                    <a href="?m=ordermgmt&fileAddForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./style/web2project/images/modules/ordermgmt/img/page_add.png" alt="Add new file" title="Add new file"/></a>
-                    <a href="?m=ordermgmt&fileAttachForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./style/web2project/images/modules/ordermgmt/img/page_link.png" alt="Attach file" title="Attach file"/></a>
+                    <a href="?m=ordermgmt&fileAddForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./modules/ordermgmt/images/page_add.png" alt="Add new file" title="Add new file"/></a>
+                    <a href="?m=ordermgmt&fileAttachForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./modules/ordermgmt/images/page_link.png" alt="Attach file" title="Attach file"/></a>
                 </span>
             </th>
         </tr>
