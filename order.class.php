@@ -89,16 +89,29 @@ class COrder {
         $this->project = $p;
     }
 
+    /**
+     * Soft check to see if a user is allowed to add an COrder to the system.
+     * 
+     * @return Bool
+     */
     public static function canAdd() {
-
-        global $AppUI;
         return $AppUI->acl()->checkModule('ordermgmt', 'add');
     }
 
+    /**
+     * Soft check to see if a user is allowed to edit current COrder.
+     * 
+     * @return Bool
+     */
     public function canEdit() {
         return $this->acl->checkModule('ordermgmt', 'edit');
     }
 
+    /**
+     * Soft check to see if a user is allowed to delete current COrder.
+     * 
+     * @return Bool
+     */
     public function canDelete() {
         return $this->acl->checkModule('ordermgmt', 'delete');
     }
