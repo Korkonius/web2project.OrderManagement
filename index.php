@@ -1,14 +1,14 @@
 <?php
 
-function getFolderSelectList() {
-	global $AppUI;
-	$folders = array(0 => '');
-	$q = new w2p_Database_Query();
-	$q->addTable('file_folders');
-	$q->addQuery('file_folder_id, file_folder_name, file_folder_parent');
-	$q->addOrder('file_folder_name');
-	$folders = $q->loadHashList('file_folder_id');
-	return $folders;
+function getFolderSelectList2() {
+    global $AppUI;
+    $folders = array(0 => '');
+    $q = new w2p_Database_Query();
+    $q->addTable('file_folders');
+    $q->addQuery('file_folder_id, file_folder_name, file_folder_parent');
+    $q->addOrder('file_folder_name');
+    $folders = $q->loadHashList('file_folder_id');
+    return $folders;
 }
 
 if (!defined('W2P_BASE_DIR')) {
@@ -102,7 +102,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/file_form.html');
         
         // Load and merge file form data
-        $folders  = getFolderSelectList();
+        $folders  = getFolderSelectList2();
         $order = COrder::createFromDatabase($newFile);
 
         $tbs->MergeBlock('folders', $folders);

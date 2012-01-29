@@ -1,10 +1,9 @@
 <div id="orderFileFormContainer">
-    <form id="orderFileForm" action="POST" enctype="multipart/form-data" autocomplete="off" action="?m=ordermgmt">
+    <form id="orderFileForm" method="POST" enctype="multipart/form-data" autocomplete="off" action="?m=ordermgmt&addFile=1">
         
-        <input type="hidden" name="dosql" value="do_order_file_aed" />
         <input type="hidden" name="order_id" value="[order.id]" />
-        <input type="hidden" name="project_id" value="[order.project.project_id]" />
-        <input type="hidden" name="company_id" value="[order.company.company_id]" />
+        <input type="hidden" name="file_project" value="[order.project.project_id]" />
+        <input type="hidden" name="file_company" value="[order.company.company_id]" />
         
         <label for="file_folder">Folder: </label>
         <select name="file_folder" id="file_folder">

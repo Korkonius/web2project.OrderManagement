@@ -16,6 +16,7 @@ $addOrder = w2PgetParam($_POST, 'orderSubmit');
 $orderDeleteId = w2PgetParam($_GET, 'deleteOrder');
 $addComponents = w2PgetParam($_POST, 'componentSubmit');
 $removeComponent = w2PgetParam($_GET, 'removeComponent');
+$addFile = w2PgetParam($_GET, 'addFile') === '1';
 
 // If a new status is submitted
 if (!empty($addStatus)) {
@@ -112,6 +113,22 @@ if(!empty($addComponents)) {
     }
     
     $AppUI->setMsg("Components where added to order number $orderId!", UI_MSG_OK, true);
+}
+if (!empty($addFile)) {
+    // Check permissions
+    $acl = $AppUI->acl();
+    if (!$acl->checkModule('files', 'add')) {
+        $AppUI->redirect('m=public&a=access_denied');
+    }
+
+    // Bind POST to a file object
+    $obj = new CFile();
+    if (!$obj->bind($_POST)) {
+        $AppUI->setMsg($obj->getError(), UI_MSG_ERROR);
+        $AppUI->redirect();
+    }
+    
+    print_r($obj);
 }
 
 // Remove component from order
