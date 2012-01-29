@@ -1,5 +1,16 @@
 <?php
 
+function getFolderSelectList() {
+	global $AppUI;
+	$folders = array(0 => '');
+	$q = new w2p_Database_Query();
+	$q->addTable('file_folders');
+	$q->addQuery('file_folder_id, file_folder_name, file_folder_parent');
+	$q->addOrder('file_folder_name');
+	$folders = $q->loadHashList('file_folder_id');
+	return $folders;
+}
+
 if (!defined('W2P_BASE_DIR')) {
     die('You should not access this file directly');
 }
@@ -19,9 +30,11 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     $orderId = w2PgetParam($_GET, 'order_id');
     $showNewOrderForm = w2PgetParam($_GET, 'newOrder'); // NOT validated. Never use directly!
     $newComponent = w2PgetParam($_GET, 'componentForm');
+    $newFile = w2PgetParam($_GET, 'fileAddForm');
 
 // Verify that the parameters contain expected values
     $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
+    $filter->patternVerification($newFile, CInputFilter::W2P_FILTER_NUMBERS);
 
 // Create template object
     $tbs = & new clsTinyButStrong();
@@ -58,9 +71,9 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_form.html');
 
         // Load and merge company and project data
-        $projects = new CProject;
+        $projects = new CProject();
         $tbs->MergeBlock('project', $projects->getAllowedProjects($AppUI->user_id));
-        $companies = new CCompany;
+        $companies = new CCompany();
         $tbs->MergeBlock('company', $companies->getCompanyList($AppUI));
 
         // Output
@@ -78,6 +91,24 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/component_form.html');
         $tbs->MergeField('orderid', $newComponent);
         $tbs->Show(TBS_OUTPUT);
+    
+    } else if(!empty($newFile)) {
+        
+        // Show new file form
+        $titleBlock = new CTitleBlock('Order Management :: New File', 'folder5.png', $m, "$m.$a");
+        $titleBlock->show();
+        
+        // Prepare template
+        $tbs->LoadTemplate(dirname(__FILE__) . '/templates/file_form.html');
+        
+        // Load and merge file form data
+        $folders  = getFolderSelectList();
+        
+        $tbs->MergeBlock('folders', $folders);
+        
+        // Display template
+        $tbs->Show(TBS_OUTPUT);
+        
     } else {
 
         // Set up the title block

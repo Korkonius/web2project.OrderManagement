@@ -1,0 +1,32 @@
+<div id="orderFileFormContainer">
+    <form id="orderFileForm" action="POST" enctype="multipart/form-data" autocomplete="off" action="?m=ordermgmt">
+        
+        <label for="file_folder">Folder: </label>
+        <select name="file_folder" id="file_folder">
+            <option value="-1">root</option>
+            <option value="[folders.file_folder_id]">[folders.file_folder_name]</option>
+        </select> <br />
+        
+        <label for="file_version">Version: </label>
+        <input type="number" name="file_version" id="file_version" value="1"/> <br />
+        
+        <label for="file_category">Category: </label>
+        <select name="file_category" id="file_category">
+            <option value="[categories.category_id]">[categories.category_name]</option>
+        </select> <br />
+        
+        <label for="file_project">Project: </label>
+        <select name="file_project" id="file_project">
+            <option value="[projects.project_id]">[projects.project_name]</option>
+        </select> <br />
+        
+        <label for="file_task">Task: </label>
+        <input name="file_task" disabled="disabled" value="Not implemented" id="file_task" /> <br />
+        
+        <label for="file_description">Description: </label>
+        <textarea name="file_description" id="file_description"></textarea> <br />
+        
+        <label for="file_notify_owners">Notify associated people</label>
+        <input name="file_notify_owners" id="file_notify_owners" value="1" type="checkbox" />
+    </form>
+</div>

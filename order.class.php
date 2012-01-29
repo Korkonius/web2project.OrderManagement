@@ -95,6 +95,7 @@ class COrder {
      * @return Bool
      */
     public static function canAdd() {
+        global $AppUI;
         return $AppUI->acl()->checkModule('ordermgmt', 'add');
     }
 
