@@ -103,8 +103,11 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         
         // Load and merge file form data
         $folders  = getFolderSelectList();
-        
+        $order = COrder::createFromDatabase($newFile);
+
         $tbs->MergeBlock('folders', $folders);
+        $tbs->MergeField('order', $order);
+        $tbs->MergeBlock('categories', w2PgetSysVal('FileType'));
         
         // Display template
         $tbs->Show(TBS_OUTPUT);
