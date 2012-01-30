@@ -128,7 +128,52 @@ if (!empty($addFile)) {
         $AppUI->redirect();
     }
     
-    print_r($obj);
+    // File parameters recieved handle upload
+    if(!ini_get('safe_mode')) {
+        set_time_limit(600);
+    }
+    ignore_user_abort(1);
+    
+    // Handle file upload
+    if(isset($_FILES['file'])) {
+        
+        $file = $_FILES['file'];
+        if($file['size'] < 1) {
+            $AppUI->setMsg("Uploaded file size is 0. Process aborted?", UI_MSG_ERROR);
+            $AppUI->redirect();
+        }
+        
+        $obj->file_name = $file['name'];
+        $obj->file_type = $file['type'];
+        $obj->file_size = $file['size'];
+        $obj->file_parent = 0;
+        $obj->file_owner = $AppUI->user_id;
+        $obj->file_date = str_replace("'", '', $db->DBTimeStamp(time()));
+        $obj->file_real_filename = uniqid(rand());
+        
+        $result = $obj->moveTemp($file);
+        if(!$result){
+            $AppUI->setMsg("Failed to move uploaded file.", UI_MSG_ERROR);
+            $AppUI->redirect();
+        }
+        
+        
+        $dbResult = $obj->store();
+
+        if(count($dbResult) > 0) {
+            $AppUI->setMsg($dbResult, UI_MSG_ERROR);
+            $AppUI->redirect();
+        } else {
+            $AppUI->setMsg("File successfully uploaded and attached to order", UI_MSG_OK, true);
+            $AppUI->redirect();
+        }
+        
+    } else {
+        $AppUI->setMsg("File was not set", UI_MSG_ERROR);
+        $AppUI->redirect();
+    }
+    
+    print_r($obj->getError());
 }
 
 // Remove component from order

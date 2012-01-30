@@ -3,11 +3,11 @@
         
         <input type="hidden" name="order_id" value="[order.id]" />
         <input type="hidden" name="file_project" value="[order.project.project_id]" />
-        <input type="hidden" name="file_company" value="[order.company.company_id]" />
+        <input type="hidden" name="file_companylag test" value="[order.company.company_id]" />
         
         <label for="file_folder">Folder: </label>
         <select name="file_folder" id="file_folder">
-            <option value="-1">root</option>
+            <option value="0">root</option>
             <option value="[folders.file_folder_id;block=option]">[folders.file_folder_name;block=option]</option>
         </select> <br />
         
@@ -24,6 +24,9 @@
         
         <label for="file_notify_owners">Notify associated people</label>
         <input name="file_notify_owners" id="file_notify_owners" value="1" type="checkbox" /> <br />
+        
+        <label for="file">File: </label>
+        <input name="file" id="file" type="file" />
         
         <button type="submit">Submit</button>
     </form>
