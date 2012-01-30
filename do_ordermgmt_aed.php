@@ -160,10 +160,13 @@ if (!empty($addFile)) {
         
         $dbResult = $obj->store();
 
-        if(count($dbResult) > 0) {
+        if(!$dbResult === true) {
             $AppUI->setMsg($dbResult, UI_MSG_ERROR);
             $AppUI->redirect();
         } else {
+            $orderId = w2PgetParam($_POST, 'order_id');
+            COrder::attachFile($orderId, $obj->file_id);
+            
             $AppUI->setMsg("File successfully uploaded and attached to order", UI_MSG_OK, true);
             $AppUI->redirect();
         }
