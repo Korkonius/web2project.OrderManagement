@@ -69,12 +69,20 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
         // Prepare template
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_form.html');
+        $orderid = COrder::nextOrderId();
 
         // Load and merge company and project data
         $projects = new CProject();
         $tbs->MergeBlock('project', $projects->getAllowedProjects($AppUI->user_id));
         $companies = new CCompany();
         $tbs->MergeBlock('company', $companies->getCompanyList($AppUI));
+        $tbs->MergeField('nextid', $orderid);
+        
+        // Load and merge file form data
+        $folders  = getFolderSelectList2();
+
+        $tbs->MergeBlock('folders', $folders);
+        $tbs->MergeBlock('categories', w2PgetSysVal('FileType'));
 
         // Output
         $tbs->Show(TBS_OUTPUT);

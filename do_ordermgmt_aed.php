@@ -81,6 +81,9 @@ if (!empty($addOrder)) {
             $o->addComponent($price, $amount, $description);
         }
     }
+    
+    // Check to see if order contains a file
+    $addFile = (isset($_FILES['file'])) ? true : false;
 
     $AppUI->setMsg('Order was created!', UI_MSG_OK, true);
 }
@@ -114,7 +117,7 @@ if(!empty($addComponents)) {
     
     $AppUI->setMsg("Components where added to order number $orderId!", UI_MSG_OK, true);
 }
-if (!empty($addFile)) {
+if ($addFile) {
     // Check permissions
     $acl = $AppUI->acl();
     if (!$acl->checkModule('files', 'add')) {

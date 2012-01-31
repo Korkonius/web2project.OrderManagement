@@ -1,6 +1,11 @@
 <style type="text/css">
     div#orderFormContainer {
+        margin: 0 auto;
         text-align: center;
+        width: 80%;
+        padding: 1em;
+        background: whitesmoke;
+        border-radius: 5px;
     }
     form#orderForm {
         width: 100%;
@@ -21,9 +26,37 @@
     input.button{
         margin: 6px;
     }
+    button {
+        font-size: 8pt;
+        font-family: arial, helvetica, sans-serif;
+        font-weight: bold;
+        color: #333;
+        width: 151px;
+        height: 21px;
+        background: transparent url('style/web2project/images/button.gif') no-repeat;
+        border-style: none;
+        line-height: 14px;
+        padding: 2px 0 5px 0px;
+    }
+    button img {
+        padding: 0 7px 0 0;
+    }
+    #companySelect {
+        margin: 0 10em 0 0;
+    }
+    #newComponentBtn, #orderSubmit {
+        float: right;
+    }
+    hr {
+        clear: both;
+    }
 </style>
+<script type="text/javascript">
+</script>
 <div id="orderFormContainer">
-    <form id="orderForm" action="?m=ordermgmt" method="POST" accept-charset="utf-8">
+    <form id="orderForm" action="?m=ordermgmt" method="POST" accept-charset="utf-8" enctype="multipart/form-data">
+        <h1>New order :: Order #[nextid]</h1>
+        <hr />
         <label for="companySelect">Company:</label>
         <select name="companySelect" id="companySelect">
             <option value="[company.company_id;block=option]">[company.company_name;block=option]</option>
@@ -32,33 +65,42 @@
         <select name="projectSelect" id="projectSelect">
             <option value="[project.project_id;block=option]">[project.project_name;block=option]</option>
         </select>
+        <hr />
+        <h2>Order Components</h2>
         <div class="componentFormList">
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
                 <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
-            <div class="componentFormLine">
-                <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
-                <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
-            </div>
-            <div class="componentFormLine">
-                <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
-                <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
-            </div>
-            <div class="componentFormLine">
-                <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
-                <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
-            </div>
-            <div class="componentFormLine">
-                <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
-                <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
-            </div>
+            <button type="button" name="newComponentBtn" id="newComponentBtn"><img src="./modules/ordermgmt/images/new.png" alt="New Component" />New Component</button>
         </div>
-        <input class="button" type="submit" name="orderSubmit" id="orderSubmit" value="Submit Order" />
+        <hr />
+        <h2>Attach a file (Optional)</h2>
+                <label for="file_folder">Folder: </label>
+        <select name="file_folder" id="file_folder">
+            <option value="0">root</option>
+            <option value="[folders.file_folder_id;block=option]">[folders.file_folder_name;block=option]</option>
+        </select>
+        
+        <label for="file_version">Version: </label>
+        <input type="number" name="file_version" id="file_version" value="1"/>
+        
+        <label for="file_category">Category: </label>
+        <select name="file_category" id="file_category">
+            <option value="[categories.key;block=option]">[categories.val;block=option]</option>
+        </select>
+        
+        <label for="file_description">Description: </label>
+        <input type="text" name="file_description" id="file_description" />      
+      
+        <label for="file">File: </label>
+        <input name="file" id="file" type="file" />
+        
+        <hr />
+        
+        <input type="hidden" name="order_id" value="[nextid]" />
+        <button type="submit" name="orderSubmit" id="orderSubmit" value="orderSubmit"/><img src="./modules/ordermgmt/images/accept.png" alt="Create Order" />Create Order</button>
+        <hr style="visibility: hidden"/>
     </form>
 </div>

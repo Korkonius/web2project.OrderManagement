@@ -345,18 +345,15 @@ class COrder {
         // Check acl
         aclCheck('view', "Insufficient permissions", $AppUI->acl());
 
-        // Compute order id
-        $q = new w2p_Database_Query();
-        $q->addTable('requisitions');
-        $q->addQuery('max(requisition_id) as id');
-        $r = $q->loadHash();
-        $id = $r['id'] + 1;
+        // Get next Id
+        $id = self::nextOrderId();
 
         // The rest of the fields
         $created = date('Y-m-d H:i:s', time());
         $userId = $AppUI->user_id;
 
         // Generate hash and insert into database
+        $q = new w2p_Database_Query();
         $a = array(
             'requisition_id' => $id,
             'requisitioned_by' => $userId,
@@ -371,6 +368,15 @@ class COrder {
 
         // Return new order
         return COrder::createFromDatabase($id);
+    }
+    
+    public static function nextOrderId() {
+        // Compute order id
+        $q = new w2p_Database_Query();
+        $q->addTable('requisitions');
+        $q->addQuery('max(requisition_id) as id');
+        $r = $q->loadHash();
+        return $r['id'] + 1;
     }
 
     /**
