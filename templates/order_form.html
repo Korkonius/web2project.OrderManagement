@@ -52,6 +52,12 @@
     }
 </style>
 <script type="text/javascript">
+    $(document).ready(function(){
+        $("#newComponentBtn").click(function(e){
+           var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/><input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/><input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/></div>';
+           $(this).before(newHtml);
+        });
+    });
 </script>
 <div id="orderFormContainer">
     <form id="orderForm" action="?m=ordermgmt" method="POST" accept-charset="utf-8" enctype="multipart/form-data">

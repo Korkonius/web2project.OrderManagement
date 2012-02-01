@@ -83,7 +83,7 @@ if (!empty($addOrder)) {
     }
     
     // Check to see if order contains a file
-    $addFile = (isset($_FILES['file'])) ? true : false;
+    $addFile = (!empty($_FILES['file']['name'])) ? true : false;
 
     $AppUI->setMsg('Order was created!', UI_MSG_OK, true);
 }
