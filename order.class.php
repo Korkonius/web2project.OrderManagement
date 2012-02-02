@@ -369,7 +369,12 @@ class COrder {
         // Return new order
         return COrder::createFromDatabase($id);
     }
-    
+
+    /**
+     * Checks the maximum inserted order id and returns max id + 1
+     * 
+     * @return int
+     */
     public static function nextOrderId() {
         // Compute order id
         $q = new w2p_Database_Query();
@@ -377,6 +382,21 @@ class COrder {
         $q->addQuery('max(requisition_id) as id');
         $r = $q->loadHash();
         return $r['id'] + 1;
+    }
+    
+    public function canChangeComponents() {
+        
+        // Check the order status and user privilegies
+        $latestStatus = $this->latestStatus();
+        if($latestStatus->status == COrderStatus::ORDER_STATUS_NEW &&
+           $latestStatus->status == COrderStatus::ORDER_STATUS_CHANGED && 
+           $this->canEdit()) {
+            return TRUE;
+        } else if($latestStatus->status != COrderStatus::ORDER_STATUS_NEW && $this->canDelete()){
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
     /**
@@ -548,6 +568,7 @@ class COrderStatus {
     const ORDER_STATUS_RECIEVED = 5;
     const ORDER_STATUS_MISSING = 6;
     const ORDER_STATUS_COMPLETED = 7;
+    const ORDER_STATUS_CHANGED = 8;
 
     /**
      * Basic constructor that populates all internal variables. Most commonly
@@ -816,23 +837,49 @@ class COrderComponent {
      * Permanently removes the component with the given id from the database.
      * 
      * @param Int $id
-     * @return resource 
+     * @param Int $orderId
+     * @return bool 
      */
     public static function deleteComponent($id) {
 
-        aclCheck('delete', 'Access denied');
+        // Create component from db
+        $component = COrderComponent::createFromDb($id);
+        
+        $order = COrder::createFromDatabase($component->requisitionId);
+        if(!$order->canChangeComponents()) {
+            throw new Exception("Failed user is not allowed to make changes to this order");
+        }
 
+        if($order->latestStatus()->status != COrderStatus::ORDER_STATUS_NEW) {
+            
+            // Set order status to changed
+            $componentName = $component->description;
+            $componentId = $component->id;
+            $order->updateStatus(8, "Component #$componentId \"$componentName\" deleted");
+        }
+        
         // Create and execute database query
         $q = new w2p_Database_Query();
         $q->setDelete('requisition_components');
         $q->addWhere("component_id = $id");
+        $q->exec();
 
-        return $q->exec();
+        return true;
     }
 
     public static function createNewComponent($requisitionId, $price, $amount, $description) {
 
-        aclCheck('edit', 'Access denied');
+        $order = COrder::createFromDatabase($requisitionId);
+        if(!$order->canChangeComponents()) {
+            throw new Exception("Failed user is not allowed to make changes to this order");
+        }
+        
+        // Update status
+        if($order->latestStatus()->status != COrderStatus::ORDER_STATUS_NEW) {
+            
+            // Set order status to changed
+            $order->updateStatus(8, "Component \"$description\" added");
+        }
 
         // Find ID
         $q = new w2p_Database_Query();
@@ -852,7 +899,7 @@ class COrderComponent {
         );
         $q->clear();
         $q->insertArray('requisition_components', $a);
-
+        
         // Return new component
         return COrderComponent::createFromDb($id);
     }

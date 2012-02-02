@@ -170,6 +170,12 @@ class CSetupOrderMgmt {
             'status_information' => 'Order is completed',
             'preferred_color' => '000000',
             'icon_path' => 'accept.png');
+        $status8 = array(
+            'requisition_status_info_id' => '8',
+            'status_title' => 'Changed',
+            'status_information' => 'Order components has changed',
+            'preferred_color' => '000000',
+            'icon_path' => 'information.png');
         $query->insertArray('requisition_status_info', $status1);
         $query->insertArray('requisition_status_info', $status2);
         $query->insertArray('requisition_status_info', $status3);
@@ -177,6 +183,7 @@ class CSetupOrderMgmt {
         $query->insertArray('requisition_status_info', $status5);
         $query->insertArray('requisition_status_info', $status6);
         $query->insertArray('requisition_status_info', $status7);
+        $query->insertArray('requisition_status_info', $status8);
         print_r(mysql_error());
         
         if (ORDERMGMT_DEBUG_DATA) {
