@@ -388,8 +388,8 @@ class COrder {
         
         // Check the order status and user privilegies
         $latestStatus = $this->latestStatus();
-        if($latestStatus->status == COrderStatus::ORDER_STATUS_NEW &&
-           $latestStatus->status == COrderStatus::ORDER_STATUS_CHANGED && 
+        if(($latestStatus->status == COrderStatus::ORDER_STATUS_NEW ||
+           $latestStatus->status == COrderStatus::ORDER_STATUS_CHANGED) && 
            $this->canEdit()) {
             return TRUE;
         } else if($latestStatus->status != COrderStatus::ORDER_STATUS_NEW && $this->canDelete()){
