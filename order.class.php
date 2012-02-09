@@ -36,6 +36,8 @@ function aclCheck($op, $deniedStr) {
  * @package web2project.OrderManagement
  */
 class COrder {
+    
+    const _TBL_PREFIKS_ = "ordermgmt"; // Must match constant in setup script!!
 
     // Simple objects containing basic order information
     public $id;
@@ -204,14 +206,14 @@ class COrder {
 
         // Dereference files
         $q = new w2p_Database_Query();
-        $q->setDelete('requisition_files');
-        $q->addWhere("requisition_id = $this->id");
+        $q->setDelete(self::_TBL_PREFIKS_ . '_files');
+        $q->addWhere("order_id = $this->id");
         $q->exec();
         $q->clear();
 
         // Remove self
-        $q->setDelete('requisitions');
-        $q->addWhere("requisition_id = $this->id");
+        $q->setDelete(self::_TBL_PREFIKS_);
+        $q->addWhere("order_id = $this->id");
         return $q->exec();
     }
 
@@ -245,15 +247,15 @@ class COrder {
 
         // Query the database for one object based on id
         $q = new w2p_database_query();
-        $q->addTable('requisitions', 'r');
+        $q->addTable(self::_TBL_PREFIKS_, 'r');
         $q->addQuery('*');
-        $q->addWhere("requisition_id = $id");
+        $q->addWhere("order_id = $id");
         $q->exec();
 
         // Parse result
         $r = $q->loadList();
         if (count($r) == 1) {
-            return new COrder($r[0]['requisition_id'], $r[0]['date_created'], $r[0]['requisitioned_by'], $r[0]['company'], $r[0]['project']);
+            return new COrder($r[0]['order_id'], $r[0]['date_created'], $r[0]['ordered_by'], $r[0]['company'], $r[0]['project']);
         } else {
             $AppUI->setMsg("Failed to create COrder from database. Multiple rows selected from same id. Database corrupt?");
             return false;
@@ -278,7 +280,7 @@ class COrder {
 
         // Query the database to fetch multiple objects
         $q = new w2p_database_query();
-        $q->addTable('requisitions', 'r');
+        $q->addTable(self::_TBL_PREFIKS_, 'r');
         $q->addQuery('*');
         $q->addClause("LIMIT", "$start,$limit", false);
         $q->exec();
@@ -287,7 +289,7 @@ class COrder {
         $results = $q->loadList();
         $retArray = array();
         foreach ($results as $r) {
-            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['project']);
+            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['ordered_by'], $r['company'], $r['project']);
         }
 
         return $retArray;
@@ -313,7 +315,7 @@ class COrder {
 
         // Query the database to fetch multiple objects
         $q = new w2p_database_query();
-        $q->addTable('requisitions', 'r');
+        $q->addTable(self::_TBL_PREFIKS_, 'r');
         $q->addQuery('*');
         $q->addClause("LIMIT", "$start,$limit", false);
         $q->addWhere("project = $projectId");
@@ -355,14 +357,14 @@ class COrder {
         // Generate hash and insert into database
         $q = new w2p_Database_Query();
         $a = array(
-            'requisition_id' => $id,
-            'requisitioned_by' => $userId,
+            'order_id' => $id,
+            'ordered_by' => $userId,
             'company' => $companyId,
             'project' => $projectId,
             'date_created' => $created
         );
         $q->clear();
-        $q->insertArray('requisitions', $a);
+        $q->insertArray(self::_TBL_PREFIKS_, $a);
 
         COrderStatus::createNewStatus($id, COrderStatus::ORDER_STATUS_NEW, 'New order');
 
@@ -378,8 +380,8 @@ class COrder {
     public static function nextOrderId() {
         // Compute order id
         $q = new w2p_Database_Query();
-        $q->addTable('requisitions');
-        $q->addQuery('max(requisition_id) as id');
+        $q->addTable(self::_TBL_PREFIKS_);
+        $q->addQuery('max(order_id) as id');
         $r = $q->loadHash();
         return $r['id'] + 1;
     }
@@ -433,10 +435,10 @@ class COrder {
         if (!$this->filesBuffered) {
             // Query database for files
             $q = new w2p_Database_Query();
-            $q->addTable('requisition_files', 'rf');
+            $q->addTable(self::_TBL_PREFIKS_ . '_files', 'rf');
             $q->addQuery('*');
             $q->addJoin('files', 'f', 'rf.file_id = f.file_id');
-            $q->addWhere("rf.requisition_id = $this->id");
+            $q->addWhere("rf.order_id = $this->id");
             $q->exec();
             $this->files = $q->loadList();
 
@@ -502,13 +504,13 @@ class COrder {
 
         // Query database for the owner of the given requisition id
         $q = new w2p_Database_Query();
-        $q->addTable('requisitions');
+        $q->addTable(self::_TBL_PREFIKS_);
         $q->addQuery('*');
-        $q->addWhere("requisition_id = $requisitionId");
+        $q->addWhere("order_id = $requisitionId");
         $r = $q->loadHash();
 
         $owner = new CContact();
-        $owner->load($r['requisitioned_by']);
+        $owner->load($r['ordered_by']);
         return $owner;
     }
 
@@ -531,9 +533,9 @@ class COrder {
         $q = new w2p_Database_Query();
         $h = array(
             'file_id' => $fileId,
-            'requisition_id' => $orderId
+            'order_id' => $orderId
         );
-        return $q->insertArray('requisition_files', $h);
+        return $q->insertArray(self::_TBL_PREFIKS_ . '_files', $h);
     }
 
 }
@@ -621,7 +623,7 @@ class COrderStatus {
 
         // Query database for known statuses
         $q = new w2p_Database_Query();
-        $q->addTable('requisition_status_info');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_status_info');
         $q->addQuery('*');
 
         return $q->loadList();
@@ -651,23 +653,23 @@ class COrderStatus {
 
         // Find ID
         $q = new w2p_Database_Query();
-        $q->addTable('requisition_status');
-        $q->addQuery('max(requisition_status_id) as num');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_status');
+        $q->addQuery('max(order_status_id) as num');
         $q->exec();
         $r = $q->loadHash();
         $id = $r['num'] + 1;
 
         // Required data known, insert data
         $insert = array(
-            'requisition_status_id' => $id,
-            'requisition_id' => $requisitionId,
+            'order_status_id' => $id,
+            'order_id' => $requisitionId,
             'user_id' => $creator,
             'status_id' => $statusId,
             'date_changed' => $created,
             'comments' => $comment
         );
         $q->clear();
-        $q->insertArray('requisition_status', $insert);
+        $q->insertArray('order_status', $insert);
 
         $newStatus = COrderStatus::createFromDb($id);
 
@@ -714,10 +716,10 @@ class COrderStatus {
 
         // Query database
         $q = new w2p_database_query();
-        $q->addTable('requisition_status', 'rs');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_status', 'rs');
         $q->addQuery('*');
-        $q->addJoin('requisition_status_info', 'rsi', 'rs.status_id = rsi.requisition_status_info_id');
-        $q->addWhere("`requisition_status_id` = $id");
+        $q->addJoin('order_status_info', 'rsi', 'rs.status_id = rsi.order_status_info_id');
+        $q->addWhere("`order_status_id` = $id");
         $q->exec();
 
         // Build icon path properly
@@ -727,7 +729,7 @@ class COrderStatus {
         $results = $q->loadList();
         if (count($results) == 1) {
             $r = $results[0];
-            return new COrderStatus($r['requisition_status_id'], $r['requisition_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
+            return new COrderStatus($r['order_status_id'], $r['order_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
         } else {
             $AppUI->setMsg("Failed to create COrderStatus from database. Multiple rows selected from same id. Database corrupt?");
             return false;
@@ -746,10 +748,10 @@ class COrderStatus {
 
         // Query database
         $q = new w2p_database_query();
-        $q->addTable('requisition_status', 'rs');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_status', 'rs');
         $q->addQuery('*');
-        $q->addJoin('requisition_status_info', 'rsi', 'rs.status_id = rsi.requisition_status_info_id');
-        $q->addWhere("`requisition_id` = $id");
+        $q->addJoin(COrder::_TBL_PREFIKS_ . '_status_info', 'rsi', 'rs.status_id = rsi.order_status_info_id');
+        $q->addWhere("`order_id` = $id");
         $q->exec();
 
         // Parse results
@@ -760,7 +762,7 @@ class COrderStatus {
             // Build icon path properly
             $icon = w2PfindImage($r['icon_path'], 'ordermgmt');
 
-            $statuses[] = new COrderStatus($r['requisition_status_id'], $r['requisition_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
+            $statuses[] = new COrderStatus($r['order_status_id'], $r['order_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
         }
 
         return $statuses;
@@ -778,8 +780,8 @@ class COrderStatus {
 
         // Create and execute database query
         $q = new w2p_Database_Query();
-        $q->setDelete('requisition_status');
-        $q->addWhere("requisition_status_id = $id");
+        $q->setDelete(COrder::_TBL_PREFIKS_ . '_status');
+        $q->addWhere("order_status_id = $id");
 
         return $q->exec();
     }
@@ -860,7 +862,7 @@ class COrderComponent {
         
         // Create and execute database query
         $q = new w2p_Database_Query();
-        $q->setDelete('requisition_components');
+        $q->setDelete(COrder::_TBL_PREFIKS_ . '_components');
         $q->addWhere("component_id = $id");
         $q->exec();
 
@@ -883,7 +885,7 @@ class COrderComponent {
 
         // Find ID
         $q = new w2p_Database_Query();
-        $q->addTable('requisition_components');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_components');
         $q->addQuery('max(component_id) as num');
         $q->exec();
         $r = $q->loadHash();
@@ -895,10 +897,10 @@ class COrderComponent {
             'component_price' => $price,
             'component_amount' => $amount,
             'component_description' => $description,
-            'requisition_id' => $requisitionId
+            'order_id' => $requisitionId
         );
         $q->clear();
-        $q->insertArray('requisition_components', $a);
+        $q->insertArray(COrder::_TBL_PREFIKS_ . '_components', $a);
         
         // Return new component
         return COrderComponent::createFromDb($id);
@@ -920,7 +922,7 @@ class COrderComponent {
 
         // Fetch single row containing the requested id
         $q = new w2p_database_query();
-        $q->addTable('requisition_components', 'rc');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_components', 'rc');
         $q->addQuery('*');
         $q->addWhere("rc.`component_id` = $id");
         $q->exec();
@@ -929,7 +931,7 @@ class COrderComponent {
         // Expect only one result, if more are returned the database is corrupt
         if (count($results) == 1) {
             $result = $results[0];
-            return new COrderComponent($result['component_id'], $result['component_price'], $result['component_amount'], $result['component_description'], $result['requisition_id']);
+            return new COrderComponent($result['component_id'], $result['component_price'], $result['component_amount'], $result['component_description'], $result['order_id']);
         } else {
             $AppUI->setMsg("Failed to create COrderComponent from database. Multiple rows selected from same id. Database corrupt?");
             return false;
@@ -949,16 +951,16 @@ class COrderComponent {
 
         // Fetch single row containing the requested id
         $q = new w2p_database_query();
-        $q->addTable('requisition_components');
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_components');
         $q->addQuery('*');
-        $q->addWhere("`requisition_id` = $id");
+        $q->addWhere("`order_id` = $id");
         $q->exec();
         $results = $q->loadList();
 
         // Populate object array
         $components = array(); // Preallocate array space
         foreach ($results as $r) {
-            $components[] = new COrderComponent($r['component_id'], $r['component_price'], $r['component_amount'], $r['component_description'], $r['requisition_id']);
+            $components[] = new COrderComponent($r['component_id'], $r['component_price'], $r['component_amount'], $r['component_description'], $r['order_id']);
         }
 
         return $components;

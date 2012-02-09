@@ -20,7 +20,7 @@
 </style>
 <table class="tbl orderlist">
     <thead>
-        <tr><th colspan="5">Order List</th></tr>
+        <tr><th colspan="6">Order List</th></tr>
     </thead>
     <tbody>
         <tr id="orderId_[order.id; block=tr]" onclick="window.location = '?m=ordermgmt&order_id=[order.id]'">
@@ -29,6 +29,7 @@
             <td style="width: 5em"><strong>Id: </strong>[order.id; block=tr]</td>
             <td><strong>Company:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.company.company_name; block=tr]</td>
             <td><strong>Project:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.project.project_name; block=tr;]</td>
+            <td><strong>Price:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.getOrderTotal; block=tr;] EUR</td>
         </tr>
     </tbody>
 </table>

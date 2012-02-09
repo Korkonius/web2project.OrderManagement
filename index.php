@@ -38,7 +38,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
 // Create template object
     $tbs = & new clsTinyButStrong();
-
+    
 // List template test
     if (!empty($orderId) && empty($showNewOrderForm)) {
 
