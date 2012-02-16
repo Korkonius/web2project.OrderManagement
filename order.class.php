@@ -5,6 +5,10 @@ if (!defined('W2P_BASE_DIR')) {
 }
 global $AppUI;
 
+// Load dependancies
+require_once(dirname(__FILE__) . "/ordercomponent.class.php");
+require_once(dirname(__FILE__) . "/orderstatus.class.php");
+
 $uistyle = $AppUI->getPref('UISTYLE') ? $AppUI->getPref('UISTYLE') : w2PgetConfig('host_style');
 
 function aclCheck($op, $deniedStr) {
@@ -255,7 +259,7 @@ class COrder {
         // Parse result
         $r = $q->loadList();
         if (count($r) == 1) {
-            return new COrder($r[0]['order_id'], $r[0]['date_created'], $r[0]['ordered_by'], $r[0]['company'], $r[0]['project']);
+            return new COrder($r[0]['order_id'], $r[0]['date_created'], $r[0]['ordered_by'], $r[0]['company'], $r[0]['main_project']);
         } else {
             $AppUI->setMsg("Failed to create COrder from database. Multiple rows selected from same id. Database corrupt?");
             return false;
@@ -289,7 +293,7 @@ class COrder {
         $results = $q->loadList();
         $retArray = array();
         foreach ($results as $r) {
-            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['ordered_by'], $r['company'], $r['project']);
+            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['ordered_by'], $r['company'], $r['main_project']);
         }
 
         return $retArray;
@@ -318,14 +322,14 @@ class COrder {
         $q->addTable(self::_TBL_PREFIKS_, 'r');
         $q->addQuery('*');
         $q->addClause("LIMIT", "$start,$limit", false);
-        $q->addWhere("project = $projectId");
+        $q->addWhere("main_project = $projectId");
         $q->exec();
 
         // Parse results
         $results = $q->loadList();
         $retArray = array();
         foreach ($results as $r) {
-            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['project']);
+            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['main_project']);
         }
 
         return $retArray;
@@ -360,7 +364,7 @@ class COrder {
             'order_id' => $id,
             'ordered_by' => $userId,
             'company' => $companyId,
-            'project' => $projectId,
+            'main_project' => $projectId,
             'date_created' => $created
         );
         $q->clear();
@@ -540,432 +544,5 @@ class COrder {
 
 }
 
-/**
- * COrderStatus is an object created to support the COrder object by structuring
- * complex status data in an intuitive and easily documentable fashion. It also
- * provides the nessesary facilities to store new status data in the database
- * and load existing data from database.
- * 
- * @author Eirik Eggesbø Ottesen
- * @package web2project.OrderManagement
- * @version 1.0.0
- */
-class COrderStatus {
-
-    public $id;
-    public $requisitionId;
-    public $creatorId;
-    public $creatorName;
-    public $status;
-    public $statusName;
-    public $iconPath;
-    public $created;
-    public $comments;
-
-    // Status constants
-    const ORDER_STATUS_NEW = 1;
-    const ORDER_STATUS_APPROVED = 2;
-    const ORDER_STATUS_DENIED = 3;
-    const ORDER_STATUS_PENDING = 4;
-    const ORDER_STATUS_RECIEVED = 5;
-    const ORDER_STATUS_MISSING = 6;
-    const ORDER_STATUS_COMPLETED = 7;
-    const ORDER_STATUS_CHANGED = 8;
-
-    /**
-     * Basic constructor that populates all internal variables. Most commonly
-     * called by static methods of this class to generate a meaningful instance
-     * based on database data.
-     * 
-     * @param Int $id
-     * @param Int $requisitionId
-     * @param Int $creator
-     * @param Int $status
-     * @param String $statusName
-     * @param TimeStamp $created
-     * @param String $comments
-     * @param String $iconPath 
-     */
-    public function __construct($id, $requisitionId, $creator, $status, $statusName, $created, $comments, $iconPath) {
-
-        aclCheck('view', 'Access denied');
-
-        // Set all internal variables
-        $this->id = $id;
-        $this->requisitionId = $requisitionId;
-        $this->creatorId = $creator;
-        $this->creatorName = CContact::getContactByUserid($creator);
-        $this->status = $status;
-        $this->statusName = $statusName;
-        $this->created = $created;
-        $this->comments = $comments;
-        $this->iconPath = $iconPath;
-    }
-
-    /**
-     * Permanently removes the component with the given id from the database.
-     * 
-     * @see deleteComponent()
-     * @return resource
-     */
-    public function delete() {
-        return COrderStatus::deleteComponent($this->id);
-    }
-
-    /**
-     * Simple local function to provide known status information to whoever requires it
-     * 
-     * @param Hash $const 
-     */
-    public static function getAllStatusinfo() {
-
-        aclCheck('view', 'Access denied');
-
-        // Query database for known statuses
-        $q = new w2p_Database_Query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_status_info');
-        $q->addQuery('*');
-
-        return $q->loadList();
-    }
-
-    /**
-     * Creates a new COrderStatus in the database by requiering a minimum of
-     * developer input. The rest of the values are looked up and filled in
-     * programmaticly. $silent specifies if the owner of the requisition should
-     * be notified of the status change.
-     * 
-     * @global CAppUI $AppUI
-     * @param Int $requisitionId
-     * @param Int $statusId
-     * @param String $comment
-     * @param Bool $silent
-     * @return COrderStatus
-     */
-    public static function createNewStatus($requisitionId, $statusId, $comment, $silent=false) {
-
-        global $AppUI;
-        aclCheck('edit', 'Access denied');
-
-        // Complete status data using known values
-        $creator = $AppUI->user_id;
-        $created = date('Y-m-d H:i:s', time());
-
-        // Find ID
-        $q = new w2p_Database_Query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_status');
-        $q->addQuery('max(order_status_id) as num');
-        $q->exec();
-        $r = $q->loadHash();
-        $id = $r['num'] + 1;
-
-        // Required data known, insert data
-        $insert = array(
-            'order_status_id' => $id,
-            'order_id' => $requisitionId,
-            'user_id' => $creator,
-            'status_id' => $statusId,
-            'date_changed' => $created,
-            'comments' => $comment
-        );
-        $q->clear();
-        $q->insertArray('order_status', $insert);
-
-        $newStatus = COrderStatus::createFromDb($id);
-
-        // Attempt to use TinyButStrong to generate an e-mail
-        if (include_once(dirname(__FILE__) . '/lib/tbs_class.php')) {
-
-            // Get owner data
-            $owner = COrder::getOwnerOfId($requisitionId);
-            $url = W2P_BASE_URL . "?m=ordermgmt&order_id=$requisitionId";
-
-            // Generate e-mail
-            $tbs = new clsTinyButStrong();
-            $tbs->LoadTemplate(dirname(__FILE__) . '/templates/emailStatusChange.tmpl');
-            $tbs->MergeField('status', $newStatus->statusName);
-            $tbs->MergeField('editor', $newStatus->creatorName);
-            $tbs->MergeField('comment', $newStatus->comments);
-            $tbs->MergeField('url', $url);
-            $tbs->Show(TBS_NOTHING);
-
-            // Send e-mail to owner
-            $mailer = new w2p_Utilities_Mail();
-            $mailer->To($owner->contact_email);
-            $mailer->From('admin@web2project.com');
-            $mailer->Subject("Status of order # $requisitionId has been updated");
-            $mailer->Body($tbs->Source);
-            $mailer->Send();
-        } else {
-            // NOTHING! Templater not found so cant generate e-mail
-        }
-
-        // Return the new order status
-        return $newStatus;
-    }
-
-    /**
-     * Fetches the COrderStatus with the given id from the database.
-     * 
-     * @param Int $id
-     * @return COrderStatus 
-     */
-    public static function createFromDb($id) {
-
-        aclCheck('view', 'Access denied');
-
-        // Query database
-        $q = new w2p_database_query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_status', 'rs');
-        $q->addQuery('*');
-        $q->addJoin('order_status_info', 'rsi', 'rs.status_id = rsi.order_status_info_id');
-        $q->addWhere("`order_status_id` = $id");
-        $q->exec();
-
-        // Build icon path properly
-        $icon = w2PfindImage($r['icon_path'], 'ordermgmt');
-
-        // Parse results
-        $results = $q->loadList();
-        if (count($results) == 1) {
-            $r = $results[0];
-            return new COrderStatus($r['order_status_id'], $r['order_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
-        } else {
-            $AppUI->setMsg("Failed to create COrderStatus from database. Multiple rows selected from same id. Database corrupt?");
-            return false;
-        }
-    }
-
-    /**
-     * Fetches all COrderStatus objects related to the given requisition id.
-     * 
-     * @param Int $id
-     * @return COrderStatus[]
-     */
-    public static function createFromReqId($id) {
-
-        aclCheck('view', 'Access denied');
-
-        // Query database
-        $q = new w2p_database_query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_status', 'rs');
-        $q->addQuery('*');
-        $q->addJoin(COrder::_TBL_PREFIKS_ . '_status_info', 'rsi', 'rs.status_id = rsi.order_status_info_id');
-        $q->addWhere("`order_id` = $id");
-        $q->exec();
-
-        // Parse results
-        $results = $q->loadList();
-        $statuses = array();
-        foreach ($results as $r) {
-
-            // Build icon path properly
-            $icon = w2PfindImage($r['icon_path'], 'ordermgmt');
-
-            $statuses[] = new COrderStatus($r['order_status_id'], $r['order_id'], $r['user_id'], $r['status_id'], $r['status_title'], $r['date_changed'], $r['comments'], $icon);
-        }
-
-        return $statuses;
-    }
-
-    /**
-     * Permanently removes the component with the given id from the database.
-     * 
-     * @param Int $id
-     * @return resource 
-     */
-    public static function deleteComponent($id) {
-
-        aclCheck('delete', 'Access denied');
-
-        // Create and execute database query
-        $q = new w2p_Database_Query();
-        $q->setDelete(COrder::_TBL_PREFIKS_ . '_status');
-        $q->addWhere("order_status_id = $id");
-
-        return $q->exec();
-    }
-
-}
-
-/**
- * COrderComponent contains all the information required to describe the
- * components belonging to a COrder. These components are used to describe the
- * content and price of an order.
- */
-class COrderComponent {
-
-    // Class components
-    public $id;
-    public $price;
-    public $amount;
-    public $description;
-    public $requisitionId;
-    public $total;
-
-    /**
-     * Basic constructor. Populates the internal variables.
-     * 
-     * @param Int $id
-     * @param Int $price
-     * @param Int $amount
-     * @param String $description
-     * @param Int $requisitionId 
-     */
-    public function __construct($id, $price, $amount, $description, $requisitionId) {
-
-        aclCheck('view', 'Access denied');
-
-        // Populate internal variables
-        $this->id = $id;
-        $this->price = $price;
-        $this->amount = $amount;
-        $this->description = $description;
-        $this->requisitionId = $requisitionId;
-        $this->total = $amount * $price;
-    }
-
-    /**
-     * Permanently removes the component with the given id from the database.
-     * 
-     * @see deleteComponent()
-     * @return resource
-     */
-    public function delete() {
-        return COrderComponent::deleteComponent($this->id);
-    }
-
-    /**
-     * Permanently removes the component with the given id from the database.
-     * 
-     * @param Int $id
-     * @param Int $orderId
-     * @return bool 
-     */
-    public static function deleteComponent($id) {
-
-        // Create component from db
-        $component = COrderComponent::createFromDb($id);
-        
-        $order = COrder::createFromDatabase($component->requisitionId);
-        if(!$order->canChangeComponents()) {
-            throw new Exception("Failed user is not allowed to make changes to this order");
-        }
-
-        if($order->latestStatus()->status != COrderStatus::ORDER_STATUS_NEW) {
-            
-            // Set order status to changed
-            $componentName = $component->description;
-            $componentId = $component->id;
-            $order->updateStatus(8, "Component #$componentId \"$componentName\" deleted");
-        }
-        
-        // Create and execute database query
-        $q = new w2p_Database_Query();
-        $q->setDelete(COrder::_TBL_PREFIKS_ . '_components');
-        $q->addWhere("component_id = $id");
-        $q->exec();
-
-        return true;
-    }
-
-    public static function createNewComponent($requisitionId, $price, $amount, $description) {
-
-        $order = COrder::createFromDatabase($requisitionId);
-        if(!$order->canChangeComponents()) {
-            throw new Exception("Failed user is not allowed to make changes to this order");
-        }
-        
-        // Update status
-        if($order->latestStatus()->status != COrderStatus::ORDER_STATUS_NEW) {
-            
-            // Set order status to changed
-            $order->updateStatus(8, "Component \"$description\" added");
-        }
-
-        // Find ID
-        $q = new w2p_Database_Query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_components');
-        $q->addQuery('max(component_id) as num');
-        $q->exec();
-        $r = $q->loadHash();
-        $id = $r['num'] + 1;
-
-        // Generate hash and insert into database
-        $a = array(
-            'component_id' => $id,
-            'component_price' => $price,
-            'component_amount' => $amount,
-            'component_description' => $description,
-            'order_id' => $requisitionId
-        );
-        $q->clear();
-        $q->insertArray(COrder::_TBL_PREFIKS_ . '_components', $a);
-        
-        // Return new component
-        return COrderComponent::createFromDb($id);
-    }
-
-    /**
-     * Generates a COrderCompoent instance based on the record with the given
-     * id in the database
-     * 
-     * @global CAppUI $AppUI
-     * @param Int $id
-     * @return COrderComponent 
-     */
-    public static function createFromDb($id) {
-
-        global $AppUI;
-
-        aclCheck('view', 'Access denied');
-
-        // Fetch single row containing the requested id
-        $q = new w2p_database_query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_components', 'rc');
-        $q->addQuery('*');
-        $q->addWhere("rc.`component_id` = $id");
-        $q->exec();
-        $results = $q->loadList();
-
-        // Expect only one result, if more are returned the database is corrupt
-        if (count($results) == 1) {
-            $result = $results[0];
-            return new COrderComponent($result['component_id'], $result['component_price'], $result['component_amount'], $result['component_description'], $result['order_id']);
-        } else {
-            $AppUI->setMsg("Failed to create COrderComponent from database. Multiple rows selected from same id. Database corrupt?");
-            return false;
-        }
-    }
-
-    /**
-     * Fetches data and creates COrderComponent objects of all database records
-     * belonging to the given requisition id.
-     * 
-     * @param Int $id
-     * @return COrderComponent 
-     */
-    public static function createFromReqId($id) {
-
-        aclCheck('view', 'Access denied');
-
-        // Fetch single row containing the requested id
-        $q = new w2p_database_query();
-        $q->addTable(COrder::_TBL_PREFIKS_ . '_components');
-        $q->addQuery('*');
-        $q->addWhere("`order_id` = $id");
-        $q->exec();
-        $results = $q->loadList();
-
-        // Populate object array
-        $components = array(); // Preallocate array space
-        foreach ($results as $r) {
-            $components[] = new COrderComponent($r['component_id'], $r['component_price'], $r['component_amount'], $r['component_description'], $r['order_id']);
-        }
-
-        return $components;
-    }
-
-}
 
 ?>
