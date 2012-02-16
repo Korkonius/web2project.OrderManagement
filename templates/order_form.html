@@ -51,12 +51,16 @@
         clear: both;
     }
 </style>
+<link rel="stylesheet" type="text/css" href="modules/ordermgmt/chosen.css" />
+<script type="text/javascript" src="modules/ordermgmt/js/chosen.jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         $("#newComponentBtn").click(function(e){
            var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/><input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/><input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/></div>';
            $(this).before(newHtml);
+           $(this).before(jQuery.version)
         });
+        $("#defaultComponentSelect").chosen();
     });
 </script>
 <div id="orderFormContainer">
@@ -79,6 +83,12 @@
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
                 <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
+            <select id="defaultComponentSelect" name="defaultComponents">
+                <option value="-1">Blank Component</option>
+                <optgroup label="Supplier: [defaultComponents.supplier;block=optgroup;parentgrp=supplier]">
+                    <option value="[defaultComponents.component_id;block=option]">[defaultComponents.description;block=option] :: [defaultComponents.local_price]kr</option>
+                </optgroup>
+            </select>
             <button type="button" name="newComponentBtn" id="newComponentBtn"><img src="./modules/ordermgmt/images/new.png" alt="New Component" />New Component</button>
         </div>
         <hr />

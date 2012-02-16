@@ -70,12 +70,14 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         // Prepare template
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_form.html');
         $orderid = COrder::nextOrderId();
+        $defaultComponents = COrderComponent::getDefaultComponentList();
 
         // Load and merge company and project data
         $projects = new CProject();
         $tbs->MergeBlock('project', $projects->getAllowedProjects($AppUI->user_id));
         $companies = new CCompany();
         $tbs->MergeBlock('company', $companies->getCompanyList($AppUI));
+        $tbs->MergeBlock('defaultComponents', $defaultComponents);
         $tbs->MergeField('nextid', $orderid);
         
         // Load and merge file form data

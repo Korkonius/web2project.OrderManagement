@@ -14,6 +14,8 @@ class COrderComponent {
     public $description;
     public $requisitionId;
     public $total;
+    
+    const NO_ID = -1;
 
     /**
      * Basic constructor. Populates the internal variables.
@@ -178,5 +180,19 @@ class COrderComponent {
         return $components;
     }
 
+    public static function getDefaultComponentList($limit=1000, $offset=0) {
+        
+        aclCheck('view', 'Access denied');
+        
+        // Fetch and build all component objects stored
+        $q = new w2p_database_query();
+        $q->addTable(COrder::_TBL_PREFIKS_ . '_default_components');
+        $q->addQuery('*');
+        $q->setLimit($limit, $offset);
+        $q->addOrder('supplier');
+        $results = $q->loadList();
+        
+        return $results;
+    }
 }
 ?>
