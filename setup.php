@@ -17,7 +17,7 @@ define(ORDERMGMT_DEBUG_DATA, true);
 
 $config = array();
 $config['mod_name'] = "Order Management";
-$config['mod_version'] = "0.1.0";
+$config['mod_version'] = "0.2.0";
 $config['mod_directory'] = "ordermgmt";
 $config['mod_setup_class'] = "CSetupOrderMgmt";
 $config['mod_type'] = "user";
@@ -43,10 +43,10 @@ class CSetupOrderMgmt {
             `order_id` INT NOT NULL COMMENT 'Identifying row' ,
             `ordered_by` INT NOT NULL COMMENT 'The userid of the person that generated this requisition' ,
             `company` INT NOT NULL COMMENT 'The id of the company related to the order',
-            `project` INT COMMENT 'The id of the project this order belongs to',
+            `main_project` INT COMMENT 'The id of this orders primary project',
             `date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-            PRIMARY KEY (`order_id`))
-            ENGINE = InnoDB";
+            PRIMARY KEY (`order_id`)
+            ) ENGINE = InnoDB, COMMENT='Main table for Order Management module'";
         $query->createTable(self::_TBL_PREFIKS_);
         $query->createDefinition($requisitionsDef);
         $query->exec();
@@ -82,6 +82,26 @@ class CSetupOrderMgmt {
         $query->createTable(self::_TBL_PREFIKS_ . "_files");
         $query->createDefinition($reqStatusInfoDef);
         $query->exec();
+        
+        // Create table to store the default component list
+        $query->clear();
+        $reqStatusInfoDef = "(
+            `component_id` INT NOT NULL AUTO_INCREMENT,
+            `catalog_number` varchar(30) NOT NULL,
+            `brand` VARCHAR(30),
+            `supplier` VARCHAR(50),
+            `discount` FLOAT,
+            `vendor_price` FLOAT NOT NULL,
+            `exchange_rate` FLOAT NOT NULL,
+            `local_price` FLOAT NOT NULL,
+            `quote_date` TIMESTAMP NOT NULL,
+            `description` MEDIUMTEXT NOT NULL,
+            `notes` MEDIUMTEXT NOT NULL,
+            PRIMARY KEY (`component_id`)
+        ) ENGINE = InnoDB, COMMENT = 'Table containing default component values'";
+        $query->createTable(self::_TBL_PREFIKS_ . "_default_components");
+        $query->createDefinition($reqStatusInfoDef);
+        $query->exec();
 
         // Create table to store requisition files
         $query->clear();
@@ -115,6 +135,7 @@ class CSetupOrderMgmt {
         `component_price` INT NOT NULL ,
         `component_amount` INT NOT NULL ,
         `component_description` TINYTEXT NOT NULL ,
+        `project` INT,
         `order_id` INT NOT NULL ,
         PRIMARY KEY (`component_id`) ,
         INDEX `order_component_fk` (`order_id` ASC) ,
@@ -253,7 +274,7 @@ class CSetupOrderMgmt {
                 'order_id' => $i,
                 'ordered_by' => '1',
                 'company' => '1',
-                'project' => '1',
+                'main_project' => '1',
                 'date_created' => date('Y-m-d H:i:s', time())
             );
             $q->insertArray(self::_TBL_PREFIKS_, $a);
