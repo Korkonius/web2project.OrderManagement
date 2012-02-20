@@ -31,6 +31,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     $showNewOrderForm = w2PgetParam($_GET, 'newOrder'); // NOT validated. Never use directly!
     $newComponent = w2PgetParam($_GET, 'componentForm');
     $newFile = w2PgetParam($_GET, 'fileAddForm');
+    $outputJsonComponents = w2PgetParam($_GET, 'getDefaultJSON');
 
 // Verify that the parameters contain expected values
     $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
@@ -122,6 +123,20 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         // Display template
         $tbs->Show(TBS_OUTPUT);
         
+    } else if(!empty($outputJsonComponents) && isset($_GET['suppressHeaders'])) {
+        
+        // Shut off error reporting
+        error_reporting(E_ERROR);
+        
+        // Output JSON
+        $dc = COrderComponent::getDefaultComponentList();
+        
+        // Escape all descriptions
+        for($i=0; $i < count($dc); $i++) {
+            $dc[$i]["description"] = htmlspecialchars($dc[$i]["description"]);
+        }
+        
+        echo json_encode($dc);
     } else {
 
         // Set up the title block

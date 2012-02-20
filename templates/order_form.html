@@ -57,15 +57,37 @@
 <link rel="stylesheet" type="text/css" href="modules/ordermgmt/chosen.css" />
 <script type="text/javascript" src="modules/ordermgmt/js/chosen.jquery.min.js"></script>
 <script type="text/javascript">
+    var defaultComponents = [];
+    var dataLoaded = false;
     $(document).ready(function(){
+               
+        // Register new component action
         $("#newComponentBtn").click(function(e){
            var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/><input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/><input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/></div>';
            $(this).before(newHtml);
-           $(this).before(jQuery.version)
+           $(this).before(jQuery.version);
         });
+        
+        // Load default components using Ajax
+        $.ajax('index.php?m=ordermgmt&getDefaultJSON=true&suppressHeaders=true',{
+            success: function(data, status, xhr) {
+                defaultComponents = $.parseJSON(data);
+                dataLoaded = true;
+            },
+            error: function(xhr, status, httpError) {
+                $('#orderForm').insertBefore('<div style="color: red">Error: ' + status + ' occurred...');
+            }
+        });
+        
+        // Enable chosen
         $("#defaultComponentSelect").chosen();
         $("#defaultComponentSelect").chosen().change(function(e){
-           $(e.currentTarget).before("Version: " + $.fn.jquery); 
+           var component = defaultComponents[$("#defaultComponentSelect").val()];
+           var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount" value="1"/>'+
+               '<input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price" value="'+ component.local_price +'"/>'+
+               '<input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description" value="' + component.description + '"/></div>';
+           $(this).before(newHtml);
+           $(this).before(jQuery.version)
         });
     });
 </script>
