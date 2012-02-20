@@ -20,6 +20,9 @@
     input.componentLabel {
         width: 50em;
     }
+    #componentFormList {
+        text-align: left;
+    }
     .componentItems {
         float:left;
     }
@@ -61,6 +64,9 @@
            $(this).before(jQuery.version)
         });
         $("#defaultComponentSelect").chosen();
+        $("#defaultComponentSelect").chosen().change(function(e){
+           $(e.currentTarget).before("Version: " + $.fn.jquery); 
+        });
     });
 </script>
 <div id="orderFormContainer">
@@ -77,7 +83,7 @@
         </select>
         <hr />
         <h2>Order Components</h2>
-        <div class="componentFormList">
+        <div id="componentFormList">
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>

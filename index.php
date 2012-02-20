@@ -52,7 +52,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->MergeBlock('status', COrderStatus::getAllStatusinfo());
 
         // Set up the title block
-        $titleBlock = new CTitleBlock("Order Management :: Order #$o->id :: $o->created", 'folder5.png', $m, "$m.$a");
+        $titleBlock = new w2p_Theme_TitleBlock("Order Management :: Order #$o->id :: $o->created", 'folder5.png', $m, "$m.$a");
         if (COrder::canAdd())
             $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
         if ($o->canDelete())
@@ -64,7 +64,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
         // Show the new order form
         // Set up the title block
-        $titleBlock = new CTitleBlock('Order Management :: New Order', 'folder5.png', $m, "$m.$a");
+        $titleBlock = new w2p_Theme_TitleBlock('Order Management :: New Order', 'folder5.png', $m, "$m.$a");
         $titleBlock->show();
 
         // Prepare template
@@ -95,7 +95,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
         // Show the new component form
         // Set up the title block
-        $titleBlock = new CTitleBlock('Order Management :: Add Components to order # ' . $newComponent, 'folder5.png', $m, "$m.$a");
+        $titleBlock = new w2p_Theme_TitleBlock('Order Management :: Add Components to order # ' . $newComponent, 'folder5.png', $m, "$m.$a");
         $titleBlock->show();
 
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/component_form.html');
@@ -105,7 +105,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     } else if(!empty($newFile)) {
         
         // Show new file form
-        $titleBlock = new CTitleBlock('Order Management :: New File', 'folder5.png', $m, "$m.$a");
+        $titleBlock = new w2p_Theme_TitleBlock('Order Management :: New File', 'folder5.png', $m, "$m.$a");
         $titleBlock->show();
         
         // Prepare template
@@ -125,7 +125,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     } else {
 
         // Set up the title block
-        $titleBlock = new CTitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
+        $titleBlock = new w2p_Theme_TitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
         if (COrder::canAdd())
             $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
         $titleBlock->show();
