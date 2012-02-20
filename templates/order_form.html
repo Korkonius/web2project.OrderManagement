@@ -10,6 +10,9 @@
     form#orderForm {
         width: 100%;
     }
+    #defaultComponentSelect {
+        width: 512px;
+    }
     form#orderForm label{
         font-weight: bold;
         padding: 3px 0em 3px 2em;
@@ -73,6 +76,19 @@
             success: function(data, status, xhr) {
                 defaultComponents = $.parseJSON(data);
                 dataLoaded = true;
+                
+                var lastGroup = "";
+                var optGroup;
+                for(i=0;i < defaultComponents.length; i++) {
+                    var c = defaultComponents[i]
+                    if(lastGroup != c.supplier) {
+                        optGroup = $('#defaultComponentSelect').append("<optgroup id=\"" + c.supplier + "\" value=\"" + c.supplier + "\"></optgroup>");
+                    }
+                    $('#'+c.supplier).append('<option value="'+i+'">'+c.description+' :: '+ c.local_price+'kr</option>');
+                    lastGroup = c.supplier;
+                }
+                
+                $("#defaultComponentSelect").trigger("liszt:updated")
             },
             error: function(xhr, status, httpError) {
                 $('#orderForm').insertBefore('<div style="color: red">Error: ' + status + ' occurred...');
@@ -113,9 +129,6 @@
             </div>
             <select id="defaultComponentSelect" name="defaultComponents">
                 <option value="-1">Blank Component</option>
-                <optgroup label="Supplier: [defaultComponents.supplier;block=optgroup;parentgrp=supplier]">
-                    <option value="[defaultComponents.component_id;block=option]">[defaultComponents.description;block=option] :: [defaultComponents.local_price]kr</option>
-                </optgroup>
             </select>
             <button type="button" name="newComponentBtn" id="newComponentBtn"><img src="./modules/ordermgmt/images/new.png" alt="New Component" />New Component</button>
         </div>
