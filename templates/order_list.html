@@ -26,10 +26,10 @@
         <tr id="orderId_[order.id; block=tr]" onclick="window.location = '?m=ordermgmt&order_id=[order.id]'">
             <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 1px #AAA solid"><img src="[order.latestStatus.iconPath; block=tr;]" alt="[order.latestStatus.statusName; block=tr]"/></td>
             <td style="width: 15em"><strong>Status: </strong>[order.latestStatus.statusName; block=tr;]</td>
-            <td style="width: 5em"><strong>Id: </strong>[order.id; block=tr]</td>
+            <td style="width: 8em"><strong>Id: </strong>[order.prefix][order.id; block=tr; frm='0000']</td>
             <td><strong>Company:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.company.company_name; block=tr]</td>
             <td><strong>Project:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.project.project_name; block=tr;]</td>
-            <td><strong>Price:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.getOrderTotal; block=tr;] EUR</td>
+            <td><strong>Price:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.getOrderTotal; block=tr; frm='0,000.00'] [order.currency]</td>
         </tr>
     </tbody>
 </table>

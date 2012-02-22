@@ -54,11 +54,16 @@ class COrder {
     public $ownerName = null;
     public $company = null;
     public $project = null;
+    
     // Complex objects holding extra information
     protected $history = array();
     protected $files = array();
     protected $components = array();
     protected $acl;
+    
+    // Public shared information about orders
+    public $prefix = 'RSS-';
+    public $currency = 'NOK';
 
     /**
      * Basic constructor. Sets up all "simple" internal variables, and fills
