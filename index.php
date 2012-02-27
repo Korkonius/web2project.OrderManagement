@@ -17,6 +17,7 @@ if (!defined('W2P_BASE_DIR')) {
 
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/order.class.php');
+require_once(dirname(__FILE__) . '/orderpdf.class.php');
 
 include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be someway to do this automaticly
 
@@ -32,6 +33,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     $newComponent = w2PgetParam($_GET, 'componentForm');
     $newFile = w2PgetParam($_GET, 'fileAddForm');
     $outputJsonComponents = w2PgetParam($_GET, 'getDefaultJSON');
+    $outputPdfOrder = w2PgetParam($_GET, 'pdfProject');
 
 // Verify that the parameters contain expected values
     $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
@@ -137,6 +139,19 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         }
         
         echo json_encode($dc);
+    } else if(!empty($outputPdfOrder) && isset($_GET['suppressHeaders'])) {
+        
+        // Detail template test
+        $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_details.html');
+        $o = COrder::createFromDatabase($outputPdfOrder);
+        $tbs->MergeField('order', $o);
+        $tbs->MergeBlock('component', $o->getComponents());
+        $tbs->MergeBlock('history', $o->getHistory());
+        $tbs->MergeBlock('file', $o->getFiles());
+        $tbs->MergeBlock('status', COrderStatus::getAllStatusinfo());
+        $tbs->Show(TBS_NOTHING);
+        
+        $test = new COrderPDF($o, $AppUI, $tbs->Source);
     } else {
 
         // Set up the title block
