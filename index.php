@@ -142,16 +142,12 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     } else if(!empty($outputPdfOrder) && isset($_GET['suppressHeaders'])) {
         
         // Detail template test
-        $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_details.html');
-        $o = COrder::createFromDatabase($outputPdfOrder);
-        $tbs->MergeField('order', $o);
-        $tbs->MergeBlock('component', $o->getComponents());
-        $tbs->MergeBlock('history', $o->getHistory());
-        $tbs->MergeBlock('file', $o->getFiles());
-        $tbs->MergeBlock('status', COrderStatus::getAllStatusinfo());
-        $tbs->Show(TBS_NOTHING);
+        $order = COrder::createFromDatabase($outputPdfOrder);
+        $sender = new CCompany();
+        $sender->load(1);
         
-        $test = new COrderPDF($o, $AppUI, $tbs->Source);
+        $test = new COrderPDF($order, $sender, $sender, $AppUI);
+        $test->render();
     } else {
 
         // Set up the title block
