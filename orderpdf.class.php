@@ -50,7 +50,7 @@ class COrderPDF {
         
         // Set default data as in example
         $logoPath = '/../../../images/logo.png';
-        $this->pdf->SetHeaderData($logoPath, PDF_HEADER_LOGO_WIDTH, "RS-Systems AS - Quote $this->orderFormatted", 'Contact: ' . $this->fullUserName . " ($this->email)");
+        $this->pdf->SetHeaderData($logoPath, PDF_HEADER_LOGO_WIDTH, "RS-Systems AS - Reference $this->orderFormatted", '');
         $this->pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $this->pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
         $this->pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
@@ -66,7 +66,19 @@ class COrderPDF {
         $this->pdf->SetFont('dejavusans', '', 14, '', true);
         $this->pdf->AddPage();
         
-        $content = "Request for quotation";
+        // Create content from template
+        $template =& new clsTinyButStrong();
+        $template->LoadTemplate(dirname(__FILE__) . '/templates/quote_template.html');
+        
+        // Merge all fields
+        $template->MergeBlock('components', $this->order->getComponents());
+        $template->MergeField('sender', $this->sender);
+        $template->MergeField('person', $this->user);
+        //$template->MergeField('order', $this->order);
+        
+        // Make sure all automatic fields are merged and set content
+        $template->Show(TBS_NOTHING);
+        $content = $template->Source;
         
         // Output passed data
         $this->pdf->writeHTMLCell(0, 0, '', '', $content, 0, 1, 0, true, '', true);

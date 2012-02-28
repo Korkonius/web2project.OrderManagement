@@ -1,0 +1,79 @@
+<style>
+    table#quoteTable {
+        background-color: silver;
+        border: 2px solid #001C4D;
+    }
+    table#quoteTable tr.tblHeader {
+        background-color: #405780;
+    }
+    .description {
+        width: 85%;
+    }
+    .amount {
+        width: 15%;
+    }
+    #buissnessInfo {
+        width: 45%;
+        float: left;
+    }
+    #contactTitle {
+        font-size: x-small;
+        font-style: italic;
+    }
+    
+    table#contactTable tr.tblHeader {
+        font-weight: bold;
+        color: #001C4D;
+    }
+
+    #companyInfo {
+        border: 1px solid black;
+    }
+    hr {
+        width: 75%;
+        height: 2px;
+    }
+</style>
+<p>
+<h3>Quote request</h3>
+<table id="quoteTable">
+    <tr class="tblHeader">
+        <th class="description">Item</th>
+        <th class="amount">Qnty.</th>
+    </tr>
+    <tr>
+        <td class="description">[components.description;block=tr]</td>
+        <td class="amount">[components.amount;block=tr]</td>
+    </tr>
+</table>
+</p>
+<p>
+<h3>Notes</h3>
+[order.notes]
+</p>
+<p>
+<table id="contactTable">
+    <tr class="tblHeader">
+        <th>Company information</th>
+        <th>Contact person</th>
+    </tr>
+    <tr>
+    <td id="companyInfo"><span id="companyName">[sender.company_name]</span><br />
+        [sender.company_address1]<br />
+        [sender.company_address2]<br />
+        [sender.company_zip] [sender.company_state]<br />
+        [sender.company_country]
+        <hr />
+        Phone: [sender.company_phone1]<br />
+        Fax: [sender.company_fax]<br />
+        Email: <a href="mailto: [sender.company_email]">[sender.company_email]</a><br />
+    </td>
+    <td id="contactInfo">[person.contact_first_name] [person.contact_last_name]<br />
+        <span id="contactTitle">[person.contact_job]</span><br />
+        <br />
+        Phone: [person.contact_phone]<br />
+        Email: <a href="mailto: [person.contact_email]">[person.contact_email]</a>
+    </td>
+    </tr>
+</table>
+</p>
