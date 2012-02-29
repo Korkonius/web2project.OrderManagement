@@ -38,8 +38,10 @@
         <tr>
             <td colspan="6">
                 <span id="orderCreated"></span>
-                <h1 class="orderHeader">Order # [order.id;block=strong] :: [order.created;block=td]</h1>
-            </td></tr>
+                <h1 class="orderHeader">[order.getFormattedId] :: [order.created;block=td]</h1>
+                [order.notes;block=td]
+            </td>
+        </tr>
         <tr>
             <td colspan="2">
                 <strong>Company:</strong>&nbsp;&nbsp;&nbsp;&nbsp;

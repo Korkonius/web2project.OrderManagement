@@ -63,7 +63,7 @@ class COrder {
     protected $acl;
     
     // Public shared information about orders
-    public $prefix = 'RSS-';
+    const ID_FORMAT = "RSS-%1$04d";
     public $currency = 'NOK';
 
     /**
@@ -497,6 +497,10 @@ class COrder {
         }
 
         return $tot;
+    }
+    
+    public function getFormattedId() {
+        return sprintf(self::ID_FORMAT, $this->id);
     }
 
     /**

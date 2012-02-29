@@ -55,11 +55,12 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->MergeBlock('status', COrderStatus::getAllStatusinfo());
 
         // Set up the title block
-        $titleBlock = new w2p_Theme_TitleBlock("Order Management :: Order #$o->id :: $o->created", 'folder5.png', $m, "$m.$a");
+        $oidf = $o->getFormattedId();
+        $titleBlock = new w2p_Theme_TitleBlock("Order Management :: $oidf", 'folder5.png', $m, "$m.$a");
         if (COrder::canAdd())
             $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
         if ($o->canDelete())
-            $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$o->id\"><span>Delete Order</span></a>", '', '', '');
+            $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$oidf\"><span>Delete Order</span></a>", '', '', '');
         $titleBlock->show();
 
         $tbs->Show(TBS_OUTPUT);
@@ -73,6 +74,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         // Prepare template
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_form.html');
         $orderid = COrder::nextOrderId();
+        $orderidf = sprintf(COrder::ID_FORMAT, $orderid);
         $defaultComponents = COrderComponent::getDefaultComponentList();
 
         // Load and merge company and project data
@@ -82,6 +84,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->MergeBlock('company', $companies->getCompanyList($AppUI));
         $tbs->MergeBlock('defaultComponents', $defaultComponents);
         $tbs->MergeField('nextid', $orderid);
+        $tbs->MergeField('nextidf', $orderidf);
         
         // Load and merge file form data
         $folders  = getFolderSelectList2();
@@ -95,10 +98,12 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
         // Validate input
         $filter->patternVerification($newComponent, CInputFilter::W2P_FILTER_NUMBERS);
+        $o = COrder::createFromDatabase($newComponent);
+        $oidf = $o->getFormattedId();
 
         // Show the new component form
         // Set up the title block
-        $titleBlock = new w2p_Theme_TitleBlock('Order Management :: Add Components to order # ' . $newComponent, 'folder5.png', $m, "$m.$a");
+        $titleBlock = new w2p_Theme_TitleBlock('Order Management :: Add Components to ' . $oidf, 'folder5.png', $m, "$m.$a");
         $titleBlock->show();
 
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/component_form.html');
