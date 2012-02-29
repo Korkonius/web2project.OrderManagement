@@ -54,6 +54,7 @@ class COrder {
     public $ownerName = null;
     public $company = null;
     public $project = null;
+    public $notes = null;
     
     // Complex objects holding extra information
     protected $history = array();
@@ -75,9 +76,10 @@ class COrder {
      * @param TimeStamp $created
      * @param Int $ownerId
      * @param Int $companyId
-     * @param Int $projectId 
+     * @param Int $projectId
+     * @param string $notes
      */
-    public function __construct($id, $created, $ownerId, $companyId, $projectId) {
+    public function __construct($id, $created, $ownerId, $companyId, $projectId, $notes) {
 
         global $AppUI;
         $this->acl = $AppUI->acl();
@@ -88,6 +90,7 @@ class COrder {
         $this->owner->load($ownerId);
         $this->ownerId = $ownerId;
         $this->ownerName = $this->owner->contact_first_name . ' ' . $this->owner->contact_last_name;
+        $this->notes = $notes;
 
         // Load company information
         $c = new CCompany();
@@ -264,7 +267,7 @@ class COrder {
         // Parse result
         $r = $q->loadList();
         if (count($r) == 1) {
-            return new COrder($r[0]['order_id'], $r[0]['date_created'], $r[0]['ordered_by'], $r[0]['company'], $r[0]['main_project']);
+            return new COrder($r[0]['order_id'], $r[0]['date_created'], $r[0]['ordered_by'], $r[0]['company'], $r[0]['main_project'], $r[0]['notes']);
         } else {
             $AppUI->setMsg("Failed to create COrder from database. Multiple rows selected from same id. Database corrupt?");
             return false;
@@ -298,7 +301,7 @@ class COrder {
         $results = $q->loadList();
         $retArray = array();
         foreach ($results as $r) {
-            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['ordered_by'], $r['company'], $r['main_project']);
+            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['ordered_by'], $r['company'], $r['main_project'], $r['notes']);
         }
 
         return $retArray;
@@ -334,7 +337,7 @@ class COrder {
         $results = $q->loadList();
         $retArray = array();
         foreach ($results as $r) {
-            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['main_project']);
+            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['main_project'], $r['notes']);
         }
 
         return $retArray;
@@ -349,7 +352,7 @@ class COrder {
      * @param Int $projectId
      * @return COrder 
      */
-    public static function createNewOrder($companyId, $projectId) {
+    public static function createNewOrder($companyId, $projectId, $notes) {
 
         global $AppUI;
 
@@ -370,6 +373,7 @@ class COrder {
             'ordered_by' => $userId,
             'company' => $companyId,
             'main_project' => $projectId,
+            'notes' => $notes, // FIXME Make this var safe!!
             'date_created' => $created
         );
         $q->clear();

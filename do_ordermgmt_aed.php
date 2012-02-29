@@ -56,13 +56,14 @@ if (!empty($addOrder)) {
     $cAmounts = w2PgetParam($_POST, 'componentAmount');
     $cPrices = w2PgetParam($_POST, 'componentPrice');
     $cLabels = w2PgetParam($_POST, 'componentLabel');
+    $note = w2PgetParam($_POST, 'orderNotes', '');
 
     // Validate parameters
     $filter->patternVerification($projectId, CInputFilter::W2P_FILTER_NUMBERS);
     $filter->patternVerification($companyId, CInputFilter::W2P_FILTER_NUMBERS);
 
     // Create new order
-    $o = COrder::createNewOrder($companyId, $projectId);
+    $o = COrder::createNewOrder($companyId, $projectId, $note);
 
     // For each component add it to order
     for ($i = 0; $i < count($cAmounts); $i++) {

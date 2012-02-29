@@ -133,8 +133,15 @@
             <button type="button" name="newComponentBtn" id="newComponentBtn"><img src="./modules/ordermgmt/images/new.png" alt="New Component" />New Component</button>
         </div>
         <hr />
+        
+        <h2>Notes (Optional)</h2>
+        <div id="textwrapper">
+            <textarea id="orderNotes" name="orderNotes" placeholder="Write any notes about the order here" style="width: 100%"></textarea>
+        </div>
+        <hr />
+        
         <h2>Attach a file (Optional)</h2>
-                <label for="file_folder">Folder: </label>
+        <label for="file_folder">Folder: </label>
         <select name="file_folder" id="file_folder">
             <option value="0">root</option>
             <option value="[folders.file_folder_id;block=option]">[folders.file_folder_name;block=option]</option>
