@@ -1,10 +1,19 @@
 <style>
     table#quoteTable {
-        background-color: silver;
         border: 2px solid #001C4D;
     }
     table#quoteTable tr.tblHeader {
         background-color: #405780;
+        color: #FFC680;
+    }
+    table#quoteTable tr.even {
+        background-color: #CCC;
+    }
+    table#quoteTable tr.odd {
+        background-color: #FFF;
+    }
+    table#quoteTable th, table#quoteTable td {
+        padding: 8px 8px 8px 8px;
     }
     .description {
         width: 85%;
@@ -33,17 +42,30 @@
         width: 75%;
         height: 2px;
     }
+    .borderLeft {
+        border-left: 1px solid #001C4D;
+    }
+    .borderBottom {
+        border-bottom: 1px solid #001C4D;
+    }
+    .textCenter {
+        text-align: center;
+    }
 </style>
 <p>
 <h3>Quote request</h3>
 <table id="quoteTable">
     <tr class="tblHeader">
-        <th class="description">Item</th>
-        <th class="amount">Qnty.</th>
+        <th class="description borderBottom">Item</th>
+        <th class="amount borderLeft borderBottom textCenter">Qnty.</th>
     </tr>
-    <tr>
+    <tr class="odd">
         <td class="description">[components.description;block=tr]</td>
-        <td class="amount">[components.amount;block=tr]</td>
+        <td class="amount borderLeft textCenter">[components.amount;block=tr]</td>
+    </tr>
+    <tr class="even">
+        <td class="description">[components.description;block=tr]</td>
+        <td class="amount borderLeft textCenter">[components.amount;block=tr]</td>
     </tr>
 </table>
 </p>
@@ -60,9 +82,9 @@
     <tr>
     <td id="companyInfo"><span id="companyName">[sender.company_name]</span><br />
         [sender.company_address1]<br />
-        [sender.company_address2]<br />
+        [sender.company_address2;magnet=br;mtype=m*]<br />
         [sender.company_zip] [sender.company_state]<br />
-        [sender.company_country]
+        [senderFullCountry]
         <hr />
         Phone: [sender.company_phone1]<br />
         Fax: [sender.company_fax]<br />

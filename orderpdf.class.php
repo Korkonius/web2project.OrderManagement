@@ -19,6 +19,7 @@ class COrderPDF {
     
     // Fields that come in handy when creating strings
     protected $fullUserName;
+    protected $fullCountryName;
     protected $orderFormatted;
     protected $emailLink;
     
@@ -38,6 +39,9 @@ class COrderPDF {
         $this->fullUserName = $this->user->contact_first_name . " " . $this->user->contact_last_name;
         $this->orderFormatted = $order->prefix . sprintf("%1$04d", $this->order->id);
         $this->email = $this->user->contact_email;
+        $countries = w2PgetSysVal('GlobalCountries');
+        $this->fullCountryName = $countries[$this->sender->company_country];
+        
     }
     
     protected function prepare() {
@@ -63,7 +67,7 @@ class COrderPDF {
         $this->pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
         $this->pdf->setLanguageArray($l);
         $this->pdf->setFontSubsetting(true);
-        $this->pdf->SetFont('dejavusans', '', 14, '', true);
+        $this->pdf->SetFont('helvetica', '', 12, '', true);
         $this->pdf->AddPage();
         
         // Create content from template
@@ -74,7 +78,7 @@ class COrderPDF {
         $template->MergeBlock('components', $this->order->getComponents());
         $template->MergeField('sender', $this->sender);
         $template->MergeField('person', $this->user);
-        //$template->MergeField('order', $this->order);
+        $template->MergeField('senderFullCountry', $this->fullCountryName);
         
         // Make sure all automatic fields are merged and set content
         $template->Show(TBS_NOTHING);
