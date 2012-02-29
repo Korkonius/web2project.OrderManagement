@@ -29,7 +29,7 @@
         font-size: x-small;
         font-style: italic;
     }
-    
+
     table#contactTable tr.tblHeader {
         font-weight: bold;
         color: #001C4D;
@@ -42,6 +42,9 @@
         width: 75%;
         height: 2px;
     }
+    hr.full {
+        width: 100%;
+    }
     .borderLeft {
         border-left: 1px solid #001C4D;
     }
@@ -52,7 +55,6 @@
         text-align: center;
     }
 </style>
-<p>
 <h3>Quote request</h3>
 <table id="quoteTable">
     <tr class="tblHeader">
@@ -68,34 +70,7 @@
         <td class="amount borderLeft textCenter">[components.amount;block=tr]</td>
     </tr>
 </table>
-</p>
 <p>
-<h3>Notes</h3>
-[order.notes]
-</p>
-<p>
-<table id="contactTable">
-    <tr class="tblHeader">
-        <th>Company information</th>
-        <th>Contact person</th>
-    </tr>
-    <tr>
-    <td id="companyInfo"><span id="companyName">[sender.company_name]</span><br />
-        [sender.company_address1]<br />
-        [sender.company_address2;magnet=br;mtype=m*]<br />
-        [sender.company_zip] [sender.company_state]<br />
-        [senderFullCountry]
-        <hr />
-        Phone: [sender.company_phone1]<br />
-        Fax: [sender.company_fax]<br />
-        Email: <a href="mailto: [sender.company_email]">[sender.company_email]</a><br />
-    </td>
-    <td id="contactInfo">[person.contact_first_name] [person.contact_last_name]<br />
-        <span id="contactTitle">[person.contact_job]</span><br />
-        <br />
-        Phone: [person.contact_phone]<br />
-        Email: <a href="mailto: [person.contact_email]">[person.contact_email]</a>
-    </td>
-    </tr>
-</table>
+    <h3>Notes</h3>
+    [order.notes; magnet=p]
 </p>

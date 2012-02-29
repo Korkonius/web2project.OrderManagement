@@ -20,7 +20,6 @@ class COrderPDF {
     // Fields that come in handy when creating strings
     protected $fullUserName;
     protected $fullCountryName;
-    protected $orderFormatted;
     protected $emailLink;
     
     public function __construct(COrder $order, CCompany $sender, CCompany $recipient, w2p_Core_CAppUI $AppUI) {
@@ -37,7 +36,6 @@ class COrderPDF {
         
         // Generate fields ready to merge
         $this->fullUserName = $this->user->contact_first_name . " " . $this->user->contact_last_name;
-        $this->orderFormatted = $order->prefix . sprintf("%1$04d", $this->order->id);
         $this->email = $this->user->contact_email;
         $countries = w2PgetSysVal('GlobalCountries');
         $this->fullCountryName = $countries[$this->sender->company_country];
@@ -45,6 +43,8 @@ class COrderPDF {
     }
     
     protected function prepare() {
+        
+        $oidf = $this->order->getFormattedId();
         
         // Set up document metadata
         $this->pdf->SetCreator($this->userFullName);
@@ -54,7 +54,7 @@ class COrderPDF {
         
         // Set default data as in example
         $logoPath = '/../../../images/logo.png';
-        $this->pdf->SetHeaderData($logoPath, PDF_HEADER_LOGO_WIDTH, "RS-Systems AS - Reference $this->orderFormatted", '');
+        $this->pdf->SetHeaderData($logoPath, PDF_HEADER_LOGO_WIDTH, "RS-Systems AS - Reference $oidf", '');
         $this->pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $this->pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
         $this->pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
@@ -63,7 +63,7 @@ class COrderPDF {
         $this->pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $this->pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
         
-        $this->pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+        $this->pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);
         $this->pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
         $this->pdf->setLanguageArray($l);
         $this->pdf->setFontSubsetting(true);
@@ -76,16 +76,25 @@ class COrderPDF {
         
         // Merge all fields
         $template->MergeBlock('components', $this->order->getComponents());
-        $template->MergeField('sender', $this->sender);
-        $template->MergeField('person', $this->user);
-        $template->MergeField('senderFullCountry', $this->fullCountryName);
-        
+        $template->MergeField('order', $this->order);
+              
         // Make sure all automatic fields are merged and set content
         $template->Show(TBS_NOTHING);
         $content = $template->Source;
         
         // Output passed data
         $this->pdf->writeHTMLCell(0, 0, '', '', $content, 0, 1, 0, true, '', true);
+        
+        $template->LoadTemplate(dirname(__FILE__) . '/templates/quote_template_contact.html');
+        $template->MergeField('sender', $this->sender);
+        $template->MergeField('person', $this->user);
+        $template->MergeField('senderFullCountry', $this->fullCountryName);
+        
+        $template->Show(TBS_NOTHING);
+        $content = $template->Source;
+        
+        // Insert contact information at bottom of last page
+        $this->pdf->writeHTMLCell(0, 0, '', 232.0, $content, 'T', 1, 0, true, true);
         
     }
     
