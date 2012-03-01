@@ -57,6 +57,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         // Set up the title block
         $oidf = $o->getFormattedId();
         $titleBlock = new w2p_Theme_TitleBlock("Order Management :: $oidf", 'folder5.png', $m, "$m.$a");
+        $titleBlock->addCell('<a class="button" href="?m=ordermgmt&pdfProject=' . $orderId . '&suppressHeaders=true"><span>Create PDF</span></a>', '', '', '');
         if (COrder::canAdd())
             $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
         if ($o->canDelete())
