@@ -61,7 +61,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         if (COrder::canAdd())
             $titleBlock->addCell('<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', '');
         if ($o->canDelete())
-            $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$oidf\"><span>Delete Order</span></a>", '', '', '');
+            $titleBlock->addCell("<a class=\"button\" href=\"?m=ordermgmt&deleteOrder=$orderId\"><span>Delete Order</span></a>", '', '', '');
         $titleBlock->show();
 
         $tbs->Show(TBS_OUTPUT);

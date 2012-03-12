@@ -337,7 +337,7 @@ class COrder {
         $results = $q->loadList();
         $retArray = array();
         foreach ($results as $r) {
-            $retArray[] = new COrder($r['requisition_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['main_project'], $r['notes']);
+            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['main_project'], $r['notes']);
         }
 
         return $retArray;

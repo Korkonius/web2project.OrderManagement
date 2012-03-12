@@ -53,8 +53,8 @@ class COrderPDF {
         $this->pdf->SetKeywords('Order,Quote,Bill');
         
         // Set default data as in example
-        $logoPath = '/../../../images/logo.png';
-        $this->pdf->SetHeaderData($logoPath, PDF_HEADER_LOGO_WIDTH, "RS-Systems AS - Reference $oidf", '');
+        $logoPath = PDF_HEADER_LOGO;
+        $this->pdf->SetHeaderData($logoPath, PDF_HEADER_LOGO_WIDTH, "Reference $oidf", '');
         $this->pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $this->pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
         $this->pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);

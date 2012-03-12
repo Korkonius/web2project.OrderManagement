@@ -27,6 +27,7 @@ class CInputFilter {
      * @return Bool
      */
     public function patternVerification($input, $pattern, $strict=true) {
+        global $AppUI;
         if (preg_match($pattern, $input))
             return true;
         else {
