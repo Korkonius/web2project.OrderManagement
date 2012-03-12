@@ -217,7 +217,30 @@ class CSetupOrderMgmt {
     }
 
     public function upgrade($old_version) {
-        return true;
+        
+        // Assuming db connection is required
+        global $db, $AppUI;
+        
+        switch($old_version) {
+            
+            
+            case '0.1.0':
+
+                // Load and execute 0_1_0to0_2_0.sql
+                $upgradeScript = dirname(__FILE__) . "/sql/0_1_0to0_2_0.sql";
+                if(!file_exists($upgradeScript)) die('No script found');
+                $allSql = file_get_contents($upgradeScript);
+                $sqlArray = explode(';', $allSql);
+                foreach($sqlArray as $q) {
+                    $result = $db->Execute($q);
+                }
+                $AppUI->setMsg("Executed " . count($sqlArray) . " SQL statements.", 1, true);
+                return true;
+            
+            default:
+                return false;
+        }
+        return false;
     }
 
     public function remove() {
