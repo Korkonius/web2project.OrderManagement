@@ -1,0 +1,1 @@
+DROP TABLE  `[PREFIX]_default_components`,`[PREFIX]_status`,`[PREFIX]_files`, `[PREFIX]_components`, `[PREFIX]_status_info`, `[PREFIX]`;
