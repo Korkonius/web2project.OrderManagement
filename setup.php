@@ -34,8 +34,6 @@ class CSetupOrderMgmt {
     const _TBL_PREFIKS_ = "ordermgmt"; // This line determines tables identificator
 
     public function install() {
-        global $AppUI;
-        $acl = $AppUI->acl();
 
         $installScript = dirname(__FILE__) . "/sql/install.sql";
         $this->executeSqlFile($installScript);
@@ -51,12 +49,11 @@ class CSetupOrderMgmt {
             
         switch($old_version) {
             
-            
             case '0.1.0':
 
                 // Load and execute 0_1_0to0_2_0.sql
                 $upgradeScript = dirname(__FILE__) . "/sql/0_1_0to0_2_0.sql";
-                return $this->executeSqlFile($upgradeScript);
+                $this->executeSqlFile($upgradeScript);
             
             default:
                 return false;
@@ -75,7 +72,7 @@ class CSetupOrderMgmt {
         global $db;
         
         // File exists?
-        if(!file_exists($filename)) die('No Script');
+        if(!file_exists($filename)) return false;
         
         // Real all file contents
         $allSql = file_get_contents($filename);
@@ -95,8 +92,7 @@ class CSetupOrderMgmt {
     protected function debugData() {
         $statusId = 1;
         $compId = 1;
-        $rsId = 1;
-        $q = new w2p_Database_Query();
+        $query = new w2p_Database_Query();
 
         // Create two base components
         $c = array(
@@ -117,8 +113,8 @@ class CSetupOrderMgmt {
                 'main_project' => '1',
                 'date_created' => date('Y-m-d H:i:s', time())
             );
-            $q->insertArray(self::_TBL_PREFIKS_, $a);
-            $q->clear();
+            $query->insertArray(self::_TBL_PREFIKS_, $a);
+            $query->clear();
 
             /// Create the new status and another one
             $n = array(
@@ -130,8 +126,8 @@ class CSetupOrderMgmt {
                 'comments' => 'Setup dummy data'
             );
             $statusId++;
-            $q->insertArray(self::_TBL_PREFIKS_ . '_status', $n);
-            $q->clear();
+            $query->insertArray(self::_TBL_PREFIKS_ . '_status', $n);
+            $query->clear();
 
             $ns = array(
                 'order_status_id' => $statusId++,
@@ -141,8 +137,8 @@ class CSetupOrderMgmt {
                 'date_changed' => date('Y-m-d H:i:s', time()),
                 'comments' => 'Setup dummy data'
             );
-            $q->insertArray(self::_TBL_PREFIKS_ . '_status', $ns);
-            $q->clear();
+            $query->insertArray(self::_TBL_PREFIKS_ . '_status', $ns);
+            $query->clear();
 
             // Do some modifications to components and insert some for each
             $c['order_id'] = $i;
@@ -150,8 +146,8 @@ class CSetupOrderMgmt {
                 $c['component_id'] = $compId++;
                 $c['component_price'] = rand(1, 100);
                 $c['component_amount'] = rand(1, 100);
-                $q->insertArray(self::_TBL_PREFIKS_ . '_components', $c);
-                $q->clear();
+                $query->insertArray(self::_TBL_PREFIKS_ . '_components', $c);
+                $query->clear();
             }
         }
     }

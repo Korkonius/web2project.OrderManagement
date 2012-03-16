@@ -8,6 +8,7 @@ global $AppUI;
 // Load dependancies
 require_once(dirname(__FILE__) . "/ordercomponent.class.php");
 require_once(dirname(__FILE__) . "/orderstatus.class.php");
+require_once(dirname(__FILE__) . "/orderdelivery.class.php");
 
 $uistyle = $AppUI->getPref('UISTYLE') ? $AppUI->getPref('UISTYLE') : w2PgetConfig('host_style');
 
@@ -49,6 +50,7 @@ class COrder {
     public $historyBuffered = false;
     public $componentsBuffered = false;
     public $filesBuffered = false;
+    public $deliveryBuffered = false;
     public $owner = null;
     public $ownerId = null;
     public $ownerName = null;
@@ -60,6 +62,7 @@ class COrder {
     protected $history = array();
     protected $files = array();
     protected $components = array();
+    protected $delivery;
     protected $acl;
     
     // Public shared information about orders
@@ -459,6 +462,25 @@ class COrder {
         }
 
         return $this->files;
+    }
+
+    public function getDelivery() {
+
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
+
+        if(!$this->deliveryBuffered) {
+
+            // Update with delivery
+            $delivery = COrderDelivery::fetchOrderDelivery($this->id);
+            if($delivery) $this->delivery = $delivery;
+
+            $this->deliveryBuffered = true;
+        }
+
+        print_r($this->delivery) . "<br /><br />";
+
+        return $this->delivery;
     }
 
     /**
