@@ -19,22 +19,20 @@ class COrderDelivery
         $this->arrived = $arrived;
     }
 
-    public static function fetchOrderDelivery($orderId) {
+    public static function fetchOrderDeliveries($orderId) {
 
         // Set up query and fetch info from database
         $query = new w2p_Database_Query();
         $query->addTable(COrder::_TBL_PREFIKS_ . "_deliveries", "del");
         $query->addQuery('*');
         $query->addWhere("order_id = $orderId");
-        $row = $query->loadList();
+        $list = $query->loadList();
+        $return = array();
 
-        if(count($row) == 1) {
-            return new COrderDelivery($row[0]['delivery_id'], $row[0]['order_id'], $row[0]['start_date'], $row[0]['end_date'], $row[0]['company'], $row[0]['arrived']);
-        } else {
-
-            // Return null. Assuming no deliveries found, implying that no deliveries are registered for the order
-            return null;
+        foreach($list as $row) {
+            $return[] = new COrderDelivery($row['delivery_id'], $row['order_id'], $row['start_date'], $row['end_date'], $row['company'], $row['arrived']);
         }
 
+        return $return;
     }
 }

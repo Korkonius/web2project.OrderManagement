@@ -23,7 +23,7 @@
         <tr><th colspan="6">Order List</th></tr>
     </thead>
     <tbody>
-        [order;block=begin]
+        [order;sub1=(deliveries);block=begin]
         <tr id="orderId_[order.id;]" onclick="window.location = '?m=ordermgmt&order_id=[order.id]'">
             <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 1px #AAA solid"><img src="[order.latestStatus.iconPath]" alt="[order.latestStatus.statusName]"/></td>
             <td style="width: 15em"><strong>Status: </strong>[order.latestStatus.statusName]</td>
@@ -36,7 +36,7 @@
             <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 0px #AAA solid"></td>
             <td colspan="5">
                 &nbsp;<img src="[deliveryIcon]" alt="Delivery status"/> ::
-                Expected delivery between [order.getDelivery.delivery_start_date;magnet=tr] and [order.getDelivery.delivery_end_date;magnet=tr]
+                Expected delivery between [order_sub1.delivery_start_date;block=tr] and [order_sub1.delivery_end_date;block=tr]
             </td>
         </tr>
         [order;block=end]

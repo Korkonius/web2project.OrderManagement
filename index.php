@@ -42,7 +42,6 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
     // Create template object
     $tbs = & new clsTinyButStrong();
-    $tbs->NoErr = true;
 
     // List template test
     if (!empty($orderId) && empty($showNewOrderForm)) {
@@ -187,7 +186,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
                         $ol = COrder::createListFromDatabase();
                         //$ol[0]->latestStatus();
-                        $tbs->MergeBlock('order', $ol); // FIXME Deliveries throw exceptions! Fix when you find out how in TBS
+                        $tbs->MergeBlock('order', $ol);
                         $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
                         $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
                         $tbs->Show(TBS_OUTPUT);

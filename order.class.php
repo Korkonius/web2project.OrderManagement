@@ -62,7 +62,7 @@ class COrder {
     protected $history = array();
     protected $files = array();
     protected $components = array();
-    protected $delivery;
+    public $deliveries = array();
     protected $acl;
     
     // Public shared information about orders
@@ -104,6 +104,9 @@ class COrder {
         $p = new CProject();
         $p->loadFull($AppUI, $projectId);
         $this->project = $p;
+
+        // Load delivery information
+        $this->loadDeliveries();
     }
 
     /**
@@ -464,23 +467,16 @@ class COrder {
         return $this->files;
     }
 
-    public function getDelivery() {
+    protected function loadDeliveries() {
 
         // Check acl
         aclCheck('view', "Insufficient permissions", $this->acl);
 
-        if(!$this->deliveryBuffered) {
-
-            // Update with delivery
-            $delivery = COrderDelivery::fetchOrderDelivery($this->id);
-            if($delivery) $this->delivery = $delivery;
-
-            $this->deliveryBuffered = true;
+        // Update with delivery
+        $deliveries = COrderDelivery::fetchOrderDeliveries($this->id);
+        if ($deliveries) {
+            $this->deliveries = $deliveries;
         }
-
-        print_r($this->delivery) . "<br /><br />";
-
-        return $this->delivery;
     }
 
     /**
