@@ -37,6 +37,7 @@
             <td colspan="5">
                 &nbsp;<img src="[deliveryIcon]" alt="Delivery status"/> ::
                 Expected delivery between [order_sub1.delivery_start_date;block=tr] and [order_sub1.delivery_end_date;block=tr]
+                <strong class="warning">[order_sub1.isOverdue;magnet=strong;if [val]=1; then 'Overdue!']</strong>
             </td>
         </tr>
         [order;block=end]

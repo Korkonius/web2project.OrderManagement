@@ -19,6 +19,28 @@ class COrderDelivery
         $this->arrived = $arrived;
     }
 
+    public function isOverdue() {
+
+        // Return end true if time now is greater than end date
+        $endTime = new DateTime($this->delivery_end_date);
+        $now = new DateTime('now');
+
+        return ($endTime < $now);
+    }
+
+    public static function createNewDelivery($orderId, $companyId, $startDate, $endDate) {
+
+        $query = new w2p_Database_Query();
+        $values = array(
+            "delivery_id" => self::getNextDeliveryId(),
+            "order_id" => $orderId,
+            "company" => $companyId,
+            "start_date" => $startDate,
+            "end_date" => $endDate
+        );
+        $query->insertArray(COrder::_TBL_PREFIKS_ . "_deliveries", &$values);
+    }
+
     public static function fetchOrderDeliveries($orderId) {
 
         // Set up query and fetch info from database
@@ -34,5 +56,18 @@ class COrderDelivery
         }
 
         return $return;
+    }
+
+    protected static function getNextDeliveryId() {
+
+        // Set up query and fetch highest current ID from database
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_deliveries", "d");
+        $query->addQuery('max(d.delivery_id) as max');
+        $result = $query->loadHash();
+
+        // Compute next ID
+        $id = intval($result['max'])+1;
+        return $id;
     }
 }

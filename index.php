@@ -185,7 +185,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
                         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
                         $ol = COrder::createListFromDatabase();
-                        //$ol[0]->latestStatus();
+                        //print_r($ol[0]->deliveries[1]->isOverdue());
                         $tbs->MergeBlock('order', $ol);
                         $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
                         $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
