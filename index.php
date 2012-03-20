@@ -35,6 +35,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     $newFile = w2PgetParam($_GET, 'fileAddForm');
     $outputJsonComponents = w2PgetParam($_GET, 'getDefaultJSON');
     $outputPdfOrder = w2PgetParam($_GET, 'pdfProject');
+    $addDelivery = w2PgetParam($_GET, 'addDelivery');
 
     // Verify that the parameters contain expected values
     $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
@@ -65,6 +66,8 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         if (COrder::canAdd()) {
             $titleBlock->addCell(
                 '<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', ''
+            );
+            $titleBlock->addCell(
             );
         }
         if ($o->canDelete()) {
@@ -107,6 +110,40 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
         // Output
         $tbs->Show(TBS_OUTPUT);
+    } else if(!empty($addDelivery)) {
+
+        aclCheck('edit', 'Access denied: You need Edit privilegies to add a component');
+
+        // Determine if form data is appended
+        $formSubmitted = w2PgetParam($_POST, 'deliverySubmit');
+        if(!empty($formSubmitted)) {
+
+            // Handle delivery form
+            // FIXME Add proper input filtering
+            $companyId = w2PgetParam($_POST, 'companySelect');
+            $orderId = w2PgetParam($_POST, 'orderId');
+            $startDate = w2PgetParam($_POST, 'startDate');
+            $endDate = w2PgetParam($_POST, 'endDate');
+
+            $order = new COrder($orderId);
+            $order->addDelivery($companyId, $startDate, $endDate);
+
+            $AppUI->setMsg("Delivery added!", UI_MSG_OK);
+            $AppUI->redirect('m=ordermgmt');
+        } else {
+
+            // Show the new delivery form
+            $titleBlock = new w2p_Theme_TitleBlock("Order Management :: New Delivery", 'folder5.png', $m, "$m.$a");
+            $titleBlock->show();
+
+            // Prepare template
+            $company = new CCompany();
+            $tbs->LoadTemplate(dirname(__FILE__) . '/templates/delivery_form.html');
+            $tbs->MergeBlock('companies', $company->getCompanyList($AppUI));
+            $tbs->MergeField('orderId', $addDelivery);
+
+            $tbs->Show(TBS_OUTPUT);
+        }
     } else {
         if (!empty($newComponent)) {
 

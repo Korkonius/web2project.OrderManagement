@@ -467,6 +467,12 @@ class COrder {
         return $this->files;
     }
 
+    public function addDelivery($companyId, $startDate, $endDate) {
+
+        // Create new delivery with this task id
+        return COrderDelivery::createNewDelivery($this->id, $companyId, $startDate, $endDate);
+    }
+
     protected function loadDeliveries() {
 
         // Check acl
@@ -572,7 +578,6 @@ class COrder {
         );
         return $q->insertArray(self::_TBL_PREFIKS_ . '_files', $h);
     }
-
 }
 
 

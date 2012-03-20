@@ -1,0 +1,57 @@
+<link rel="stylesheet" type="text/css" media="all" href="lib/jscalendar/calendar-system.css"/>
+<script type="text/javascript" src="lib/jscalendar/calendar.js"></script>
+<script type="text/javascript" src="lib/jscalendar/lang/calendar-en.js"></script>
+<script type="text/javascript" src="lib/jscalendar/calendar-setup.js"></script>
+<div id="formContainer">
+    <form id="orderForm" action="?m=ordermgmt&addDelivery=[orderId]" method="POST" accept-charset="utf-8">
+        <table id="deliveryFormTable">
+            <tr>
+                <th><label for="companySelect">Delivering Company:</label></th>
+                <th>Expected from:</th>
+                <th>Overdue after:</th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="companySelect" id="companySelect">
+                        <option value="[companies.company_id;block=option]">[companies.company_name;block=option]
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <div id="startDateContainer">
+                        <script type="text/javascript">
+                            function startDateChanged(calendar) {
+                                var startDate = calendar.date.getFullYear() + "-" + calendar.date.getMonth() + "-" + calendar.date.getDate();
+                                $('#startDate').val(encodeURIComponent(startDate));
+                            }
+                            Calendar.setup({
+                                flat:"startDateContainer",
+                                flatCallback: startDateChanged
+                            });
+                        </script>
+                    </div>
+                </td>
+                <td>
+                    <div id="endDateContainer">
+                        <script type="text/javascript">
+                            function endDateChanged(calendar) {
+                                var endDate = calendar.date.getFullYear() + "-" + calendar.date.getMonth() + "-" + calendar.date.getDate();
+                                $('#endDate').val(encodeURIComponent(endDate));
+                            }
+                            Calendar.setup({
+                                flat:"endDateContainer",
+                                flatCallback: endDateChanged
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <input type="hidden" id="startDate" name="startDate" value=""/>
+        <input type="hidden" id="endDate" name="endDate" value=""/>
+        <input type="hidden" name="orderId" value="[orderId]"/>
+        <button type="submit" name="deliverySubmit" id="deliverySubmit" value="1"/>
+        <img src="./modules/ordermgmt/images/accept.png" alt="New Delivery"/>New Delivery</button>
+    </form>
+</div>
