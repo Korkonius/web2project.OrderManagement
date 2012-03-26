@@ -68,7 +68,6 @@
         $("#newComponentBtn").click(function(e){
            var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/><input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/><input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/></div>';
            $(this).before(newHtml);
-           $(this).before(jQuery.version);
         });
         
         // Load default components using Ajax
@@ -76,19 +75,6 @@
             success: function(data, status, xhr) {
                 defaultComponents = $.parseJSON(data);
                 dataLoaded = true;
-                
-                var lastGroup = "";
-                var optGroup;
-                for(i=0;i < defaultComponents.length; i++) {
-                    var c = defaultComponents[i]
-                    if(lastGroup != c.supplier) {
-                        optGroup = $('#defaultComponentSelect').append("<optgroup id=\"" + c.supplier + "\" value=\"" + c.supplier + "\"></optgroup>");
-                    }
-                    $('#'+c.supplier).append('<option value="'+i+'">'+c.description+' :: '+ c.local_price+'kr</option>');
-                    lastGroup = c.supplier;
-                }
-                
-                $("#defaultComponentSelect").trigger("liszt:updated")
             },
             error: function(xhr, status, httpError) {
                 $('#orderForm').insertBefore('<div style="color: red">Error: ' + status + ' occurred...');
@@ -129,6 +115,9 @@
             </div>
             <select id="defaultComponentSelect" name="defaultComponents">
                 <option value="-1">Blank Component</option>
+                <optgroup label="Supplier: [defaultComponents.supplier;block=optgroup;parentgrp=supplier]">
+                    <option value="[defaultComponents.component_id;block=option]">[defaultComponents.description;block=option] :: [defaultComponents.local_price]kr</option>
+                </optgroup>
             </select>
             <button type="button" name="newComponentBtn" id="newComponentBtn"><img src="./modules/ordermgmt/images/new.png" alt="New Component" />New Component</button>
         </div>

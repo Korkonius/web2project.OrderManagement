@@ -92,6 +92,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $orderid = COrder::nextOrderId();
         $orderidf = sprintf(COrder::ID_FORMAT, $orderid);
         $defaultComponents = COrderComponent::getDefaultComponentList();
+        print_r($defaultComponents);
 
         // Load and merge company and project data
         $projects = new CProject();
