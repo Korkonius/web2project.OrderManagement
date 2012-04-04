@@ -63,6 +63,10 @@ if ($acl->checkModule('ordermgmt', 'view')) {
             '<a class="button" href="?m=ordermgmt&pdfProject=' . $orderId
                 . '&suppressHeaders=true"><span>Create PDF</span></a>', '', '', ''
         );
+        $titleBlock->addCell(
+            '<a class="button" href="?m=ordermgmt&addDelivery=' . $orderId
+                . '"><span>Add Delivery</span></a>', '', '', ''
+        );
         if (COrder::canAdd()) {
             $titleBlock->addCell(
                 '<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '', ''
@@ -225,6 +229,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                         //print_r($ol[0]->deliveries[1]->isOverdue());
                         $tbs->MergeBlock('order', $ol);
                         $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
+                        $tbs->MergeField('recievedIcon', w2pfindImage('/thumb_up.png', 'ordermgmt'));
                         $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
                         $tbs->Show(TBS_OUTPUT);
                     }
