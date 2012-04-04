@@ -86,14 +86,17 @@
             </th>
         </tr>
         <tr id="orderDeliveries">
-            <td colspan="5">
+            <td colspan="6">
                 &nbsp;<img src="./modules/ordermgmt/images/lorry_go.png" alt="Delivery status"/> ::
-                Expected delivery between [deliveries.delivery_start_date;block=tr;frm='dd/mm/yyyy'] and [deliveries.delivery_end_date;block=tr;frm='dd/mm/yyyy']
+                Expected delivery between [deliveries.delivery_start_date;block=tr;frm='dd/mm/yyyy';when [deliveries.hasArrived]!=1;several] and [deliveries.delivery_end_date;block=tr;frm='dd/mm/yyyy']
                 <strong class="warning">[deliveries.isOverdue;magnet=strong;if [val]=1; then 'Overdue!']</strong>
-                <strong class="message">[deliveries.hasArrived;magnet=strong;if [val]=1; then 'Has Arrived!']</strong>
+                <a href="?m=ordermgmt&deliveryRecieved=[deliveries.delivery_id]" style="padding-left: 1em"><img src="./modules/ordermgmt/images/thumb_up.png" alt="Delivery recieved!"/></a>
             </td>
-            <td style="width: 16px; padding: 2px 12px 2px 12px; border-left: 0px #AAA solid">
-                <a href="?m=ordermgmt&deliveryRecieved=[deliveries.delivery_id]"><img src="./modules/ordermgmt/images/thumb_up.png" alt="Delivery recieved!"/></a>
+        </tr>
+        <tr id="orderDeliveries">
+            <td colspan="6">
+                &nbsp;<img src="./modules/ordermgmt/images/house.png" alt="Delivery status"/> ::
+                Delivery arrived [deliveries.arrived;block=tr;frm='dd/mm/yyyy';when [deliveries.hasArrived]==1]
             </td>
         </tr>
         <tr>
