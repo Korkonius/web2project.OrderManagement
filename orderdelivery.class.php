@@ -67,13 +67,41 @@ class COrderDelivery
         $query->insertArray(COrder::_TBL_PREFIKS_ . "_deliveries", &$values);
     }
 
-    public static function fetchOrderDeliveries($orderId) {
+    public static function fetchOrderDeliveries($orderId, array $filter=array()) {
+
+        // Set up query filter
+        $filter[order_id] = $orderId;
+
+        return self::fetchFromDeliveryTbl($filter);
+    }
+
+    public static function fetchOrderDeliveryFromDb($deliveryId) {
+
+        // Fetch a single delivery from database
+        $filter = array(
+            delivery_id => $deliveryId
+        );
+        $result = self::fetchFromDeliveryTbl($filter);
+
+        // Make sure you only get one result
+        if(count($result) != 1) {
+            throw new Exception("Database possibly corrupt. Expected 1 result.");
+        }
+
+        // Return ONLY result
+        return $result[0];
+    }
+
+    protected static function fetchFromDeliveryTbl($filter) {
+
+        // Build where clause from filter
+        $whereStr = self::buildWhereFromArray($filter);
 
         // Set up query and fetch info from database
         $query = new w2p_Database_Query();
         $query->addTable(COrder::_TBL_PREFIKS_ . "_deliveries", "del");
         $query->addQuery('*');
-        $query->addWhere("order_id = $orderId");
+        $query->addWhere($whereStr);
         $list = $query->loadList();
         $return = array();
 
@@ -84,17 +112,25 @@ class COrderDelivery
         return $return;
     }
 
-    public static function fetchOrderDeliveryFromDb($deliveryId) {
+    protected static function buildWhereFromArray(array $conditions) {
 
-        // Fetch a single delivery from database
-        $query = new w2p_Database_Query();
-        $query->addTable(COrder::_TBL_PREFIKS_ . "_deliveries", "del");
-        $query->addQuery('*');
-        $query->addWhere("delivery_id = $deliveryId");
-        $hash = $query->loadHash();
+        // Loop through conditions and create a string from all
+        $parts = array();
+        foreach($conditions as $key => $value) {
 
-        return new COrderDelivery($hash['delivery_id'], $hash['order_id'], $hash['start_date'], $hash['end_date'], $hash['company'], $hash['arrived']);
+            // If value contains multiple values
+            if(is_array($value)) {
+                $parts[] = $key . " IN(" . implode(',', $value) . ")";
 
+            }
+
+            // Value is a simple type
+            else {
+                $parts[] = $key . " = " . $value;
+            }
+        }
+
+        return implode(' AND ', $parts);
     }
 
     protected static function getNextDeliveryId() {
