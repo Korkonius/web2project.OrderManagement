@@ -38,7 +38,7 @@
                 &nbsp;<img src="[deliveryIcon]" alt="Delivery status"/> ::
                 Expected delivery between [order_sub1.delivery_start_date;block=tr;frm='dd/mm/yyyy';when [order_sub1.hasArrived]!=1] and [order_sub1.delivery_end_date;block=tr;frm='dd/mm/yyyy']
                 <strong class="warning">[order_sub1.isOverdue;magnet=strong;if [val]=1; then 'Overdue!']</strong>
-                <a href="?m=ordermgmt&deliveryRecieved=[order_sub1.delivery_id]" style="padding-left: 1em">[order_sub1.hasArrived;block=a;when [order_sub1.hasArrived]!=1]<img src="[recievedIcon]" alt="Delivery recieved!"/></a>
+                <a href="?m=ordermgmt&deliveryRecieved=[order_sub1.delivery_id]" style="padding-left: 1em"><img src="[recievedIcon]" alt="Delivery recieved!"/></a>
             </td>
         </tr>
         [order;block=end]
