@@ -504,6 +504,20 @@ class COrder {
         return $this->components;
     }
 
+    public function getDeliveries() {
+
+        // Check acl
+        aclCheck('view', "Insufficient permissions", $this->acl);
+
+        // Check to see if components are loaded
+        if(!$this->deliveryBuffered) {
+            $this->loadDeliveries();
+            $this->deliveryBuffered = true;
+        }
+
+        return $this->deliveries;
+    }
+
     /**
      * Returns the total price of the order. This is the sum of all component
      * prices.

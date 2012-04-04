@@ -56,6 +56,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->MergeBlock('history', $o->getHistory());
         $tbs->MergeBlock('file', $o->getFiles());
         $tbs->MergeBlock('status', COrderStatus::getAllStatusinfo());
+        $tbs->MergeBlock('deliveries', $o->getDeliveries());
 
         // Set up the title block
         $oidf = $o->getFormattedId();

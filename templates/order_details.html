@@ -82,13 +82,29 @@
         <tr><td colspan="6"><strong class="component_total">Total: [order.getOrderTotal] kr</strong></td></tr>
         <tr>
             <th colspan="6">
-                Attached files
+                Associated deliveries
+            </th>
+        </tr>
+        <tr id="orderDeliveries">
+            <td colspan="5">
+                &nbsp;<img src="./modules/ordermgmt/images/lorry_go.png" alt="Delivery status"/> ::
+                Expected delivery between [deliveries.delivery_start_date;block=tr;frm='dd/mm/yyyy'] and [deliveries.delivery_end_date;block=tr;frm='dd/mm/yyyy']
+                <strong class="warning">[deliveries.isOverdue;magnet=strong;if [val]=1; then 'Overdue!']</strong>
+                <strong class="message">[deliveries.hasArrived;magnet=strong;if [val]=1; then 'Has Arrived!']</strong>
+            </td>
+            <td style="width: 16px; padding: 2px 12px 2px 12px; border-left: 0px #AAA solid">
+                <a href="?m=ordermgmt&deliveryRecieved=[deliveries.delivery_id]"><img src="./modules/ordermgmt/images/thumb_up.png" alt="Delivery recieved!"/></a>
+            </td>
+        </tr>
+        <tr>
+        <th colspan="6">
+            Attached files
                 <span class="orderButtonPane">
                     <a href="?m=ordermgmt&fileAddForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./modules/ordermgmt/images/page_add.png" alt="Add new file" title="Add new file"/></a>
                     <!--<a href="?m=ordermgmt&fileAttachForm=[order.id;magnet=a;]">[order.canEdit; magnet=a; ope=mok:1]<img src="./modules/ordermgmt/images/page_link.png" alt="Attach file" title="Attach file"/></a>-->
                 </span>
-            </th>
-        </tr>
+        </th>
+    </tr>
         <tr><td>Filename: <a href="fileviewer.php?file_id=[file.file_id]">[file.file_name; block=tr]</a></td><td colspan="5">Description: [file.file_description; block=tr]</td></tr>
         <tr>
             <th colspan="6">
