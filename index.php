@@ -36,6 +36,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
     $outputJsonComponents = w2PgetParam($_GET, 'getDefaultJSON');
     $outputPdfOrder = w2PgetParam($_GET, 'pdfProject');
     $addDelivery = w2PgetParam($_GET, 'addDelivery');
+    $deliveryRecieved = w2PgetParam($_GET, 'deliveryRecieved');
 
     // Verify that the parameters contain expected values
     $filter->patternVerification($orderId, CInputFilter::W2P_FILTER_NUMBERS);
@@ -148,6 +149,15 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
             $tbs->Show(TBS_OUTPUT);
         }
+    } else if($deliveryRecieved) {
+
+        // A delivery has been recieved! Fetch it and update the record
+        $delivery = COrderDelivery::fetchOrderDeliveryFromDb($deliveryRecieved);
+        $delivery->justArrived();
+
+        $AppUI->setMsg("Delivery set as recieved!", UI_MSG_OK, true);
+        $AppUI->redirect('m=ordermgmt');
+
     } else {
         if (!empty($newComponent)) {
 

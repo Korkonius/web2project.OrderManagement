@@ -21,11 +21,37 @@ class COrderDelivery
 
     public function isOverdue() {
 
+        // If the the delivery is recieved it cannot be overdue
+        if($this->hasArrived()) {
+            return false;
+        }
+
         // Return end true if time now is greater than end date
         $endTime = new DateTime($this->delivery_end_date);
         $now = new DateTime('now');
 
         return ($endTime < $now);
+    }
+
+    public function hasArrived() {
+        if(!empty($this->arrived)) {
+            return true;
+        }
+    }
+
+    public function justArrived() {
+        return $this->setArrived(date('Y-m-d H:i:s'));
+    }
+
+    public function setArrived($time) {
+
+        // Update record with arrived time
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_deliveries", "del");
+        $query->addUpdate('arrived', $time);
+        $query->addWhere("delivery_id = " . $this->delivery_id);
+
+        return $query->exec();
     }
 
     public static function createNewDelivery($orderId, $companyId, $startDate, $endDate) {
@@ -56,6 +82,19 @@ class COrderDelivery
         }
 
         return $return;
+    }
+
+    public static function fetchOrderDeliveryFromDb($deliveryId) {
+
+        // Fetch a single delivery from database
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_deliveries", "del");
+        $query->addQuery('*');
+        $query->addWhere("delivery_id = $deliveryId");
+        $hash = $query->loadHash();
+
+        return new COrderDelivery($hash['delivery_id'], $hash['order_id'], $hash['start_date'], $hash['end_date'], $hash['company'], $hash['arrived']);
+
     }
 
     protected static function getNextDeliveryId() {
