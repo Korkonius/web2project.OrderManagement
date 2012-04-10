@@ -27,4 +27,19 @@ $(document).ready(function(){
             window.location = "?m=ordermgmt&order_id=" + strId;
         }
     });
+
+    // Text ajax call to see if we can get the expected object to work
+    $.ajax({
+        type: 'POST',
+        data: {
+            'dosql': 'do_ajaxrequest'
+        },
+        url: '?m=ordermgmt&suppressHeaders=true',
+        success: function(data) {
+            alert(data);
+        },
+        error: function(data) {
+            alert('Call failed!');
+        }
+    });
 });
