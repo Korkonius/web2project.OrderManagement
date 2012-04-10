@@ -8,9 +8,15 @@
         background-color: transparent;
     }
     table.orderlist tr {
-        cursor: pointer;
+        cursor: auto;
         border-bottom: 1px #DDD solid;
         background-color: white;
+    }
+    table.orderlist tr.order_clickable {
+        cursor: pointer;
+    }
+    table.orderlist tr.order_delivery {
+        background-color: #e0ffff;
     }
     table.orderlist tr:hover {
         background-color: #ccc;
@@ -36,50 +42,41 @@
     }
 </style>
 <script type="text/javascript" src="./modules/ordermgmt/lib/smartpaginator/smartpaginator.js"></script>
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#orderTblContainer').smartpaginator({
-            totalrecords: 100,
-            recordsperpage: 10,
-            initval: 0
-        });
-    });
-</script>
-    <table class="tbl orderlist">
-        <thead>
-        <tr>
-            <th colspan="6">Order List</th>
-        </tr>
-        </thead>
-        <tbody>
-        [order;sub1=(deliveries);block=begin]
-        <tr id="orderId_[order.id;]" onclick="window.location = '?m=ordermgmt&order_id=[order.id]'">
-            <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 1px #AAA solid"><img
-                    src="[order.latestStatus.iconPath]" alt="[order.latestStatus.statusName]"/></td>
-            <td style="width: 15em"><strong>Status: </strong>[order.latestStatus.statusName]</td>
-            <td style="width: 8em"><strong>Id: </strong>[order.getFormattedId]</td>
-            <td><strong>Company:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.company.company_name]</td>
-            <td><strong>Project:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.project.project_name]</td>
-            <td><strong>Price:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.getOrderTotal; frm='0,000.00'] [order.currency]
-            </td>
-        </tr>
-        <tr id="orderDeliveryId_[order.id]">
-            <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 0px #AAA solid"></td>
-            <td colspan="5">
-                &nbsp;<img src="[deliveryIcon]" alt="Delivery status"/> ::
-                Expected delivery between [order_sub1.delivery_start_date;block=tr;frm='dd/mm/yyyy';when
-                [order_sub1.hasArrived]!=1] and [order_sub1.delivery_end_date;block=tr;frm='dd/mm/yyyy']
-                <strong class="warning">[order_sub1.isOverdue;magnet=strong;if [val]=1; then 'Overdue!']</strong>
-                <a href="?m=ordermgmt&deliveryRecieved=[order_sub1.delivery_id]" style="padding-left: 1em"><img
-                        src="[recievedIcon]" alt="Delivery recieved!"/></a>
-            </td>
-        </tr>
-        [order;block=end]
-        <tr>
-            <td colspan="6">
-                <div id="orderTblContainer"></div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<table class="tbl orderlist">
+    <thead>
+    <tr>
+        <th colspan="6">Order List</th>
+    </tr>
+    </thead>
+    <tbody>
+    [order;sub1=(deliveries);block=begin]
+    <tr id="orderId_[order.id;]" class="order_clickable">
+        <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 1px #AAA solid"><img
+                src="[order.latestStatus.iconPath]" alt="[order.latestStatus.statusName]"/></td>
+        <td style="width: 15em"><strong>Status: </strong>[order.latestStatus.statusName]</td>
+        <td style="width: 8em"><strong>Id: </strong>[order.getFormattedId]</td>
+        <td><strong>Company:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.company.company_name]</td>
+        <td><strong>Project:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.project.project_name]</td>
+        <td><strong>Price:&nbsp;&nbsp;&nbsp;&nbsp;</strong>[order.getOrderTotal; frm='0,000.00'] [order.currency]
+        </td>
+    </tr>
+    <tr id="orderDeliveryId_[order.id]" class="order_delivery">
+        <td style="width: 16px; padding: 2px 12px 2px 12px; border-right: 0px #AAA solid"></td>
+        <td colspan="5">
+            &nbsp;<img src="[deliveryIcon]" alt="Delivery status"/> ::
+            Expected delivery between [order_sub1.delivery_start_date;block=tr;frm='dd/mm/yyyy';when
+            [order_sub1.hasArrived]!=1] and [order_sub1.delivery_end_date;block=tr;frm='dd/mm/yyyy']
+            <strong class="warning">[order_sub1.isOverdue;magnet=strong;if [val]=1; then 'Overdue!']</strong>
+            <a href="?m=ordermgmt&deliveryRecieved=[order_sub1.delivery_id]" style="padding-left: 1em"><img
+                    src="[recievedIcon]" alt="Delivery received" title="Delivery received!"/></a>
+        </td>
+    </tr>
+    [order;block=end]
+    <tr>
+        <td colspan="6">
+            <div id="orderTblContainer" class="paginate"></div>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
