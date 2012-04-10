@@ -42,6 +42,15 @@
     }
 </style>
 <script type="text/javascript" src="./modules/ordermgmt/lib/smartpaginator/smartpaginator.js"></script>
+<form id="order_list_filter" method="POST" action="?m=ordermgmt">
+    <fieldset>
+        <legend>Filter for Order list:</legend>
+        <select name="order_filter" id="order_filter">
+            <option value="[filters.val; block=option]">[filters.val; block=option]</option>
+        </select>
+        <button name="order_apply_filter" id="order_apply_filter">Apply</button>
+    </fieldset>
+</form>
 <table class="tbl orderlist">
     <thead>
     <tr>

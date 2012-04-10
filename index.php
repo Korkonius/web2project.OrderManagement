@@ -22,6 +22,14 @@ require_once(dirname(__FILE__) . '/orderpdf.class.php');
 
 include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be someway to do this automaticly
 
+// Define the available filters for the order list
+$ORDERMGMGT_LIST_FILTERS = array(
+    "Only unfinished",
+    "Only finished",
+    "Only with pending deliveries",
+    "Only with arrived deliveries"
+);
+
 $AppUI->savePlace();
 $filter = new CInputFilter();
 $acl = $AppUI->acl();
@@ -239,6 +247,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                         $ol = COrder::createListFromDatabase();
                         //print_r($ol[0]->deliveries[1]->isOverdue());
                         $tbs->MergeBlock('order', $ol);
+                        $tbs->MergeBlock('filters', $ORDERMGMGT_LIST_FILTERS);
                         $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
                         $tbs->MergeField('recievedIcon', w2pfindImage('/thumb_up.png', 'ordermgmt'));
                         $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
