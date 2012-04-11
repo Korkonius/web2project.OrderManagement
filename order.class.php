@@ -1,8 +1,8 @@
 <?php
 
-if (!defined('W2P_BASE_DIR')) {
+/*if (!defined('W2P_BASE_DIR')) {
     die('You should not access this file directly');
-}
+}*/
 global $AppUI;
 
 // Load dependancies

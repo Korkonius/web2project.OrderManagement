@@ -29,17 +29,19 @@ $(document).ready(function(){
     });
 
     // Text ajax call to see if we can get the expected object to work
-    $.ajax({
+    var ajaxSettings = {
         type: 'POST',
         data: {
             'dosql': 'do_ajaxrequest'
         },
         url: '?m=ordermgmt&suppressHeaders=true',
         success: function(data) {
-            alert(data);
+
+            // Expecting to recieve HTML from server using TBS templates
+            $('#ordertable tbody').html(data);
         },
         error: function(data) {
             alert('Call failed!');
         }
-    });
+    };
 });
