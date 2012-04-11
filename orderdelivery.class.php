@@ -64,7 +64,7 @@ class COrderDelivery
             "start_date" => $startDate,
             "end_date" => $endDate
         );
-        $query->insertArray(COrder::_TBL_PREFIKS_ . "_deliveries", &$values);
+        $query->insertArray(COrder::_TBL_PREFIKS_ . "_deliveries", $values);
     }
 
     public static function fetchOrderDeliveries($orderId, array $filter=array()) {
