@@ -50,8 +50,21 @@
         background-color: #70A5CC;
         border: solid 1px white;
     }
+    #load_dialog {
+        background-color: #e0ffff;
+        color: red;
+        box-shadow: 2px 2px 2px 2px black;
+        border-radius: 3px;
+        font-size: large;
+        font-weight: bold;
+        padding: 0.5em 3em;
+    }
 </style>
 <script type="text/javascript" src="./modules/ordermgmt/lib/smartpaginator/smartpaginator.js"></script>
+<script type="text/javascript" src="./modules/ordermgmt/js/jquery.tools.min.js"></script>
+<div id="load_dialog">
+    Loading next page...
+</div>
 <form id="order_list_filter" method="POST" action="?m=ordermgmt">
     <fieldset>
         <legend>Filter for Order list:</legend>
@@ -60,6 +73,11 @@
         </select>
         <button name="order_apply_filter" id="order_apply_filter">Apply</button>
     </fieldset>
+</form>
+<form id="pagination_info" method="POST" action="?m=ordermgmt">
+    <input hidden="hidden" name="pagination_total_records" id="pagination_total_records" value="[pagination_total]" />
+    <input hidden="hidden" name="pagination_records_per_page" id="pagination_records_per_page" value="[pagination_page]" />
+    <input hidden="hidden" name="pagination_initial_page" id="pagination_initial_page" value="[pagination_init]" />
 </form>
 <table id="ordertable" class="tbl orderlist">
     <thead>

@@ -243,12 +243,17 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                         }
                         $titleBlock->show();
 
+                        $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);
+
                         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
-                        $ol = COrder::createListFromDatabase();
+                        $ol = COrder::createListFromDatabase($offset, w2PgetConfig('page_size', 50));
                         //print_r($ol[0]->deliveries[1]->isOverdue());
                         $tbs->MergeBlock('order', $ol);
                         $tbs->MergeBlock('filters', $ORDERMGMGT_LIST_FILTERS);
                         $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
+                        $tbs->MergeField('pagination_total', COrder::countOrders());
+                        $tbs->MergeField('pagination_page', w2PgetConfig("page_size"));
+                        $tbs->MergeField('pagination_init', w2PgetParam($_GET, 'page', 1));
                         $tbs->MergeField('recievedIcon', w2pfindImage('/thumb_up.png', 'ordermgmt'));
                         $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
                         $tbs->Show(TBS_OUTPUT);

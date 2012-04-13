@@ -10,11 +10,40 @@
  * @author Eirik Eggesbø Ottesen <Korkonius@gmail.com>
  */
 $(document).ready(function(){
+    $('#load_dialog')
+        .hide()
+        .overlay({
+            modal: true,
+            closeOnEsc: true,
+            load: false,
+            mask: {
+                color: 'white',
+                opacity: 0.7
+            },
+            top: 'center',
+            left: 'center'
+        });
+
     $('.paginate').each(function(index, value) {
+
+        var total = $('#pagination_total_records').val();
+        var per_page = $('#pagination_records_per_page').val();
+        var init_page = $('#pagination_initial_page').val();
+
         $(value).smartpaginator({
-            totalrecords: 100,
-            recordsperpage: 10,
-            initval: 0
+            totalrecords: total,
+            recordsperpage: per_page,
+            initval: init_page,
+            onchange: function(newpage) {
+
+                // Copy and modify global settings
+                $("#load_dialog").overlay().load();
+                var request = $.extend(true, {}, ajaxSettings);
+                request.data.page = newpage;
+
+                // Make request!
+                $.ajax(request);
+            }
         });
     });
 
@@ -36,12 +65,22 @@ $(document).ready(function(){
         },
         url: '?m=ordermgmt&suppressHeaders=true',
         success: function(data) {
-
             // Expecting to recieve HTML from server using TBS templates
             $('#ordertable tbody').html(data);
+            $("#load_dialog").overlay().close();
+
+            // Register events
+            $('tr.order_clickable').on({
+                click: function() {
+                    event.preventDefault();
+                    var strId = this.id.substr(8);
+
+                    window.location = "?m=ordermgmt&order_id=" + strId;
+                }
+            });
         },
         error: function(data) {
-            alert('Call failed!');
+            $("#load_dialog").overlay().close();
         }
     };
 });
