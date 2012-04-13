@@ -300,7 +300,7 @@ class COrder {
         $q = new w2p_database_query();
         $q->addTable(self::_TBL_PREFIKS_, 'r');
         $q->addQuery('*');
-        $q->addClause("LIMIT", "$start,$limit", false);
+        $q->setLimit($limit, $start);
         $q->exec();
 
         // Parse results
@@ -591,6 +591,20 @@ class COrder {
             'order_id' => $orderId
         );
         return $q->insertArray(self::_TBL_PREFIKS_ . '_files', $h);
+    }
+
+    public static function countOrders(array $filter=array()) {
+
+        // Check acl
+        aclCheck('view', "Insufficient privilegies to view orders. Access denied");
+
+        // Count the total number of records
+        $query = new w2p_Database_Query();
+        $query->addQuery("count(order_id) as total");
+        $query->addTable(self::_TBL_PREFIKS_);
+
+        $result = $query->loadHash();
+        return intval($result['total']);
     }
 }
 
