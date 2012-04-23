@@ -10,18 +10,18 @@
  * @author Eirik Eggesbø Ottesen <Korkonius@gmail.com>
  */
 $(document).ready(function(){
+    $('#load_dialog').position({
+        of: $('#ordertable tbody'),
+        at: 'center center',
+        my: 'center center'
+    });
     $('#load_dialog')
         .hide()
         .overlay({
             modal: true,
             closeOnEsc: true,
             load: false,
-            mask: {
-                color: 'white',
-                opacity: 0.7
-            },
-            top: 'center',
-            left: 'center'
+            mask: 'white'
         });
 
     $('.paginate').each(function(index, value) {
@@ -56,12 +56,16 @@ $(document).ready(function(){
             window.location = "?m=ordermgmt&order_id=" + strId;
         }
     });
+    $('#order_filter').change(function() {
+        window.location = '?m=ordermgmt&filter=' + $('#order_filter option:selected').val();
+    });
 
     // Text ajax call to see if we can get the expected object to work
     var ajaxSettings = {
         type: 'POST',
         data: {
-            'dosql': 'do_ajaxrequest'
+            'dosql': 'do_ajaxrequest',
+            'filter': $('#pagination_filter').val()
         },
         url: '?m=ordermgmt&suppressHeaders=true',
         success: function(data) {

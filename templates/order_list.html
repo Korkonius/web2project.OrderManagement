@@ -65,19 +65,19 @@
 <div id="load_dialog">
     Loading next page...
 </div>
-<form id="order_list_filter" method="POST" action="?m=ordermgmt">
+<form id="filter" method="GET" action="?m=ordermgmt">
     <fieldset>
         <legend>Filter for Order list:</legend>
         <select name="order_filter" id="order_filter">
-            <option value="[filters.val; block=option]">[filters.val; block=option]</option>
+            <option value="[filters.$; block=option]">[filters.val; block=option]</option>
         </select>
-        <button name="order_apply_filter" id="order_apply_filter">Apply</button>
     </fieldset>
 </form>
 <form id="pagination_info" method="POST" action="?m=ordermgmt">
     <input hidden="hidden" name="pagination_total_records" id="pagination_total_records" value="[pagination_total]" />
     <input hidden="hidden" name="pagination_records_per_page" id="pagination_records_per_page" value="[pagination_page]" />
     <input hidden="hidden" name="pagination_initial_page" id="pagination_initial_page" value="[pagination_init]" />
+    <input hidden="hidden" name="pagination_filter" id="pagination_filter" value="[pagination_filter]" />
 </form>
 <table id="ordertable" class="tbl orderlist">
     <thead>

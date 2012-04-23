@@ -289,7 +289,7 @@ class COrder {
      * @param Int $limit
      * @return COrder[]
      */
-    public static function createListFromDatabase($start=0, $limit=10) {
+    public static function createListFromDatabase($start=0, $limit=10, $filter='') {
 
         global $AppUI;
 
@@ -299,8 +299,15 @@ class COrder {
         // Query the database to fetch multiple objects
         $q = new w2p_database_query();
         $q->addTable(self::_TBL_PREFIKS_, 'r');
+
+        // Add query and limit
         $q->addQuery('*');
         $q->setLimit($limit, $start);
+        $q->addOrder('r.order_id');
+
+        // Build where using filters
+        if(!empty($filter)) $q->addWhere(COrder::buildWhereFromArray($filter));
+
         $q->exec();
 
         // Parse results
@@ -311,6 +318,35 @@ class COrder {
         }
 
         return $retArray;
+    }
+
+    public static function listOfOpenOrders($start=0, $limit=10) {
+
+        // TODO w2p_Database_Query does not support subquery joins... This is hack is devoted to avoid that problem
+        global $db;
+
+        // Fetch ids from status list
+        $query = 'SELECT s.*
+              FROM ordermgmt_status s
+              INNER JOIN (SELECT order_id, status_id, MAX(date_changed) as maxdate FROM ordermgmt_status GROUP BY order_id) sub
+              ON sub.order_id = s.order_id AND s.date_changed = sub.maxdate
+              WHERE NOT(s.status_id = 7) AND NOT(s.status_id = 3)
+              ORDER BY s.order_id';
+        $res = $db->Execute($query);
+
+        $indexed = $res->GetArray();
+
+
+        $openOrderIds = array();
+        foreach($indexed as $record) {
+            $openOrderIds[] = $record['order_id'];
+        }
+
+        $filter = array(
+            'order_id' => $openOrderIds
+        );
+
+        return self::createListFromDatabase($start, $limit, $filter);
     }
 
     /**
@@ -605,6 +641,44 @@ class COrder {
 
         $result = $query->loadHash();
         return intval($result['total']);
+    }
+
+    public static function countOpenOrders() {
+
+        global $db;
+
+        // Fetch ids from status list
+        $query = 'SELECT count(s.order_id) as count
+              FROM ordermgmt_status s
+              INNER JOIN (SELECT order_id, status_id, MAX(date_changed) as maxdate FROM ordermgmt_status GROUP BY order_id) sub
+              ON sub.order_id = s.order_id AND s.date_changed = sub.maxdate
+              WHERE NOT(s.status_id = 7) AND NOT(s.status_id = 3)
+              ORDER BY s.order_id';
+        $res = $db->Execute($query);
+        $rows = $res->getArray();
+
+        return intval($rows[0]['count']);
+    }
+
+    protected static function buildWhereFromArray(array $conditions) {
+
+        // Loop through conditions and create a string from all
+        $parts = array();
+        foreach($conditions as $key => $value) {
+
+            // If value contains multiple values
+            if(is_array($value)) {
+                $parts[] = $key . " IN(" . implode(',', $value) . ")";
+
+            }
+
+            // Value is a simple type
+            else {
+                $parts[] = $key . " = " . $value;
+            }
+        }
+
+        return implode(' AND ', $parts);
     }
 }
 
