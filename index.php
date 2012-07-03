@@ -265,6 +265,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
 
                         $tbs->MergeBlock('order', $ol);
+                        $tbs->MergeField('currentFilter', $filter); // Merge before 'filters' since filters depend on this
                         $tbs->MergeBlock('filters', $ORDERMGMGT_LIST_FILTERS);
                         $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
                         $tbs->MergeField('pagination_total', $totalOrders);

@@ -69,7 +69,8 @@
     <fieldset>
         <legend>Filter for Order list:</legend>
         <select name="order_filter" id="order_filter">
-            <option value="[filters.$; block=option]">[filters.val; block=option]</option>
+            <option value="[currentFilter]">Current: [currentFilter]</option>
+            <option value="[filters.$; block=option]">|- [filters.val; block=option]</option>
         </select>
     </fieldset>
 </form>
