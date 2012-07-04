@@ -25,7 +25,8 @@ include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be so
 // Define the available filters for the order list
 $ORDERMGMGT_LIST_FILTERS = array(
     "open" => "Only open orders",
-    "all" => "All orders"
+    "all" => "All orders",
+    "overdue" => "Overdue orders"
 //    "pending" => "Only with pending deliveries",
 //    "arrived" => "Only with arrived deliveries"
 );
@@ -245,16 +246,21 @@ if ($acl->checkModule('ordermgmt', 'view')) {
 
                         $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);
                         $filter = w2PgetCleanParam($_REQUEST, 'filter', 'open');
+                        $pagesize = w2PgetConfig('page_size', 50);
 
                         // Load list based on selected filter
                         switch($filter) {
                         case 'open':
-                            $ol = COrder::listOfOpenOrders($offset, w2PgetConfig('page_size', 50));
+                            $ol = COrder::listOfOpenOrders($offset, $pagesize);
                             $totalOrders = COrder::countOpenOrders();
                             break;
                         case 'all':
-                            $ol = COrder::createListFromDatabase($offset, w2PgetConfig('page_size', 50));
+                            $ol = COrder::createListFromDatabase($offset, $pagesize);
                             $totalOrders = COrder::countOrders();
+                            break;
+                        case 'overdue':
+                            $ol = COrder::listOverdueOrders($offset, $pagesize);
+                            $totalOrders = COrder::countOverdueOrders();
                             break;
                         default:
                             $ol = COrder::listOfOpenOrders($offset, w2PgetConfig('page_size', 50));

@@ -349,6 +349,46 @@ class COrder {
         return self::createListFromDatabase($start, $limit, $filter);
     }
 
+    public static function listOverdueOrders($start=0, $limit=10) {
+
+        // Fetch a list of overdue orders from the database
+        $query = new w2p_Database_Query();
+        $query->addTable(self::_TBL_PREFIKS_ . "_deliveries");
+        $query->addQuery('DISTINCT(order_id)');
+        $query->addWhere('end_date < NOW()');
+        $results = $query->loadList();
+
+        $overdueIds = array();
+        foreach($results as $row) {
+            $overdueIds[] = $row['order_id'];
+        }
+
+        // Fetch a list of open orders from the database
+        // Fetch ids from status list
+        global $db;
+        $query = 'SELECT s.*
+              FROM ordermgmt_status s
+              INNER JOIN (SELECT order_id, status_id, MAX(date_changed) as maxdate FROM ordermgmt_status GROUP BY order_id) sub
+              ON sub.order_id = s.order_id AND s.date_changed = sub.maxdate
+              WHERE NOT(s.status_id = 7) AND NOT(s.status_id = 3)
+              ORDER BY s.order_id';
+        $res = $db->Execute($query);
+
+        $indexed = $res->GetArray();
+        $openOrderIds = array();
+        foreach($indexed as $record) {
+            $openOrderIds[] = $record['order_id'];
+        }
+
+        $overdueAndOpen = array_intersect($overdueIds, $openOrderIds);
+
+        $filter = array(
+            'order_id' => $overdueAndOpen
+        );
+
+        return self::createListFromDatabase($start, $limit, $filter);
+    }
+
     /**
      * Creates an array of COrders based on a project id. This function returns
      * a number of orders specified by $limit and starting with record # $start
@@ -641,6 +681,21 @@ class COrder {
 
         $result = $query->loadHash();
         return intval($result['total']);
+    }
+
+    public static function countOverdueOrders(array $filter=array()) {
+
+        // Check acl
+        aclCheck('view', "Insufficient privilegies to view orders. Access denied");
+
+        // Fetch a list of overdue orders from the database
+        $query = new w2p_Database_Query();
+        $query->addTable(self::_TBL_PREFIKS_ . "_deliveries");
+        $query->addQuery('DISTINCT(order_id)');
+        $query->addWhere('end_date < NOW()');
+        $query->exec();
+
+        return count($query->loadList());
     }
 
     public static function countOpenOrders() {
