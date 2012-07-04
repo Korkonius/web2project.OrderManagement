@@ -1,20 +1,33 @@
+<style type="text/css">
+    table.componentlist {
+        width: 100%
+    }
+</style>
 <script type="text/javascript" src="./modules/ordermgmt/js/jquery.inlineEdit.min.js"></script>
 <table id="componenttable" class="tbl componentlist">
     <thead>
-        <tr><th colspan="4">Stored Components</th></tr>
+        <tr><th colspan="8">Stored Components</th></tr>
         <tr>
             <th>Catalog Number</th>
             <th>Name</th>
             <th>Supplier</th>
-            <th>Price</th>
+            <th>Price (seller)</th>
+            <th>Discount</th>
+            <th>Price (local)</th>
+            <th>Updated</th>
+            <th>Options</th>
         </tr>
     </thead>
     <tbody>
-        <tr id="component_[components.component_id;block=tr]" class="component">
+        <tr id="component_[components.component_id;block=tr]" class="component" title="[components.notes]">
             <td class="editableSingle componentNumber id[components.component_id]">[components.catalog_number]</td>
             <td class="editableSingle componentName id[components.component_id]">[components.description]</td>
             <td class="editableSingle componentSupplier id[components.component_id]">[components.supplier]</td>
-            <td class="editableSingle componentPrice id[components.component_id]">[components.local_price;frm='0,000.00']</td>
+            <td class="editableSingle componentVPrice id[components.component_id]">[components.vendor_price;frm='0,000.00'] [components.vendor_currency]</td>
+            <td class="editableSingle componentDiscount id[components.component_id]">[components.discount]</td>
+            <td class="componentLPrice">[components.local_price;frm='0,000.00']</td>
+            <td class="componentUpdated">[components.quote_date]</td>
+            <td class="componentOptions">None</td>
         </tr>
     </tbody>
 </table>
