@@ -281,6 +281,36 @@ class COrder {
     }
 
     /**
+     * Helper function to retrieve open order ids from the database
+     *
+     * @static
+     * @return array
+     */
+    private static function getOpenOrderIds() {
+
+        global $db; // Need this because of the following subquery
+
+        // Fetch ids from status list
+        $query = 'SELECT s.*
+              FROM ordermgmt_status s
+              INNER JOIN (SELECT order_id, status_id, MAX(date_changed) as maxdate FROM ordermgmt_status GROUP BY order_id) sub
+              ON sub.order_id = s.order_id AND s.date_changed = sub.maxdate
+              WHERE NOT(s.status_id = 7) AND NOT(s.status_id = 3)
+              ORDER BY s.order_id';
+        $res = $db->Execute($query);
+
+        $indexed = $res->GetArray();
+
+
+        $openOrderIds = array();
+        foreach($indexed as $record) {
+            $openOrderIds[] = $record['order_id'];
+        }
+
+        return $openOrderIds;
+    }
+
+    /**
      * Fetches a number of COrder objects from the database, starting with the
      * entry number given by $start and returning a maximum $number objects.
      * Less objects are returned when end of data is reached before $limit.
@@ -320,27 +350,20 @@ class COrder {
         return $retArray;
     }
 
+    /**
+     * Returns a list of orders from the database. The list is similar to the standard list but contains only orders
+     * that are open and has overdue deliveries.
+     *
+     * @static
+     * @param int $start
+     * @param int $limit
+     * @return COrder[]
+     */
     public static function listOfOpenOrders($start=0, $limit=10) {
 
-        // TODO w2p_Database_Query does not support subquery joins... This is hack is devoted to avoid that problem
         global $db;
 
-        // Fetch ids from status list
-        $query = 'SELECT s.*
-              FROM ordermgmt_status s
-              INNER JOIN (SELECT order_id, status_id, MAX(date_changed) as maxdate FROM ordermgmt_status GROUP BY order_id) sub
-              ON sub.order_id = s.order_id AND s.date_changed = sub.maxdate
-              WHERE NOT(s.status_id = 7) AND NOT(s.status_id = 3)
-              ORDER BY s.order_id';
-        $res = $db->Execute($query);
-
-        $indexed = $res->GetArray();
-
-
-        $openOrderIds = array();
-        foreach($indexed as $record) {
-            $openOrderIds[] = $record['order_id'];
-        }
+        $openOrderIds = self::getOpenOrderIds();
 
         $filter = array(
             'order_id' => $openOrderIds
@@ -349,6 +372,14 @@ class COrder {
         return self::createListFromDatabase($start, $limit, $filter);
     }
 
+    /**
+     * This function fetches and creates a list of orders that have overdue deliveries.
+     *
+     * @static
+     * @param int $start
+     * @param int $limit
+     * @return COrder[]
+     */
     public static function listOverdueOrders($start=0, $limit=10) {
 
         // Fetch a list of overdue orders from the database
@@ -364,21 +395,7 @@ class COrder {
         }
 
         // Fetch a list of open orders from the database
-        // Fetch ids from status list
-        global $db;
-        $query = 'SELECT s.*
-              FROM ordermgmt_status s
-              INNER JOIN (SELECT order_id, status_id, MAX(date_changed) as maxdate FROM ordermgmt_status GROUP BY order_id) sub
-              ON sub.order_id = s.order_id AND s.date_changed = sub.maxdate
-              WHERE NOT(s.status_id = 7) AND NOT(s.status_id = 3)
-              ORDER BY s.order_id';
-        $res = $db->Execute($query);
-
-        $indexed = $res->GetArray();
-        $openOrderIds = array();
-        foreach($indexed as $record) {
-            $openOrderIds[] = $record['order_id'];
-        }
+        $openOrderIds = self::getOpenOrderIds();
 
         $overdueAndOpen = array_intersect($overdueIds, $openOrderIds);
 
