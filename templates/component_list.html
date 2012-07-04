@@ -1,0 +1,20 @@
+<script type="text/javascript" src="./modules/ordermgmt/js/jquery.inlineEdit.min.js"></script>
+<table id="componenttable" class="tbl componentlist">
+    <thead>
+        <tr><th colspan="4">Stored Components</th></tr>
+        <tr>
+            <th>Catalog Number</th>
+            <th>Name</th>
+            <th>Supplier</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="component_[components.component_id;block=tr]" class="component">
+            <td class="editableSingle componentNumber id[components.component_id]">[components.catalog_number]</td>
+            <td class="editableSingle componentName id[components.component_id]">[components.description]</td>
+            <td class="editableSingle componentSupplier id[components.component_id]">[components.supplier]</td>
+            <td class="editableSingle componentPrice id[components.component_id]">[components.local_price;frm='0,000.00']</td>
+        </tr>
+    </tbody>
+</table>
