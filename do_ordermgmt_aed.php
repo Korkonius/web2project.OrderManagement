@@ -72,8 +72,11 @@ if (!empty($addOrder)) {
         $description = $cLabels[$i];
 
         // Validate parameters
-        $filter->patternVerification($price, CInputFilter::W2P_FILTER_NUMBERS);
+        $filter->patternVerification($price, CInputFilter::W2P_FILTER_PRICE);
         $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
+
+        // Make price understandable by the database
+        $price = COrder::dbsafeNumber($price);
         
         // TODO: Same issue as with the status comment
         $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
@@ -105,9 +108,12 @@ if(!empty($addComponents)) {
         $description = $cLabels[$i];
 
         // Validate parameters
-        $filter->patternVerification($price, CInputFilter::W2P_FILTER_NUMBERS);
+        $filter->patternVerification($price, CInputFilter::W2P_FILTER_PRICE);
         $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
-        
+
+        // Make price understandable by the database
+        $price = COrder::dbsafeNumber($price);
+
         // TODO: Same issue as with the status comment
         $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
 

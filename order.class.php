@@ -752,6 +752,14 @@ class COrder {
 
         return implode(' AND ', $parts);
     }
+
+    public static function dbsafeNumber($value) {
+
+        // Should work in most countries, except SEA
+        $value = str_replace(' ', '', $value);
+        $value = str_replace(',', '.', $value);
+        return $value;
+    }
 }
 
 

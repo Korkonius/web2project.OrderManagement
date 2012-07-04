@@ -14,6 +14,7 @@ class CInputFilter {
     const W2P_FILTER_LETTERS = '/^[a-zæøåA-ZÆØÅ]*$/';
     const W2P_FILTER_LETTERS_OR_NUMBERS = '/^[a-zæøåA-ZÆØÅ\.\ 0-9,]*$/';
     const W2P_FILTER_NUMBERS = '/^[0-9\.,]*$/';
+    const W2P_FILTER_PRICE = '/^([0-9,.\ ]+(\.,[0-9]{2})?)$/';
 
     /**
      * Checks the given string against the specified pattern using preg_match.
