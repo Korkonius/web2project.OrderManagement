@@ -1,33 +1,46 @@
 <style type="text/css">
-    table.componentlist {
-        width: 100%
+    @import "./modules/ordermgmt/js/dojox/grid/resources/claroGrid.css";
+    #componenttable {
+        width: inherit;
+        height: 600px;
     }
 </style>
-<script type="text/javascript" src="./modules/ordermgmt/js/jquery.inlineEdit.min.js"></script>
-<table id="componenttable" class="tbl componentlist">
-    <thead>
-        <tr><th colspan="8">Stored Components</th></tr>
-        <tr>
-            <th>Catalog Number</th>
-            <th>Name</th>
-            <th>Supplier</th>
-            <th>Price (seller)</th>
-            <th>Discount</th>
-            <th>Price (local)</th>
-            <th>Updated</th>
-            <th>Options</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr id="component_[components.component_id;block=tr]" class="component" title="[components.notes]">
-            <td class="editableSingle componentNumber id[components.component_id]">[components.catalog_number]</td>
-            <td class="editableSingle componentName id[components.component_id]">[components.description]</td>
-            <td class="editableSingle componentSupplier id[components.component_id]">[components.supplier]</td>
-            <td class="editableSingle componentVPrice id[components.component_id]">[components.vendor_price;frm='0,000.00'] [components.vendor_currency]</td>
-            <td class="editableSingle componentDiscount id[components.component_id]">[components.discount]</td>
-            <td class="componentLPrice">[components.local_price;frm='0,000.00']</td>
-            <td class="componentUpdated">[components.quote_date]</td>
-            <td class="componentOptions">None</td>
-        </tr>
-    </tbody>
-</table>
+<script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+<script type="text/javascript">
+    var grid, dataStore;
+    require(["dojox/grid/DataGrid", "dojo/store/Memory","dojo/data/ObjectStore", "dojo/_base/xhr", "dojo/domReady!"],
+            function(DataGrid, Memory, ObjectStore, xhr) {
+
+                function createOptions(item) {
+                    return "<button>Dummy</button>";
+                }
+
+                xhr.get({
+                    url: "?m=ordermgmt&a=cedit&field=get&suppressHeaders=true",
+                    handleAs: "json"
+                }).then(function(data) {
+                        dataStore = new ObjectStore({objectStore: new Memory({data: data.items})});
+
+                        grid = new DataGrid({
+                            store: dataStore,
+                            query: {id: "*"},
+                            queryOptions: {},
+                            structure: [
+                                {name: "Catalog Number", field: "catalog_number", width: "5%"},
+                                {name: "Part Name", field: "description", width: "15%"},
+                                {name: "Wet Material", field: "wet_material", width: "3%"},
+                                {name: "Brand", field: "brand", width: "5%"},
+                                {name: "Supplier", field: "supplier", width: "7%"},
+                                {name: "Options", field: "component_id", width: "2%", formatter: createOptions}
+                            ]
+                        }, "componenttable");
+                        grid.startup();
+                    });
+            }
+    );
+
+</script>
+        <div id="componentContainer">
+            <div id="componenttable">
+            </div>
+        </div>
