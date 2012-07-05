@@ -27,7 +27,7 @@
 </div>
 <script type="text/javascript">
 
-    require(['dijit/form/TextBox', 'dojo/behavior', 'dijit/Dialog']);
+    require(['dijit/form/TextBox','dijit/form/Button', 'dojo/behavior', 'dijit/Dialog']);
 
     // Scripts that initialize dialogs
     var editDialog, newDialog;
@@ -40,6 +40,24 @@
                         placeholder: dojo.getAttr(box, 'title'),
                         title: dojo.getAttr(box, 'title')
                     }, dojo.getAttr(box, 'id'));
+                }
+            },
+            '#componentEditSubmit': { // Since it is an ID expect one and register callback
+                found: function(button) {
+                    new dijit.form.Button({
+                        label: "Save",
+                        onClick: function() {
+                            alert("Submit data here!");
+                        }
+                    }, dojo.getAttr(button, 'id'));
+                }
+            },
+            '#componentNewButton': {
+                found: function(button) {
+                    new dijit.form.Button({
+                        label: "New Component",
+                        onClick: openNewDialog
+                    }, dojo.getAttr(button, 'id'));
                 }
             }
         });
@@ -55,7 +73,30 @@
             style: "width:1024px;"
         });
     }
+
+    // Populate the dialog with values from the row that was selected
     function openEditDialog(item) {
+        var row = grid.getItem(item);
+        var id = row["component_id"];
+        dijit.byId("componentEditNumber").set('value', row["catalog_number"]);
+        dijit.byId("componentEditName").set('value', row["description"]);
+        dijit.byId("componentEditMaterial").set('value', row["wet_material"]);
+        dijit.byId("componentEditBrand").set('value', row["brand"]);
+        dijit.byId("componentEditSupplier").set('value', row["supplier"]);
+        dijit.byId("componentEditSubmit").set('value', row["component_id"]);
+        editDialog.attr('title', "Editing item #" + id);
+        editDialog.show();
+    }
+
+    // Clear the dialog and set the id to new to signal new component
+    function openNewDialog() {
+        dijit.byId("componentEditNumber").set('value', '');
+        dijit.byId("componentEditName").set('value', '');
+        dijit.byId("componentEditMaterial").set('value', '');
+        dijit.byId("componentEditBrand").set('value', '');
+        dijit.byId("componentEditSupplier").set('value', '');
+        dijit.byId("componentEditSubmit").set('value', '');
+        editDialog.attr('title', "New component");
         editDialog.show();
     }
 
@@ -63,9 +104,10 @@
     require(["dojox/grid/DataGrid", "dojo/store/Memory","dojo/data/ObjectStore", "dojo/_base/xhr", "dojo/domReady!"],
             function(DataGrid, Memory, ObjectStore, xhr) {
 
-                function createOptions(item) {
-                    return "<button onclick=\"openEditDialog(1)\"><img src=\"./modules/ordermgmt/images/cog_edit.png\" title=\"Edit Component\" alt=\"Edit Component\"/></button>" +
-                           "<button onclick=\"alert('tes2')\"><img src=\"./modules/ordermgmt/images/cog_delete.png\" title=\"Remove Component\" alt=\"Remove Component\" /></button>";
+                function createOptions(item, index) {
+
+                    return "<button onclick=\"openEditDialog(" + index + ")\"><img src=\"./modules/ordermgmt/images/cog_edit.png\" title=\"Edit Component\" alt=\"Edit Component\"/></button>" +
+                           "<button onclick=\"confirm(\"Are you sure you want to delete this item?\")\"><img src=\"./modules/ordermgmt/images/cog_delete.png\" title=\"Remove Component\" alt=\"Remove Component\" /></button>";
                 }
 
                 xhr.get({
@@ -97,6 +139,9 @@
     });
 
 </script>
+        <button id="componentNewButton">
+            New Component
+        </button>
         <div id="componentContainer">
             <div id="componenttable">
             </div>
