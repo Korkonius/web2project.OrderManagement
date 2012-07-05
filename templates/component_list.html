@@ -47,7 +47,30 @@
                     new dijit.form.Button({
                         label: "Save",
                         onClick: function() {
-                            alert("Submit data here!");
+
+                            // Set up and perform XHR request
+                            var xhrParam = {
+                                url: "?m=ordermgmt&suppressHeaders=true&a=cedit",
+                                handleAs: 'json',
+                                preventCache: true,
+                                content: {
+                                    componentNumber: dijit.byId("componentEditNumber").get('value'),
+                                    componentName: dijit.byId("componentEditName").get('value'),
+                                    componentMaterial: dijit.byId("componentEditMaterial").get('value'),
+                                    componentBrand: dijit.byId("componentEditBrand").get('value'),
+                                    componentSupplier: dijit.byId("componentEditSupplier").get('value'),
+                                    componentId: dijit.byId("componentEditSubmit").get('value')
+                                },
+                                error: function(error) {
+                                    alert("Failed to store data! Server said: " + error);
+                                },
+                                load: function(data) {
+                                    alert("Data stored on server!");
+                                }
+                            }
+
+                            // Preform the XHR to send data to the server
+                            dojo.xhrPost(xhrParam);
                         }
                     }, dojo.getAttr(button, 'id'));
                 }
@@ -111,7 +134,7 @@
                 }
 
                 xhr.get({
-                    url: "?m=ordermgmt&a=cedit&field=get&suppressHeaders=true",
+                    url: "?m=ordermgmt&a=cedit&op=get&suppressHeaders=true",
                     handleAs: "json"
                 }).then(function(data) {
                         dataStore = new ObjectStore({objectStore: new Memory({data: data.items})});
