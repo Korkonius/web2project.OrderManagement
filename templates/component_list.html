@@ -6,13 +6,66 @@
     }
 </style>
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+<div id="editComponentDialog" title="Edit Component" data-dojo-type="">
+    <table>
+        <tr>
+            <td><label for="componentEditNumber">Catalog #:</label></td>
+            <td><input id="componentEditNumber" class="textbutton" title="Catalog Number"/></td>
+            <td><label for="componentEditName">Part Name:</label></td>
+            <td colspan="4"><input id="componentEditName" class="textbutton" title="Component Name"/></td>
+        </tr>
+        <tr>
+            <td><label for="componentEditMaterial">Wet Material:</label></td>
+            <td><input id="componentEditMaterial" class="textbutton" title="Material"/></td>
+            <td><label for="componentEditBrand">Brand:</label></td>
+            <td><input id="componentEditBrand" class="textbutton" title="Brand"/></td>
+            <td><label for="componentEditSupplier">Supplier: </label></td>
+            <td><input id="componentEditSupplier" class="textbutton" title="Supplier"/></td>
+            <td><button id="componentEditSubmit" class="submitbutton">Ok</button></td>
+        </tr>
+    </table>
+</div>
 <script type="text/javascript">
+
+    require(['dijit/form/TextBox', 'dojo/behavior', 'dijit/Dialog']);
+
+    // Scripts that initialize dialogs
+    var editDialog, newDialog;
+    function initEditDialog() {
+        dojo.behavior.add({
+            '.textbutton': {
+                found: function(box) {
+                    new dijit.form.TextBox({
+                        name: dojo.getAttr(box, 'id'),
+                        placeholder: dojo.getAttr(box, 'title'),
+                        title: dojo.getAttr(box, 'title')
+                    }, dojo.getAttr(box, 'id'));
+                }
+            }
+        });
+
+        // Apply behavior
+        dojo.behavior.apply();
+
+        // Init dialog
+        var dialogContent = dojo.byId('editComponentDialog');
+        editDialog = new dijit.Dialog({
+            title: dojo.getAttr(dialogContent, 'title'),
+            content: dialogContent,
+            style: "width:1024px;"
+        });
+    }
+    function openEditDialog(item) {
+        editDialog.show();
+    }
+
     var grid, dataStore;
     require(["dojox/grid/DataGrid", "dojo/store/Memory","dojo/data/ObjectStore", "dojo/_base/xhr", "dojo/domReady!"],
             function(DataGrid, Memory, ObjectStore, xhr) {
 
                 function createOptions(item) {
-                    return "<button>Dummy</button>";
+                    return "<button onclick=\"openEditDialog(1)\"><img src=\"./modules/ordermgmt/images/cog_edit.png\" title=\"Edit Component\" alt=\"Edit Component\"/></button>" +
+                           "<button onclick=\"alert('tes2')\"><img src=\"./modules/ordermgmt/images/cog_delete.png\" title=\"Remove Component\" alt=\"Remove Component\" /></button>";
                 }
 
                 xhr.get({
@@ -38,6 +91,10 @@
                     });
             }
     );
+
+    dojo.ready(function() {
+        initEditDialog();
+    });
 
 </script>
         <div id="componentContainer">
