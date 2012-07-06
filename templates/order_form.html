@@ -1,3 +1,4 @@
+<script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <style type="text/css">
     div#orderFormContainer {
         margin: 0 auto;
@@ -58,37 +59,44 @@
     }
 </style>
 <link rel="stylesheet" type="text/css" href="modules/ordermgmt/chosen.css" />
-<script type="text/javascript" src="modules/ordermgmt/js/chosen.jquery.min.js"></script>
 <script type="text/javascript">
-    var defaultComponents = [];
-    var dataLoaded = false;
-    $(document).ready(function(){
-               
-        // Register new component action
-        $("#newComponentBtn").click(function(e){
-           var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/><input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/><input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/></div>';
-           $(this).before(newHtml);
-        });
-        
-        // Load default components using Ajax
-        $.ajax('index.php?m=ordermgmt&getDefaultJSON=true&suppressHeaders=true',{
-            success: function(data, status, xhr) {
-                defaultComponents = $.parseJSON(data);
-                dataLoaded = true;
-            },
-            error: function(xhr, status, httpError) {
-                $('#orderForm').insertBefore('<div style="color: red">Error: ' + status + ' occurred...');
-            }
-        });
-        
-        // Enable chosen
-        $("#defaultComponentSelect").chosen();
-        $("#defaultComponentSelect").chosen().change(function(e){
-           var component = defaultComponents[$("#defaultComponentSelect").val()];
-           var newHtml = '<div class="componentFormLine"><input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount" value="1"/>'+
-               '<input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price" value="'+ component.local_price +'"/>'+
-               '<input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description" value="' + component.description + '"/></div>';
-           $(this).before(newHtml);
+
+    // Fetch dependencies and init select list
+    var select;
+    require(['dojo/ready', 'dojo/dom', 'dojo/store/Memory', "dojo/data/ObjectStore", "dojo/_base/xhr", 'dijit/form/FilteringSelect'],
+    function(ready, dom, Memory, ObjectStore, xhr, FilteringSelect) {
+        xhr.get({
+            url: "?m=ordermgmt&a=cedit&op=getfilterlist&suppressHeaders=true",
+            handleAs: "json"
+        }).then(function(data) {
+
+            store = new ObjectStore({objectStore: new Memory({data: data.items})});
+            select = new FilteringSelect({
+                id: "defaultComponentSelect",
+                name: "defaultComponentSelect",
+                queryExpr: "*${0}*",
+                autoComplete: false,
+                "store": store,
+                searchAttr: "list_name",
+                labelAttr: "list_display",
+                labelType: "html",
+                onChange: function(item) {
+
+                    // Fetch item data
+                    var string = this.item.list_short;
+                    var price  = this.item.price;
+
+                    // Create new set of nodes
+                    var container  = dojo.create('div', {class: "componentFormLine"});
+                    var amountNode = dojo.create('input', {class: "componentAmount", type: "text", name: "componentAmount[]", value: "1"}, container);
+                    var priceNode  = dojo.create('input', {class: "componentPrice", type: "text", name: "componentPrice[]", value: price}, container);
+                    var nameNode   = dojo.create('input', {class: "componentLabel", type: "text", name: "componentLabel[]", value: string}, container);
+
+                    // Insert into DOM
+                    dojo.place(container, dojo.byId("componentFormList"), "first");
+                    select.set('value', '');
+                }
+            }, dom.byId("defaultComponentSelect"));
         });
     });
 </script>
@@ -112,11 +120,7 @@
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
                 <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
-            <select id="defaultComponentSelect" name="defaultComponents">
-                <option value="-1">Blank Component</option>
-                <optgroup label="Supplier: [defaultComponents.supplier;block=optgroup;parentgrp=supplier]">
-                    <option value="[defaultComponents.component_id;block=option]">[defaultComponents.description;block=option] :: [defaultComponents.local_price]kr</option>
-                </optgroup>
+            <select id="defaultComponentSelect" name="defaultComponents" style="width: 600px">
             </select>
             <button type="button" name="newComponentBtn" id="newComponentBtn"><img src="./modules/ordermgmt/images/new.png" alt="New Component" />New Component</button>
         </div>

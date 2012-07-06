@@ -29,6 +29,28 @@ switch($op){
             "items" => $components
         ));
         break;
+    case "getfilterlist":
+        $components = COrderComponent::getDefaultComponentList();
+        $listItems = array();
+        foreach($components as $component) {
+
+            $number = $component['catalog_number'];
+            $description = $component['description'];
+            $brand = $component['brand'];
+            $supplier = $component['supplier'];
+
+            $listItems[] = array(
+                "id"            => $component['component_id'],
+                "list_name"     => "$number $description $brand $name",
+                "list_display"  => "<i>$number</i> :: <strong>$description</strong> :: <span style='color: silver'>$brand by $supplier</span>",
+                "list_short"    => "$number $description",
+                "price"         => $component["local_price"]
+            );
+        }
+        echo json_encode(array(
+            "items" => $listItems
+        ));
+        break;
     case "edit":
 
         // Get additional info
