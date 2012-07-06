@@ -4,6 +4,9 @@
         width: inherit;
         height: 600px;
     }
+    .claro .dojoxGridCell {
+        padding: 0px 5px;
+    }
 </style>
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <div id="editComponentDialog" title="Edit Component" data-dojo-type="">
@@ -99,10 +102,12 @@
                                     componentId: dijit.byId("componentEditSubmit").get('value')
                                 },
                                 error: function(error) {
+                                    editDialog.hide();
                                     alert("Failed to store data! Server said: " + error);
                                 },
                                 load: function(data) {
-                                    alert("Data stored on server! Reply was: " + data.message);
+                                    editDialog.hide();
+                                    window.location.href = window.location.href;
                                 }
                             }
 
@@ -192,7 +197,7 @@
                 alert("Failed to remove data! Server said: " + error);
             },
             load: function(data) {
-                alert("Data removed! Reply was: " + data.message);
+                window.location.href = window.location.href;
             }
         }
         dojo.xhrPost(xhrParam);
@@ -244,6 +249,7 @@
                             store: dataStore,
                             query: {id: "*"},
                             queryOptions: {},
+                            sortInfo: -8,
                             structure: [
                                 {name: "Options", field: "component_id", width: "3%", formatter: createOptions},
                                 {name: "Catalog Number", field: "catalog_number", width: "5%"},
