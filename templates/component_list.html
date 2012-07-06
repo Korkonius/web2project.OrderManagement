@@ -21,13 +21,27 @@
             <td><input id="componentEditBrand" class="textbutton" title="Brand"/></td>
             <td><label for="componentEditSupplier">Supplier: </label></td>
             <td><input id="componentEditSupplier" class="textbutton" title="Supplier"/></td>
+        </tr>
+        <tr>
+            <td><label for="componentEditPrice">Price:</label></td>
+            <td><input id="componentEditPrice" class="currencybutton" /></td>
+            <td><label for="componentEditCurrency">Currency:</label></td>
+            <td><input id="componentEditCurrency" class="textbutton" title="NOK, USD, EUR etc."></td>
+            <td><label for="componentEditDiscount">Discount:</label></td>
+            <td><input id="componentEditDiscount" class="fracbutton"></td>
+            <td><label for="componentEditRate">Exchange Rate:</label><img src="./modules/ordermgmt/images/money.png" alt="Get Rate" title="Get from OpenExchangeRates.org!" id="moneyfetch"/></td>
+            <td><input id="componentEditRate" class="fracbutton"></td>
+        </tr>
+        <tr>
+            <td><label for="componentEditNotes">Notes:</label></td>
+            <td colspan="4"><input id="componentEditNotes" class="textbutton" title="Misc. notes" /></td>
             <td><button id="componentEditSubmit" class="submitbutton">Ok</button></td>
         </tr>
     </table>
 </div>
 <script type="text/javascript">
 
-    require(['dijit/form/TextBox','dijit/form/Button', 'dojo/behavior', 'dijit/Dialog']);
+    require(['dijit/form/TextBox','dijit/form/Button', 'dijit/form/CurrencyTextBox', 'dojo/behavior', 'dijit/Dialog', 'dojo/io/script']);
 
     // Scripts that initialize dialogs
     var editDialog, newDialog;
@@ -42,6 +56,24 @@
                     }, dojo.getAttr(box, 'id'));
                 }
             },
+            '.currencybutton': {
+                found: function(box) {
+                    new dijit.form.CurrencyTextBox({
+                        name: dojo.getAttr(box, 'id'),
+                        value: 0.00,
+                        currency: ' ',
+                        title: dojo.getAttr(box, 'title')
+                    }, dojo.getAttr(box, 'id'));
+                }
+            },
+            '.fracbutton': {
+                found: function(box) {
+                    new dijit.form.NumberTextBox({
+                        name: dojo.getAttr(box, 'id'),
+                        value: Number(1.00)
+                    }, dojo.getAttr(box, 'id'));
+                }
+            },
             '#componentEditSubmit': { // Since it is an ID expect one and register callback
                 found: function(button) {
                     new dijit.form.Button({
@@ -50,7 +82,7 @@
 
                             // Set up and perform XHR request
                             var xhrParam = {
-                                url: "?m=ordermgmt&suppressHeaders=true&a=cedit",
+                                url: "?m=ordermgmt&suppressHeaders=true&a=cedit&op=edit",
                                 handleAs: 'json',
                                 preventCache: true,
                                 content: {
@@ -65,7 +97,7 @@
                                     alert("Failed to store data! Server said: " + error);
                                 },
                                 load: function(data) {
-                                    alert("Data stored on server!");
+                                    alert("Data stored on server! Reply was: " + data.message);
                                 }
                             }
 
@@ -95,6 +127,9 @@
             content: dialogContent,
             style: "width:1024px;"
         });
+
+        // Connect additional event handlers
+        dojo.connect(dojo.byId("moneyfetch"), "onclick", fetchExchangeRate);
     }
 
     // Populate the dialog with values from the row that was selected
@@ -106,8 +141,13 @@
         dijit.byId("componentEditMaterial").set('value', row["wet_material"]);
         dijit.byId("componentEditBrand").set('value', row["brand"]);
         dijit.byId("componentEditSupplier").set('value', row["supplier"]);
+        dijit.byId("componentEditPrice").set('value', row["vendor_price"]);
+        dijit.byId("componentEditCurrency").set('value', row["vendor_currency"]);
+        dijit.byId("componentEditDiscount").set('value', row["discount"]);
+        dijit.byId("componentEditNotes").set('value', row["notes"]);
+        dijit.byId("componentEditRate").set('value', row["exchange_rate"]);
         dijit.byId("componentEditSubmit").set('value', row["component_id"]);
-        editDialog.attr('title', "Editing item #" + id);
+        editDialog.set('title', "Editing item #" + id);
         editDialog.show();
     }
 
@@ -118,9 +158,36 @@
         dijit.byId("componentEditMaterial").set('value', '');
         dijit.byId("componentEditBrand").set('value', '');
         dijit.byId("componentEditSupplier").set('value', '');
+        dijit.byId("componentEditPrice").set('value', '');
+        dijit.byId("componentEditCurrency").set('value', '');
+        dijit.byId("componentEditDiscount").set('value', '');
+        dijit.byId("componentEditNotes").set('value', '');
+        dijit.byId("componentEditRate").set('value', '');
         dijit.byId("componentEditSubmit").set('value', '');
-        editDialog.attr('title', "New component");
+        editDialog.set('title', "New component");
         editDialog.show();
+    }
+
+    function fetchExchangeRate() {
+        var xhrParam = {
+            url: "http://openexchangerates.org/latest.json?callback=handleRates"
+        }
+        dojo.io.script.get(xhrParam);
+    }
+
+    function handleRates(data) {
+
+        // Base on openexchangerates.org is USD, change to NOK
+        var localCurr = "NOK";
+        var base = data.rates[localCurr];
+
+        // Fetch currency from field
+        var curr = dijit.byId("componentEditCurrency").get('value');
+        var rate = data.rates[curr];
+        if(rate == undefined) return 0; // Unknown rate!
+        else {
+            dijit.byId("componentEditRate").set('value', base/rate);
+        }
     }
 
     var grid, dataStore;
@@ -131,6 +198,10 @@
 
                     return "<button onclick=\"openEditDialog(" + index + ")\"><img src=\"./modules/ordermgmt/images/cog_edit.png\" title=\"Edit Component\" alt=\"Edit Component\"/></button>" +
                            "<button onclick=\"confirm(\"Are you sure you want to delete this item?\")\"><img src=\"./modules/ordermgmt/images/cog_delete.png\" title=\"Remove Component\" alt=\"Remove Component\" /></button>";
+                }
+
+                function currencyFormatter(item) {
+                    return parseFloat(item).toFixed(2) + " NOK";
                 }
 
                 xhr.get({
@@ -144,12 +215,14 @@
                             query: {id: "*"},
                             queryOptions: {},
                             structure: [
+                                {name: "Options", field: "component_id", width: "3%", formatter: createOptions},
                                 {name: "Catalog Number", field: "catalog_number", width: "5%"},
                                 {name: "Part Name", field: "description", width: "15%"},
                                 {name: "Wet Material", field: "wet_material", width: "3%"},
                                 {name: "Brand", field: "brand", width: "5%"},
                                 {name: "Supplier", field: "supplier", width: "7%"},
-                                {name: "Options", field: "component_id", width: "2%", formatter: createOptions}
+                                {name: "Price (NOK)", field: "local_price", width: "3%", formatter: currencyFormatter},
+                                {name: "Updated", field: "quote_date", width: "4%"}
                             ]
                         }, "componenttable");
                         grid.startup();
