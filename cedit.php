@@ -27,14 +27,74 @@ switch($op){
 
         // Fetch all parameters from client
         $id = w2PgetParam($_POST, 'componentId');
+        $number = w2PgetParam($_POST, 'componentNumber');
         $description = w2PgetParam($_POST, 'componentName');
         $material = w2PgetParam($_POST, 'componentMaterial');
         $brand = w2PgetParam($_POST, 'componentBrand');
         $supplier = w2PgetParam($_POST, 'componentSupplier');
+        $vendorPrice = w2PgetParam($_POST, 'componentPrice');
+        $currency = w2PgetParam($_POST, 'componentCurrency');
+        $vendorDiscount = w2PgetParam($_POST, 'componentDiscount');
+        $vendorRate = w2PgetParam($_POST, 'componentRate');
+        $vendorNotes = w2PgetParam($_POST, 'componentNotes');
 
+        // Make sure all input is clean
+        $filter->patternVerification($id, CInputFilter::W2P_FILTER_NUMBERS);
+        $filter->patternVerification($number, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($description, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($material, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($brand, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($supplier, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($vendorPrice, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($currency, CInputFilter::W2P_FILTER_LETTERS);
+        $filter->patternVerification($vendorDiscount, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($vendorRate, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $filter->patternVerification($vendorNotes, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+
+        // Compute local price
+        $localPrice = ($vendorPrice*$vendorDiscount)*$vendorRate;
+
+        // If id is set to 'new' insert component, data should be clean now
+        if($id === '0') {
+            $query = new w2p_Database_Query();
+            $data = array(
+                'description'       => $description,
+                'brand'             => $brand,
+                'catalog_number'    => $number,
+                'wet_material'      => $material,
+                'supplier'          => $supplier,
+                'vendor_price'      => $vendorPrice,
+                'vendor_currency'   => $currency,
+                'exchange_rate'     => $vendorRate,
+                'discount'          => $vendorDiscount,
+                'local_price'       => $localPrice,
+                'notes'             => $vendorNotes
+            );
+
+            $id = $query->insertArray(COrder::_TBL_PREFIKS_ . "_default_components", $data);
+        }
+        // Update an existing id
+        else {
+            $query = new w2p_Database_Query();
+            $data = array(
+                'component_id'      => $id,
+                'description'       => $description,
+                'brand'             => $brand,
+                'catalog_number'    => $number,
+                'wet_material'      => $material,
+                'supplier'          => $supplier,
+                'vendor_price'      => $vendorPrice,
+                'vendor_currency'   => $currency,
+                'exchange_rate'     => $vendorRate,
+                'discount'          => $vendorDiscount,
+                'local_price'       => $localPrice,
+                'notes'             => $vendorNotes
+            );
+            $query->updateArray(COrder::_TBL_PREFIKS_ . "_default_components", $data, 'component_id');
+        }
 
         // Reply to client
         echo json_encode(array(
-            "message" => "Recieved #" . $id
+            "message" => "Successfully updated #" . $id
         ));
 }
