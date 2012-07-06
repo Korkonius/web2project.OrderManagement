@@ -1,4 +1,5 @@
 <?php
+// TODO Implement proper ACL checks
 class COrderDelivery
 {
     public $delivery_id;
@@ -17,6 +18,15 @@ class COrderDelivery
         $this->delivery_start_date = $delivery_start_date;
         $this->company = $company;
         $this->arrived = $arrived;
+    }
+
+    public function delete() {
+
+        $query = new w2p_Database_Query();
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_deliveries");
+        $query->addWhere("delivery_id = $this->delivery_id");
+
+        return $query->exec();
     }
 
     public function isOverdue() {
@@ -79,7 +89,7 @@ class COrderDelivery
 
         // Fetch a single delivery from database
         $filter = array(
-            delivery_id => $deliveryId
+            "delivery_id" => $deliveryId
         );
         $result = self::fetchFromDeliveryTbl($filter);
 

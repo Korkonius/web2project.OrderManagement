@@ -222,6 +222,11 @@ class COrder {
             $c->delete();
         }
 
+        $deliveries = $this->getDeliveries();
+        foreach ($deliveries as $d) {
+            $d->delete();
+        }
+
         // Dereference files
         $q = new w2p_Database_Query();
         $q->setDelete(self::_TBL_PREFIKS_ . '_files');
