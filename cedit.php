@@ -67,10 +67,10 @@ switch($op){
 
         // Make sure all input is clean
         $filter->patternVerification($number, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
-        $filter->patternVerification($description, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
-        $filter->patternVerification($material, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
-        $filter->patternVerification($brand, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
-        $filter->patternVerification($supplier, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $description = $filter->removeUnsafeAttributes($description);
+        $material = $filter->removeUnsafeAttributes($material);
+        $brand = $filter->removeUnsafeAttributes($brand);
+        $supplier = $filter->removeUnsafeAttributes($supplier);
         $filter->patternVerification($vendorPrice, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($currency, CInputFilter::W2P_FILTER_LETTERS);
         $filter->patternVerification($vendorDiscount, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
