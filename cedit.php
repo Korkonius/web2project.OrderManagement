@@ -16,6 +16,12 @@ $componentId = w2PgetParam($_GET, 'cid', null);
 //if(empty($componentId) || !$filter->patternVerification($componentId, CInputFilter::W2P_FILTER_NUMBERS)) die;
 
 $op = w2PgetParam($_GET, 'op');
+
+// Fetch all parameters from client
+$id = w2PgetParam($_POST, 'componentId');
+$filter->patternVerification($id, CInputFilter::W2P_FILTER_NUMBERS);
+
+
 switch($op){
     case "get": // TODO Mode ACL checks into these methods to have more granulated access control...
         $components = COrderComponent::getDefaultComponentList();
@@ -25,8 +31,7 @@ switch($op){
         break;
     case "edit":
 
-        // Fetch all parameters from client
-        $id = w2PgetParam($_POST, 'componentId');
+        // Get additional info
         $number = w2PgetParam($_POST, 'componentNumber');
         $description = w2PgetParam($_POST, 'componentName');
         $material = w2PgetParam($_POST, 'componentMaterial');
@@ -39,7 +44,6 @@ switch($op){
         $vendorNotes = w2PgetParam($_POST, 'componentNotes');
 
         // Make sure all input is clean
-        $filter->patternVerification($id, CInputFilter::W2P_FILTER_NUMBERS);
         $filter->patternVerification($number, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($description, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($material, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
@@ -97,4 +101,18 @@ switch($op){
         echo json_encode(array(
             "message" => "Successfully updated #" . $id
         ));
+        break;
+    case "remove":
+
+        // Remove command received delete from database
+        $query = new w2p_Database_Query();
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_default_components");
+        $query->addWhere('component_id = ' . $id);
+        $query->exec();
+
+        // Reply to client
+        echo json_encode(array(
+            "message" => "Successfully removed #" . $id
+        ));
+        break;
 }
