@@ -565,12 +565,24 @@ class COrder {
         return $this->files;
     }
 
+    /**
+     * Wrapper for the COrderDelivery::createNewDelivery. Creates a new delivery automatically assosiated with this
+     * order.
+     *
+     * @param $companyId
+     * @param $startDate
+     * @param $endDate
+     * @return int
+     */
     public function addDelivery($companyId, $startDate, $endDate) {
 
         // Create new delivery with this task id
         return COrderDelivery::createNewDelivery($this->id, $companyId, $startDate, $endDate);
     }
 
+    /**
+     * Provides lazy loading for deliveries.
+     */
     protected function loadDeliveries() {
 
         // Check acl
@@ -602,6 +614,11 @@ class COrder {
         return $this->components;
     }
 
+    /**
+     * Fetches an array of all deliveries associated with this order
+     *
+     * @return array
+     */
     public function getDeliveries() {
 
         // Check acl
@@ -634,7 +651,13 @@ class COrder {
 
         return $tot;
     }
-    
+
+    /**
+     * Provides a nicely formatted id based on the pattern defined in COrder. Used to produce nice order ids with a
+     * proper format in views
+     *
+     * @return string
+     */
     public function getFormattedId() {
         return sprintf(self::ID_FORMAT, $this->id);
     }
@@ -691,6 +714,13 @@ class COrder {
         return $q->insertArray(self::_TBL_PREFIKS_ . '_files', $h);
     }
 
+    /**
+     * Counts all order is the database
+     *
+     * @static
+     * @param array $filter
+     * @return int
+     */
     public static function countOrders(array $filter=array()) {
 
         // Check acl
@@ -705,6 +735,13 @@ class COrder {
         return intval($result['total']);
     }
 
+    /**
+     * Provides a count of all overdue orders
+     *
+     * @static
+     * @param array $filter
+     * @return int
+     */
     public static function countOverdueOrders(array $filter=array()) {
 
         // Check acl
@@ -720,6 +757,12 @@ class COrder {
         return count($query->loadList());
     }
 
+    /**
+     * Provides a count of all open orders
+     *
+     * @static
+     * @return int
+     */
     public static function countOpenOrders() {
 
         global $db;
@@ -737,6 +780,13 @@ class COrder {
         return intval($rows[0]['count']);
     }
 
+    /**
+     * Provides a shared way to add where clauses to queries in this class
+     *
+     * @static
+     * @param array $conditions
+     * @return string
+     */
     protected static function buildWhereFromArray(array $conditions) {
 
         // Loop through conditions and create a string from all
@@ -758,6 +808,13 @@ class COrder {
         return implode(' AND ', $parts);
     }
 
+    /**
+     * Clears spaces and commas from number strings to make them db safe.
+     *
+     * @static
+     * @param $value
+     * @return mixed
+     */
     public static function dbsafeNumber($value) {
 
         // Should work in most countries, except SEA
