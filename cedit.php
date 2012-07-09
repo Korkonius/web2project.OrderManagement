@@ -66,7 +66,7 @@ switch($op){
         $vendorNotes = w2PgetParam($_POST, 'componentNotes');
 
         // Make sure all input is clean
-        $filter->patternVerification($number, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
+        $number = $filter->removeUnsafeAttributes($number);
         $description = $filter->removeUnsafeAttributes($description);
         $material = $filter->removeUnsafeAttributes($material);
         $brand = $filter->removeUnsafeAttributes($brand);
