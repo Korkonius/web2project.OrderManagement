@@ -80,9 +80,10 @@ switch($op){
         // Compute local price
         $localPrice = ($vendorPrice*$vendorDiscount)*$vendorRate;
 
+        $query = new w2p_Database_Query();
+
         // If id is set to 'new' insert component, data should be clean now
         if($id === '0') {
-            $query = new w2p_Database_Query();
             $data = array(
                 'description'       => $description,
                 'brand'             => $brand,
@@ -101,7 +102,7 @@ switch($op){
         }
         // Update an existing id
         else {
-            $query = new w2p_Database_Query();
+
             $data = array(
                 'component_id'      => $id,
                 'description'       => $description,
@@ -119,9 +120,11 @@ switch($op){
             $query->updateArray(COrder::_TBL_PREFIKS_ . "_default_components", $data, 'component_id');
         }
 
+
         // Reply to client
         echo json_encode(array(
-            "message" => "Successfully updated #" . $id
+            "message" => "Successfully updated #" . $id,
+            "error" => $query->_db->ErrorMsg()
         ));
         break;
     case "remove":
