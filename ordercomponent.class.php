@@ -41,12 +41,13 @@ class COrderComponent {
 
     /**
      * Permanently removes the component with the given id from the database.
-     * 
+     *
+     * @param $signaling bool
      * @see deleteComponent()
      * @return resource
      */
-    public function delete() {
-        return COrderComponent::deleteComponent($this->id);
+    public function delete($signaling=true) {
+        return COrderComponent::deleteComponent($this->id, $signaling);
     }
 
     /**
@@ -54,9 +55,10 @@ class COrderComponent {
      * 
      * @param Int $id
      * @param Int $orderId
+     * @param bool $signaling
      * @return bool 
      */
-    public static function deleteComponent($id) {
+    public static function deleteComponent($id, $signaling=true) {
 
         // Create component from db
         $component = COrderComponent::createFromDb($id);
@@ -66,7 +68,7 @@ class COrderComponent {
             throw new Exception("Failed user is not allowed to make changes to this order");
         }
 
-        if($order->latestStatus()->status != COrderStatus::ORDER_STATUS_NEW) {
+        if(($order->latestStatus()->status != COrderStatus::ORDER_STATUS_NEW) && $signaling) {
             
             // Set order status to changed
             $componentName = $component->description;

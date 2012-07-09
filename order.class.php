@@ -219,7 +219,7 @@ class COrder {
 
         $components = $this->getComponents();
         foreach ($components as $c) {
-            $c->delete();
+            $c->delete(false);
         }
 
         $deliveries = $this->getDeliveries();
