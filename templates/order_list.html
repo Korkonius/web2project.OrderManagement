@@ -9,10 +9,33 @@
         background-color: transparent;
     }
 
+    table.orderlist tr th {
+        background: transparent;
+        border: inherit;
+        font-weight: bold;
+    }
+
     table.orderlist tr {
-        cursor: auto;
-        border-bottom: 1px #DDD solid;
-        background-color: white;
+        background: white;
+        border: #E8E4D8 1px solid;
+        border-collapse: separate;
+        color: #333;
+        font-weight: normal;
+    }
+
+    table.orderlist tr:nth-child(odd) {
+        background-color: #F7FCFF;
+    }
+
+    table.orderlist tr.header {
+        background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(237,242,247)), to(rgb(208, 223, 234)));
+        background-origin: padding-box;
+        border-bottom: white 1px solid;
+        border-left: white 1px solid;
+        border-top: white 1px solid;
+        border-right: #333 0px solid;
+        color: #333;
+        font-weight: bold;
     }
 
     table.orderlist tr.order_clickable {
@@ -24,7 +47,7 @@
     }
 
     table.orderlist tr:hover {
-        background-color: #ccc;
+        background-color: #D9E8F9;
     }
 
     table.orderlist {
@@ -85,7 +108,7 @@
 </form>
 <table id="ordertable" class="tbl orderlist">
     <thead>
-    <tr>
+    <tr class="header">
         <th colspan="6">Incoming Orders</th>
     </tr>
     </thead>
