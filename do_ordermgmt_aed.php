@@ -71,17 +71,18 @@ if (!empty($addOrder)) {
         $amount = $cAmounts[$i];
         $description = $cLabels[$i];
 
-        // Validate parameters
-        $filter->patternVerification($price, CInputFilter::W2P_FILTER_PRICE);
-        $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
-
-        // Make price understandable by the database
-        $price = COrder::dbsafeNumber($price);
-        
-        // TODO: Same issue as with the status comment
-        $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
-
         if (!empty($price) && !empty($amount) && !empty($description)) {
+
+            // Validate parameters
+            $filter->patternVerification($price, CInputFilter::W2P_FILTER_PRICE);
+            $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
+
+            // Make price understandable by the database
+            $price = COrder::dbsafeNumber($price);
+
+            // TODO: Same issue as with the status comment
+            $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
+
             $o->addComponent($price, $amount, $description);
         }
     }
@@ -90,6 +91,7 @@ if (!empty($addOrder)) {
     $addFile = (!empty($_FILES['file']['name'])) ? true : false;
 
     $AppUI->setMsg('Order was created!', UI_MSG_OK, true);
+    $AppUI->redirect('m=ordermgmt&order_id=' . $o->id);
 }
 if(!empty($addComponents)) {
     
@@ -107,17 +109,18 @@ if(!empty($addComponents)) {
         $amount = $cAmounts[$i];
         $description = $cLabels[$i];
 
-        // Validate parameters
-        $filter->patternVerification($price, CInputFilter::W2P_FILTER_PRICE);
-        $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
-
-        // Make price understandable by the database
-        $price = COrder::dbsafeNumber($price);
-
-        // TODO: Same issue as with the status comment
-        $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
-
         if (!empty($price) && !empty($amount) && !empty($description)) {
+
+            // Validate parameters
+            $filter->patternVerification($price, CInputFilter::W2P_FILTER_PRICE);
+            $filter->patternVerification($amount, CInputFilter::W2P_FILTER_NUMBERS);
+
+            // Make price understandable by the database
+            $price = COrder::dbsafeNumber($price);
+
+            // TODO: Same issue as with the status comment
+            $description = $filter->removeUnsafeAttributes($filter->stripOnly($description, 'script'));
+
             COrderComponent::createNewComponent($orderId, $price, $amount, $description);
         }
     }
