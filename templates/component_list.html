@@ -63,8 +63,8 @@
                 found: function(box) {
                     new dijit.form.CurrencyTextBox({
                         name: dojo.getAttr(box, 'id'),
-                        value: 0.00,
-                        currency: ' ',
+                        value: Number(0.00),
+                        currency: '',
                         title: dojo.getAttr(box, 'title')
                     }, dojo.getAttr(box, 'id'));
                 }
@@ -73,7 +73,7 @@
                 found: function(box) {
                     new dijit.form.NumberTextBox({
                         name: dojo.getAttr(box, 'id'),
-                        value: Number(1.00)
+                        value: 1.00
                     }, dojo.getAttr(box, 'id'));
                 }
             },

@@ -1,3 +1,8 @@
+ALTER TABLE `[PREFIX]_default_components` MODIFY COLUMN `component_id`  int(11) NOT NULL AUTO_INCREMENT FIRST ;
+ALTER TABLE `[PREFIX]_default_components` MODIFY COLUMN `notes` mediumtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;
+ALTER TABLE `[PREFIX]_default_components` ADD COLUMN `wet_material`  tinytext NULL AFTER `catalog_number`;
+ALTER TABLE `[PREFIX]_default_components` ADD COLUMN `vendor_currency`  tinytext NULL AFTER `vendor_price`;
+
 CREATE TABLE `[PREFIX]_deliveries` (
   `delivery_id` int(11) NOT NULL COMMENT 'The unique identificator for order deliveries',
   `order_id` int(11) NOT NULL COMMENT 'Reference to the order id',

@@ -77,6 +77,10 @@ switch($op){
         $filter->patternVerification($vendorRate, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($vendorNotes, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
 
+        // Ensure the commas are db safe
+        $vendorPrice = str_replace(',', '.', $vendorPrice);
+        $vendorDiscount = str_replace(',', '.', $vendorDiscount);
+
         // Compute local price
         $localPrice = ($vendorPrice*$vendorDiscount)*$vendorRate;
 

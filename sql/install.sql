@@ -20,17 +20,19 @@ INDEX `requisition_component_fk` (`order_id`)
 );
 
 CREATE TABLE `[PREFIX]_default_components` (
-`component_id` int(11) NOT NULL,
+`component_id` int(11) NOT NULL AUTO_INCREMENT,
 `catalog_number` varchar(30) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+`wet_material`  tinytext NULL,
 `brand` varchar(30) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
 `supplier` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
 `discount` float NULL DEFAULT NULL,
 `vendor_price` float NOT NULL,
+`vendor_currency`  tinytext NULL,
 `exchange_rate` float NOT NULL,
 `local_price` float NOT NULL,
 `quote_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 `description` mediumtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-`notes` mediumtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+`notes` mediumtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
 PRIMARY KEY (`component_id`) 
 );
 
