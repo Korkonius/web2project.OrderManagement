@@ -13,11 +13,11 @@ if (!defined('W2P_BASE_DIR')) {
 }
 
 // This constant determines if debug data should be inserted into array on setup
-define(ORDERMGMT_DEBUG_DATA, true);
+define(ORDERMGMT_DEBUG_DATA, false);
 
 $config = array();
 $config['mod_name'] = "Order Management";
-$config['mod_version'] = "0.2.0";
+$config['mod_version'] = "0.3.0";
 $config['mod_directory'] = "ordermgmt";
 $config['mod_setup_class'] = "CSetupOrderMgmt";
 $config['mod_type'] = "user";
@@ -54,11 +54,18 @@ class CSetupOrderMgmt {
                 // Load and execute 0_1_0to0_2_0.sql
                 $upgradeScript = dirname(__FILE__) . "/sql/0_1_0to0_2_0.sql";
                 $this->executeSqlFile($upgradeScript);
+
+            case '0.2.0':
+
+                // Load and execure 0_2_0to0_3_0.sql
+                $upgradeScript = dirname(__FILE__) . "/sql/0_2_0to0_3_0.sql";
+                $this->executeSqlFile($upgradeScript);
+                break;
             
             default:
                 return false;
         }
-        return false;
+        return true;
     }
 
     public function remove() {
