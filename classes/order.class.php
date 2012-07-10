@@ -412,42 +412,6 @@ class COrder {
     }
 
     /**
-     * Creates an array of COrders based on a project id. This function returns
-     * a number of orders specified by $limit and starting with record # $start
-     * belonging to the given project.
-     * 
-     * @global CAppUI $AppUI
-     * @param Int $projectId
-     * @param Int $start
-     * @param Int $limit
-     * @return COrder[]
-     */
-    public static function createListFromProjectId($projectId, $start=0, $limit=10) {
-
-        global $AppUI;
-
-        // Check acl
-        aclCheck('view', "Insufficient permissions", $AppUI->acl());
-
-        // Query the database to fetch multiple objects
-        $q = new w2p_database_query();
-        $q->addTable(self::_TBL_PREFIKS_, 'r');
-        $q->addQuery('*');
-        $q->addClause("LIMIT", "$start,$limit", false);
-        $q->addWhere("main_project = $projectId");
-        $q->exec();
-
-        // Parse results
-        $results = $q->loadList();
-        $retArray = array();
-        foreach ($results as $r) {
-            $retArray[] = new COrder($r['order_id'], $r['date_created'], $r['requisitioned_by'], $r['company'], $r['main_project'], $r['notes']);
-        }
-
-        return $retArray;
-    }
-
-    /**
      * This function creates a new order in the database belonging to the
      * specified project and specified company.
      * 
