@@ -47,6 +47,8 @@ $(document).ready(function(){
         });
     });
 
+    $('#filter').show();
+
     // Make all order lines clickable and lead to specific project views
     $('tr.order_clickable').on({
         click: function() {
