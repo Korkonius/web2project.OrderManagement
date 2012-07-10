@@ -6,8 +6,10 @@ require_once(dirname(__FILE__) . '/classes/order.class.php');
 // Create template object
 $tbs = & new clsTinyButStrong();
 $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
-$ol = COrder::createListFromProjectId(w2PgetParam($_GET, 'project_id'));
-//$ol[0]->latestStatus();
-$tbs->MergeBlock('order', $ol);
+$filter = array(
+    "main_project" => w2PgetParam($_GET, 'project_id')
+);
+$orders = COrder::createListFromDatabase(0, 2000, $filter);
+$tbs->MergeBlock('order', $orders);
 $tbs->Show(TBS_OUTPUT);
 ?>
