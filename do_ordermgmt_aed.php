@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/inputfilter.class.php');
+require_once(dirname(__FILE__) . '/classes/inputfilter.class.php');
 
 /* $Id$ $URL$ */
 if (!defined('W2P_BASE_DIR')) {

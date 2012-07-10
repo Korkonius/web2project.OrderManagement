@@ -1,7 +1,7 @@
 <?php
 
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
-require_once(dirname(__FILE__) . '/order.class.php');
+require_once(dirname(__FILE__) . '/classes/order.class.php');
 
 // Create template object
 $tbs = & new clsTinyButStrong();

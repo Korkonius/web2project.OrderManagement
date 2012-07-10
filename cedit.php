@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
-require_once(dirname(__FILE__) . '/order.class.php');
-require_once(dirname(__FILE__) . '/inputfilter.class.php');
+require_once(dirname(__FILE__) . '/classes/order.class.php');
+require_once(dirname(__FILE__) . '/classes/inputfilter.class.php');
 
 // Check ACL to see if the user is allowed to view items in the order module
 if (!$acl->checkModule('ordermgmt', 'view')) {

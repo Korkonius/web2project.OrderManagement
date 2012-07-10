@@ -1,8 +1,8 @@
 <?php
 require_once('ordermgmt.class.php');
-require_once('lib/tcpdf/config/lang/eng.php');
-require_once('lib/tcpdf/tcpdf.php');
-require_once('lib/tbs_class.php');
+require_once(dirname(__FILE__) . '/../lib/tcpdf/config/lang/eng.php');
+require_once(dirname(__FILE__) . '/../lib/tcpdf/tcpdf.php');
+require_once(dirname(__FILE__) . '/../lib/tbs_class.php');
 
 /**
  * Description of COrderPDF

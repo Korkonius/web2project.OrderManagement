@@ -1,6 +1,6 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
-require_once(dirname(__FILE__) . '/order.class.php');
+require_once(dirname(__FILE__) . '/classes/order.class.php');
 
 // Parse data to determine the page to create
 $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);

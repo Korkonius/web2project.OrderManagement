@@ -17,8 +17,8 @@ if (!defined('W2P_BASE_DIR')) {
 }
 
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
-require_once(dirname(__FILE__) . '/order.class.php');
-require_once(dirname(__FILE__) . '/orderpdf.class.php');
+require_once(dirname(__FILE__) . '/classes/order.class.php');
+require_once(dirname(__FILE__) . '/classes/orderpdf.class.php');
 
 include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be someway to do this automaticly
 
