@@ -19,6 +19,7 @@ if (!defined('W2P_BASE_DIR')) {
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/classes/order.class.php');
 require_once(dirname(__FILE__) . '/classes/orderpdf.class.php');
+require_once(dirname(__FILE__) . '/classes/orderstoredcomponent.class.php');
 
 include_once(dirname(__FILE__) . '/do_ordermgmt_aed.php'); // FIXME Should be someway to do this automaticly
 
@@ -106,14 +107,12 @@ if ($acl->checkModule('ordermgmt', 'view')) {
         $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_form.html');
         $orderid = COrder::nextOrderId();
         $orderidf = sprintf(COrder::ID_FORMAT, $orderid);
-        $defaultComponents = COrderComponent::getDefaultComponentList();
 
         // Load and merge company and project data
         $projects = new CProject();
         $tbs->MergeBlock('project', $projects->getAllowedProjects($AppUI->user_id));
         $companies = new CCompany();
         $tbs->MergeBlock('company', $companies->getCompanyList($AppUI));
-        $tbs->MergeBlock('defaultComponents', $defaultComponents);
         $tbs->MergeField('nextid', $orderid);
         $tbs->MergeField('nextidf', $orderidf);
 
@@ -208,49 +207,34 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                 $tbs->Show(TBS_OUTPUT);
 
             } else {
-                if (!empty($outputJsonComponents) && isset($_GET['suppressHeaders'])) {
+                if (!empty($outputPdfOrder) && isset($_GET['suppressHeaders'])) {
 
-                    // Turn off error reporting
-                    error_reporting(E_ERROR);
+                    // Detail template test
+                    $order = COrder::createFromDatabase($outputPdfOrder);
+                    $sender = new CCompany();
+                    $sender->load(1);
 
-                    // Output JSON
-                    $dc = COrderComponent::getDefaultComponentList();
-
-                    // Escape all descriptions
-                    for ($i = 0; $i < count($dc); $i++) {
-                        $dc[$i]["description"] = htmlspecialchars($dc[$i]["description"]);
-                    }
-
-                    echo json_encode($dc);
+                    $test = new COrderPDF($order, $sender, $sender, $AppUI);
+                    $test->render();
                 } else {
-                    if (!empty($outputPdfOrder) && isset($_GET['suppressHeaders'])) {
 
-                        // Detail template test
-                        $order = COrder::createFromDatabase($outputPdfOrder);
-                        $sender = new CCompany();
-                        $sender->load(1);
+                    // Set up the title block
+                    $titleBlock = new w2p_Theme_TitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
+                    if (COrder::canAdd()) {
+                        $titleBlock->addCell(
+                            '<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '',
+                            ''
+                        );
+                    }
+                    $titleBlock->addCrumb('?m=ordermgmt&a=components', 'Component View');
+                    $titleBlock->show();
 
-                        $test = new COrderPDF($order, $sender, $sender, $AppUI);
-                        $test->render();
-                    } else {
+                    $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);
+                    $filter = w2PgetCleanParam($_REQUEST, 'filter', 'open');
+                    $pagesize = w2PgetConfig('page_size', 50);
 
-                        // Set up the title block
-                        $titleBlock = new w2p_Theme_TitleBlock('Order Management', 'folder5.png', $m, "$m.$a");
-                        if (COrder::canAdd()) {
-                            $titleBlock->addCell(
-                                '<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '',
-                                ''
-                            );
-                        }
-                        $titleBlock->addCrumb('?m=ordermgmt&a=components', 'Component View');
-                        $titleBlock->show();
-
-                        $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);
-                        $filter = w2PgetCleanParam($_REQUEST, 'filter', 'open');
-                        $pagesize = w2PgetConfig('page_size', 50);
-
-                        // Load list based on selected filter
-                        switch($filter) {
+                    // Load list based on selected filter
+                    switch($filter) {
                         case 'open':
                             $ol = COrder::listOfOpenOrders($offset, $pagesize);
                             $totalOrders = COrder::countOpenOrders();
@@ -267,22 +251,21 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                             $ol = COrder::listOfOpenOrders($offset, w2PgetConfig('page_size', 50));
                             $totalOrders = COrder::countOpenOrders();
                             break;
-                        }
-
-                        $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
-
-                        $tbs->MergeBlock('order', $ol);
-                        $tbs->MergeField('currentFilter', $filter); // Merge before 'filters' since filters depend on this
-                        $tbs->MergeBlock('filters', $ORDERMGMGT_LIST_FILTERS);
-                        $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
-                        $tbs->MergeField('pagination_total', $totalOrders);
-                        $tbs->MergeField('pagination_page', w2PgetConfig("page_size"));
-                        $tbs->MergeField('pagination_init', w2PgetParam($_GET, 'page', 1));
-                        $tbs->MergeField('pagination_filter', $filter);
-                        $tbs->MergeField('recievedIcon', w2pfindImage('/thumb_up.png', 'ordermgmt'));
-                        $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
-                        $tbs->Show(TBS_OUTPUT);
                     }
+
+                    $tbs->LoadTemplate(dirname(__FILE__) . '/templates/order_list.html');
+
+                    $tbs->MergeBlock('order', $ol);
+                    $tbs->MergeField('currentFilter', $filter); // Merge before 'filters' since filters depend on this
+                    $tbs->MergeBlock('filters', $ORDERMGMGT_LIST_FILTERS);
+                    $tbs->MergeField('deliveryIcon', w2PfindImage('/lorry_go.png', 'ordermgmt'));
+                    $tbs->MergeField('pagination_total', $totalOrders);
+                    $tbs->MergeField('pagination_page', w2PgetConfig("page_size"));
+                    $tbs->MergeField('pagination_init', w2PgetParam($_GET, 'page', 1));
+                    $tbs->MergeField('pagination_filter', $filter);
+                    $tbs->MergeField('recievedIcon', w2pfindImage('/thumb_up.png', 'ordermgmt'));
+                    $tbs->MergeField('deliveryOverdueIcon', w2PfindImage('/lorry_error.png', 'ordermgmt'));
+                    $tbs->Show(TBS_OUTPUT);
                 }
             }
         }

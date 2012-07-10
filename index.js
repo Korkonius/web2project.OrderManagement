@@ -50,14 +50,14 @@ $(document).ready(function(){
     $('#filter').show();
 
     // Make all order lines clickable and lead to specific project views
-    $('tr.order_clickable').on({
+    /*$('tr.order_clickable').on({
         click: function() {
             event.preventDefault();
             var strId = this.id.substr(8);
 
             window.location = "?m=ordermgmt&order_id=" + strId;
         }
-    });
+    });*/
     $('#order_filter').change(function() {
         window.location = '?m=ordermgmt&filter=' + $('#order_filter option:selected').val();
     });

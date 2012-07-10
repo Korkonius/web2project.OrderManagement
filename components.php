@@ -9,6 +9,7 @@
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/classes/order.class.php');
 require_once(dirname(__FILE__) . '/classes/orderpdf.class.php');
+require_once(dirname(__FILE__) . '/classes/orderstoredcomponent.class.php');
 
 // Check ACL to see if the user is allowed to view items in the order module
 if (!$acl->checkModule('ordermgmt', 'view')) {
@@ -24,10 +25,6 @@ $titleBlock->show();
 // Get component listing template
 $tbs = & new clsTinyButStrong();
 $tbs->LoadTemplate(dirname(__FILE__) . "/templates/component_list.html");
-
-// Get component list
-$components = COrderComponent::getDefaultComponentList();
-$tbs->MergeBlock('components', $components);
 
 // Output component list
 $tbs->Show(TBS_OUTPUT);

@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/classes/order.class.php');
+require_once(dirname(__FILE__) . '/classes/orderstoredcomponent.class.php');
 require_once(dirname(__FILE__) . '/classes/inputfilter.class.php');
 
 // Check ACL to see if the user is allowed to view items in the order module
@@ -24,27 +25,27 @@ $filter->patternVerification($id, CInputFilter::W2P_FILTER_NUMBERS);
 
 switch($op){
     case "get": // TODO Mode ACL checks into these methods to have more granulated access control...
-        $components = COrderComponent::getDefaultComponentList();
+        $components = COrderStoredComponent::createListFromDb(0, 2000);
         echo json_encode(array(
             "items" => $components
         ));
         break;
     case "getfilterlist":
-        $components = COrderComponent::getDefaultComponentList();
+        $components = COrderStoredComponent::createListFromDb(0, 2000);
         $listItems = array();
         foreach($components as $component) {
 
-            $number = $component['catalog_number'];
-            $description = $component['description'];
-            $brand = $component['brand'];
-            $supplier = $component['supplier'];
+            $number = $component->catalogNumber;
+            $description = $component->description;
+            $brand = $component->brand;
+            $supplier = $component->supplier;
 
             $listItems[] = array(
-                "id"            => $component['component_id'],
+                "id"            => $component->id,
                 "list_name"     => "$number $description $brand $name",
                 "list_display"  => "<i>$number</i> :: <strong>$description</strong> :: <span style='color: silver'>$brand by $supplier</span>",
                 "list_short"    => "$number $description",
-                "price"         => $component["local_price"]
+                "price"         => $component->localPrice
             );
         }
         echo json_encode(array(

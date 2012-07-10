@@ -145,17 +145,17 @@
     function openEditDialog(item) {
         var row = grid.getItem(item);
         var id = row["component_id"];
-        dijit.byId("componentEditNumber").set('value', row["catalog_number"]);
+        dijit.byId("componentEditNumber").set('value', row["catalogNumber"]);
         dijit.byId("componentEditName").set('value', row["description"]);
-        dijit.byId("componentEditMaterial").set('value', row["wet_material"]);
+        dijit.byId("componentEditMaterial").set('value', row["wetMaterial"]);
         dijit.byId("componentEditBrand").set('value', row["brand"]);
         dijit.byId("componentEditSupplier").set('value', row["supplier"]);
-        dijit.byId("componentEditPrice").set('value', row["vendor_price"]);
-        dijit.byId("componentEditCurrency").set('value', row["vendor_currency"]);
+        dijit.byId("componentEditPrice").set('value', row["vendorPrice"]);
+        dijit.byId("componentEditCurrency").set('value', row["vendorCurrency"]);
         dijit.byId("componentEditDiscount").set('value', row["discount"]);
         dijit.byId("componentEditNotes").set('value', row["notes"]);
-        dijit.byId("componentEditRate").set('value', row["exchange_rate"]);
-        dijit.byId("componentEditSubmit").set('value', row["component_id"]);
+        dijit.byId("componentEditRate").set('value', row["exchangeRate"]);
+        dijit.byId("componentEditSubmit").set('value', row["id"]);
         editDialog.set('title', "Editing item #" + id);
         editDialog.show();
     }
@@ -250,14 +250,14 @@
                             queryOptions: {},
                             sortInfo: -8,
                             structure: [
-                                {name: "Options", field: "component_id", width: "3%", formatter: createOptions},
-                                {name: "Catalog Number", field: "catalog_number", width: "5%"},
+                                {name: "Options", field: "id", width: "3%", formatter: createOptions},
+                                {name: "Catalog Number", field: "catalogNumber", width: "5%"},
                                 {name: "Part Name", field: "description", width: "15%"},
-                                {name: "Wet Material", field: "wet_material", width: "3%"},
+                                {name: "Wet Material", field: "wetMaterial", width: "3%"},
                                 {name: "Brand", field: "brand", width: "5%"},
                                 {name: "Supplier", field: "supplier", width: "7%"},
-                                {name: "Price (NOK)", field: "local_price", width: "3%", formatter: currencyFormatter},
-                                {name: "Updated", field: "quote_date", width: "4%"}
+                                {name: "Price (NOK)", field: "localPrice", width: "3%", formatter: currencyFormatter},
+                                {name: "Updated", field: "quoteDate", width: "4%"}
                             ]
                         }, "componenttable");
                         grid.startup();
