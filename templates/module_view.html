@@ -1,4 +1,5 @@
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+<script type="text/javascript" src="./modules/ordermgmt/modules_delay.js"></script>
 <script type="text/javascript">
     dojo.require("dijit.layout.ContentPane");
     dojo.require("dijit.layout.BorderContainer");
@@ -93,9 +94,8 @@
         </h1>
         <hr />
         <ul>
-            <li>Kjerneholder MK3</li>
-            <li class="selected">Kjerneholder MK4</li>
-            <li>PCRI</li>
+            <li>[modules; block=li;nodata]Could not find any modules</li>
+            <li data-rss-module_id="[modules.id; block=li]">[modules.name]</li>
         </ul>
     </div>
     <div id="orderModuleSummary" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="height: 250px">
@@ -104,13 +104,15 @@
             <img src="./modules/ordermgmt/images/cog_edit.png" alt="Edit module" title="Edit module"/>
         </h1>
         <hr />
-        <h2>Kjerneholder MK4</h2>
+        <h2 id="orderModuleDetailName">None selected</h2>
         <div id="orderModuleOverview">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque leo nibh, tristique et interdum quis, lacinia et dolor.
-            Nulla eleifend sapien ipsum, eget commodo magna. Curabitur nunc nisl, pretium at porta eu, sollicitudin ut orci. Phasellus blandit, lorem vitae facilisis rutrum,
-            diam turpis mattis sem, vitae venenatis nulla risus eget leo. Etiam porta sem massa. Nulla accumsan cursus felis.
+            <div id="orderModuleDetailDescr">
+                Please select a module in the list to the left...
+            </div>
             <hr />
-            <strong>Build Price: </strong> 34,000.00 NOK <strong>Delivered: </strong> 35 <strong>Est. build time: </strong> 12 hours
+            <strong>Build Price: </strong> <span id="orderModuleDetailPrice">N/A</span>
+            <strong>Delivered: </strong> <span id="orderModuleDetailDelivered">N/A</span>
+            <strong>Est. build time: </strong> <span id="orderModuleDetailBuild">N/A</span> hours
             <hr />
         </div>
         <div id="orderSuperList">
