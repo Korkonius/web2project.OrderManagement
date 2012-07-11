@@ -17,6 +17,26 @@ class COrderModule
             $this->{$key} = $value;
         }
 
+        // Load children related to this module
+        $this->loadChildren();
+    }
+
+    protected function loadChildren() {
+
+        // Load children
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_module_rel", "r");
+        $query->addJoin(COrder::_TBL_PREFIKS_ . "_modules", "m", "m.module_id = r.child_id");
+        $query->addWhere("r.parent_id = $this->id");
+        $results = $query->loadList();
+
+        $children = array();
+        foreach($results as $row) {
+            self::fromPrepareDb($row);
+            $children[] = new COrderModule($row);
+        }
+
+        $this->childModules = $children;
     }
 
     protected function fromPrepareDb(array & $entry) {
