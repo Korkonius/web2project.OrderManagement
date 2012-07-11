@@ -61,20 +61,32 @@
         .orderModuleComponentTable {
             padding: 0;
             margin: 0;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .orderModuleComponentTable tr td {
+            padding: 3px;
+        }
+        .orderModuleComponentTable tr td {
+            border-bottom: 1px solid #EEEEFF;
         }
         .orderModuleCompHead {
-            border-bottom: 1px solid silver;
+            border-bottom: 2px solid silver;
         }
-        .orderModuleCompFoot {
-            border-top: 1px solid silver;
+        .orderModuleComponentTable tr td.orderModuleCompFoot {
+            border-top: 2px solid silver;
+            border-bottom: 3px double silver;
         }
         .orderModuleCompDescr {
-            border-right: 1px solid silver;
+            border-right: 2px solid silver;
         }
     </style>
 <div id="orderModuleDetailContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar',gutters:true">
     <div id="orderModuleList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading'" style="width: 250px">
-        <h1>Module List</h1>
+        <h1>
+            Module List
+            <img src="./modules/ordermgmt/images/add.png" alt="Add module" title="Add module" />
+        </h1>
         <hr />
         <ul>
             <li>Kjerneholder MK3</li>
@@ -83,7 +95,10 @@
         </ul>
     </div>
     <div id="orderModuleSummary" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="height: 250px">
-        <h1>Details</h1>
+        <h1>
+            Details
+            <img src="./modules/ordermgmt/images/cog_edit.png" alt="Edit module" title="Edit module"/>
+        </h1>
         <hr />
         <h2>Kjerneholder MK4</h2>
         <div id="orderModuleOverview">
@@ -100,7 +115,10 @@
         </div>
     </div>
     <div id="orderModuleFileList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="height: 150px">
-        <h1>Files</h1>
+        <h1>
+            Files
+            <img src="./modules/ordermgmt/images/add.png" alt="Add file" title="Add file" />
+        </h1>
         <hr />
         <ul id="orderModuleFileUl">
             <li><a href="">Kjerneholder MK4 tegninger (.pdf) <span class="orderModuleFileDetails">Size: 512 Kb Changed: 10/07/12</span></a></li>
@@ -108,8 +126,12 @@
         </ul>
     </div>
     <div id="orderModuleComponentList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
-        <h1>Components</h1>
+        <h1>
+            Components
+            <img src="./modules/ordermgmt/images/add.png" alt="Add components" title="Add components" />
+        </h1>
         <hr />
+        <h2>This module:</h2>
         <table class="orderModuleComponentTable">
             <tr>
                 <th width="5%" class="orderModuleCompHead">Amount</th><th width="80%" class="orderModuleCompHead">Description</th><th width="15%" class="orderModuleCompHead">Price</th>
@@ -124,7 +146,6 @@
                 <td colspan="3" style="text-align: right" class="orderModuleCompFoot">Subtotal: 15,100.00 NOK</td>
             </tr>
         </table>
-        <hr />
         <h2>From: Kjerneholder MK3</h2>
         <table class="orderModuleComponentTable">
             <tr>
