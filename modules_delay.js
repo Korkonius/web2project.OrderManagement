@@ -126,7 +126,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     handleAs: "json",
                     preventCache: true,
                     content: {
-                        "orderModuleId": dojo.byId("orderModuleIdIn").get("value"),
+                        "orderModuleId": dojo.attr(dojo.byId("orderModuleIdIn"),"value"),
                         "orderModuleName": dijit.byId("orderModuleNameIn").get("value"),
                         "orderModuleBuild": dijit.byId("orderModuleBuildIn").get("value"),
                         "orderModuleDescr": dijit.byId("orderModuleDescrIn").get("value")
@@ -139,6 +139,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                         window.location.href = window.location.href;
                     }
                 }
+                dojo.xhrPost(xhrParam);
             }
         }
     });

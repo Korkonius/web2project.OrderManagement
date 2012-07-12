@@ -136,6 +136,31 @@ class COrderModule
         return new COrderModule($result);
     }
 
+    public static function createNewModule($name, $description, $buildTime) {
+
+        // Send new data to database
+        $query = new w2p_Database_Query();
+        $new = array(
+            "module_id" => self::getNextId(),
+            "module_name" => $name,
+            "module_description" => $description,
+            "module_buildtime" => $buildTime,
+            "module_delivered" => 0
+        );
+
+        return $query->insertArray(COrder::_TBL_PREFIKS_ . "_modules", $new);
+    }
+
+    public static function getNextId() {
+
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_modules");
+        $query->addQuery("MAX(module_id) as id");
+        $r = $query->loadHash();
+
+        return $r["id"]+1;
+    }
+
     /**
      * Provides a shared way to add where clauses to queries in this class
      *
