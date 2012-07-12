@@ -35,7 +35,11 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
 
                         // Clear all component tables
                         dojo.forEach(dojo.query(".orderModuleComponentTable"), function(table, num){
-                            if(num != 0) dojo.destroy(table);
+                            if(num == 0) {
+                                dojo.forEach(dojo.query(".itemLine"), function(line){
+                                    dojo.destroy(line, table);
+                                });
+                            } else dojo.destroy(table);
                         });
                         dojo.forEach(dojo.query("h2", dojo.byId("#orderModuleComponentList")), function(node, num){
                             if(num != 0) dojo.destroy(node);
@@ -47,7 +51,7 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                         var headerNode = dojo.query(".tableHeader", componentTable)[0];
                         dojo.forEach(data.components, function(item){
                             var total = item.local_price * item.amount;
-                            dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + " :: " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
+                            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + " :: " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
                         });
                         dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], data.modulePrice + " NOK");
 
