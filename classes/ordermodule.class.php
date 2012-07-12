@@ -10,6 +10,8 @@ class COrderModule
     public $delivered;
     public $childModules;
     public $components;
+    public $totalPrice = 0;
+    public $modulePrice = 0;
 
     protected function __construct(array $values) {
 
@@ -18,11 +20,11 @@ class COrderModule
             $this->{$key} = $value;
         }
 
+        // Load components related to this module, load before children to compute price!
+        $this->loadComponents();
+
         // Load children related to this module
         $this->loadChildren();
-
-        // Load components related to this module
-        $this->loadComponents();
     }
 
     protected function loadChildren() {
@@ -37,7 +39,12 @@ class COrderModule
         $children = array();
         foreach($results as $row) {
             self::fromPrepareDb($row);
-            $children[] = new COrderModule($row);
+            $newChild = new COrderModule($row);
+
+            // Compute grand total of this module
+            $this->totalPrice += $newChild->modulePrice;
+
+            $children[] = $newChild;
         }
 
         $this->childModules = $children;
@@ -50,8 +57,16 @@ class COrderModule
         $query->addTable(COrder::_TBL_PREFIKS_ . "_module_components", "mc");
         $query->addJoin(COrder::_TBL_PREFIKS_ . "_default_components", "dc", "mc.stored_component_id = dc.component_id");
         $query->addWhere("mc.module_id = $this->id");
+        $results = $query->loadList();
 
-        $this->components = $query->loadList();
+        // Compute module price
+        foreach($results as $row) {
+            $this->modulePrice += $row["local_price"] * $row["amount"];
+        }
+
+        // Components loaded, without children this is correct
+        $this->totalPrice = $this->modulePrice;
+        $this->components = $results;
     }
 
     protected function fromPrepareDb(array & $entry) {
