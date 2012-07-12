@@ -10,6 +10,7 @@ class COrderModule
     public $delivered;
     public $childModules;
     public $components;
+    public $files;
     public $totalPrice = 0;
     public $modulePrice = 0;
 
@@ -25,6 +26,9 @@ class COrderModule
 
         // Load children related to this module
         $this->loadChildren();
+
+        // Load all files related to this module
+        $this->loadFiles();
     }
 
     protected function loadChildren() {
@@ -67,6 +71,24 @@ class COrderModule
         // Components loaded, without children this is correct
         $this->totalPrice = $this->modulePrice;
         $this->components = $results;
+    }
+
+    protected function loadFiles() {
+
+        // Query for file ID's and construct file array
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_module_files");
+        $query->addWhere("module_id=$this->id");
+        $results = $query->loadList();
+
+        $files = array();
+        foreach($results as $row) {
+            $file = new CFile();
+            $file->load($row["file_id"]);
+            $files[] = $file;
+        }
+
+        $this->files = $files;
     }
 
     protected function fromPrepareDb(array & $entry) {
