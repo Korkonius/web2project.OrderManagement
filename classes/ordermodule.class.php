@@ -9,6 +9,7 @@ class COrderModule
     public $buildtime;
     public $delivered;
     public $childModules;
+    public $components;
 
     protected function __construct(array $values) {
 
@@ -19,6 +20,9 @@ class COrderModule
 
         // Load children related to this module
         $this->loadChildren();
+
+        // Load components related to this module
+        $this->loadComponents();
     }
 
     protected function loadChildren() {
@@ -37,6 +41,17 @@ class COrderModule
         }
 
         $this->childModules = $children;
+    }
+
+    protected function loadComponents() {
+
+        // Load components
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_module_components", "mc");
+        $query->addJoin(COrder::_TBL_PREFIKS_ . "_default_components", "dc", "mc.stored_component_id = dc.component_id");
+        $query->addWhere("mc.module_id = $this->id");
+
+        $this->components = $query->loadList();
     }
 
     protected function fromPrepareDb(array & $entry) {
