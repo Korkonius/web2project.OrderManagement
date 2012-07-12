@@ -1,4 +1,4 @@
-require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/Editor"], function(ready, behavior, Dialog, TextBox, Editor){
+require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor"], function(ready, behavior, Dialog, TextBox, Button, Editor){
 
     // Variable that determine the currently selected item
     var moduleId = undefined;
