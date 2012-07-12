@@ -54,7 +54,7 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                         var headerNode = dojo.query(".tableHeader", componentTable)[0];
                         dojo.forEach(data.components, function(item){
                             var total = item.local_price * item.amount;
-                            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + " :: " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
+                            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
                         });
                         dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], data.modulePrice + " NOK");
 
@@ -66,7 +66,7 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                             headerNode = dojo.query(".tableHeader", componentTable)[0];
                             dojo.forEach(module.components, function(item){
                                 var total = item.local_price * item.amount;
-                                dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + " :: " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
+                                dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td> " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
                             });
                             dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], module.modulePrice + " NOK");
                             dojo.place(componentTable, lastTable, "after");

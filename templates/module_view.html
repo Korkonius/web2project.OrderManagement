@@ -64,6 +64,7 @@
         color: #999;
     }
     .orderModuleComponentTable {
+        width: 100%;
         padding: 0;
         margin: 0;
         border-collapse: collapse;
@@ -84,6 +85,9 @@
     }
     .orderModuleCompDescr {
         border-right: 2px solid silver;
+    }
+    #orderModuleDetailDescr {
+        height: 80px;
     }
 </style>
 <div id="orderModuleDetailContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar',gutters:true">
@@ -141,10 +145,13 @@
         <h2>This module:</h2>
         <table class="orderModuleComponentTable">
             <tr class="tableHeader">
-                <th width="5%" class="orderModuleCompHead">Amount</th><th width="80%" class="orderModuleCompHead">Description</th><th width="15%" class="orderModuleCompHead">Price</th>
+                <th width="5%" class="orderModuleCompHead">Amount</th>
+                <th width="15%" class="orderModuleCompHead">Catalog #</th>
+                <th width="65%" class="orderModuleCompHead">Description</th>
+                <th width="15%" class="orderModuleCompHead">Price</th>
             </tr>
             <tr>
-                <td colspan="3" style="text-align: right" class="orderModuleCompFoot">Subtotal: <span class="orderModuleCompPrice">N/A NOK</span></td>
+                <td colspan="4" style="text-align: right" class="orderModuleCompFoot">Subtotal: <span class="orderModuleCompPrice">N/A NOK</span></td>
             </tr>
         </table>
     </div>
