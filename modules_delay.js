@@ -2,6 +2,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
 
     // Variable that determine the currently selected item
     var moduleId = undefined;
+    var selectedModule = undefined;
 
     // Register listeners on items in the module list
     var loadDetailsDialog = new Dialog({
@@ -22,6 +23,8 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     preventCache: true,
                     sync: true,
                     load: function(data) {
+
+                        selectedModule = data;
 
                         // Set general module details
                         dojo.html.set(dojo.byId("orderModuleDetailName"), data.name);
@@ -113,9 +116,28 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                 }, dojo.getAttr(node, "id"));
             }
         },
+        "#orderModuleEditBtn": {
+            onclick: function(e) {
+                var dialog = dijit.byId("orderModuleDialog");
+                dojo.attr(dojo.byId("orderModuleIdIn"),"value", selectedModule.id);
+                dijit.byId("orderModuleNameIn").set("value", selectedModule.name);
+                dijit.byId("orderModuleBuildIn").set("value", selectedModule.buildtime);
+                dijit.byId("orderModuleDescrIn").set("value", selectedModule.description);
+
+                dialog.set("title", "Edit module: " + selectedModule.name);
+                dialog.show();
+            }
+        },
         "#orderModuleAddBtn": {
             onclick: function(e) {
-                dijit.byId("orderModuleDialog").show();
+                var dialog = dijit.byId("orderModuleDialog");
+                dojo.attr(dojo.byId("orderModuleIdIn"),"value", "0");
+                dijit.byId("orderModuleNameIn").set("value", "");
+                dijit.byId("orderModuleBuildIn").set("value", "");
+                dijit.byId("orderModuleDescrIn").set("value", "Description...");
+
+                dialog.set("title", "Add new module");
+                dialog.show();
             }
         },
         "#orderModuleAedSubmit": {

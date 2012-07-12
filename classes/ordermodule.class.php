@@ -151,6 +151,18 @@ class COrderModule
         return $query->insertArray(COrder::_TBL_PREFIKS_ . "_modules", $new);
     }
 
+    public static function alterModule($id, $name, $description, $buildTime) {
+
+        $query = new w2p_Database_Query();
+        $changed = array(
+            "module_id" => $id,
+            "module_name" => $name,
+            "module_description" => $description,
+            "module_buildtime" => $buildTime
+        );
+        return $query->updateArray(COrder::_TBL_PREFIKS_ . "_modules", $changed, "module_id");
+    }
+
     public static function getNextId() {
 
         $query = new w2p_Database_Query();

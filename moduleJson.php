@@ -22,9 +22,15 @@ switch($op) {
         $name = $filter->removeUnsafeAttributes($name);
         $descr = $filter->removeUnsafeAttributes($descr);
 
+        // If id is null insert new items
+        if($id == 0) {
+            COrderModule::createNewModule($name, $descr, $buildTime);
+        } else {
+            COrderModule::alterModule($id, $name, $descr, $buildTime);
+        }
+
         echo json_encode(array(
-            "error" => "",
-            "item" => COrderModule::createNewModule($name, $descr, $buildTime)
+            "error" => ""
         ));
         break;
 
