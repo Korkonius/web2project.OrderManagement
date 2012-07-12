@@ -1,5 +1,8 @@
 require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
 
+    // Variable that determine the currently selected item
+    var moduleId = undefined;
+
     // Register listeners on items in the module list
     var loadDetailsDialog = new Dialog({
         title: "Loading module details...",
@@ -12,7 +15,7 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                 e.preventDefault(); // Stop default event handling
 
                 // Fetch information about this object
-                var moduleId = dojo.attr(e.target, "data-rss-module_id");
+                moduleId = dojo.attr(e.target, "data-rss-module_id");
                 var xhrParam = {
                     url: "?m=ordermgmt&a=moduleJson&suppressHeaders=true&id=" + moduleId,
                     handleAs: "json",
@@ -41,7 +44,7 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                                 });
                             } else dojo.destroy(table);
                         });
-                        dojo.forEach(dojo.query("h2", dojo.byId("#orderModuleComponentList")), function(node, num){
+                        dojo.forEach(dojo.query("h2", dojo.byId("orderModuleComponentList")), function(node, num){
                             if(num != 0) dojo.destroy(node);
                         });
 
@@ -75,6 +78,8 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                         dojo.forEach(dojo.query(".orderModuleDetailPrice"), function(node) {
                             dojo.html.set(node, data.totalPrice + " NOK");
                         });
+
+                        // Update file listings
                     },
                     error: function(crap) {
                         alert(crap.message);
