@@ -83,18 +83,26 @@
         border-top: 2px solid silver;
         border-bottom: 3px double silver;
     }
-    .orderModuleCompDescr {
-        border-right: 2px solid silver;
-    }
     #orderModuleDetailDescr {
         height: 80px;
     }
 </style>
+        <div id="orderModuleDialog" data-dojo-type="dijit.Dialog" style="width:600px" data-dojo-props="title: 'Add or edit module'">
+            <table style="width: 100%">
+                <input type="hidden" id="orderModuleIdIn" value="0" name="orderModuleIdIn" />
+                <tr>
+                    <td>Module name :<input id="orderModuleNameIn" type="text" class="dojoTextInput" title="Moule name"/></td>
+                    <td>Est. build time (h): <input id="orderModuleBuildIn" type="text" class="dojoTextInput" title="Time (h)" /></td>
+                </tr>
+                <tr><td colspan="2"><div id="orderModuleDescrIn" class="dojoTextEdit" title="Module description" /></td></tr>
+                <tr><td colspan="2" style="text-align: right;"><button id="orderModuleAedSubmit">Send</button></td></tr>
+            </table>
+        </div>
 <div id="orderModuleDetailContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar',gutters:true">
     <div id="orderModuleList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading'" style="width: 250px">
         <h1>
             Module List
-            <img src="./modules/ordermgmt/images/add.png" alt="Add module" title="Add module" />
+            <img src="./modules/ordermgmt/images/add.png" alt="Add module" title="Add module" id="orderModuleAddBtn"/>
         </h1>
         <hr />
         <ul >

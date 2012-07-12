@@ -1,4 +1,4 @@
-require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
+require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/Editor"], function(ready, behavior, Dialog, TextBox, Editor){
 
     // Variable that determine the currently selected item
     var moduleId = undefined;
@@ -93,6 +93,52 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                     }
                 }
                 dojo.xhrGet(xhrParam);
+            }
+        },
+        ".dojoTextInput": {
+            found: function(node) {
+                new TextBox({
+                    name: dojo.getAttr(node, "id"),
+                    placeholder: dojo.getAttr(node, 'title'),
+                    title: dojo.getAttr(node, 'title')
+                }, dojo.getAttr(node, "id"));
+            }
+        },
+        ".dojoTextEdit": {
+            found: function(node) {
+                new Editor({
+                    width: "100%",
+                    height: "200px",
+                    value: dojo.getAttr(node, "title")
+                }, dojo.getAttr(node, "id"));
+            }
+        },
+        "#orderModuleAddBtn": {
+            onclick: function(e) {
+                dijit.byId("orderModuleDialog").show();
+            }
+        },
+        "#orderModuleAedSubmit": {
+            onclick: function(e) {
+
+                var xhrParam = {
+                    url: "?m=ordermgmt&a=moduleJson&suppressHeaders=true&op=ae",
+                    handleAs: "json",
+                    preventCache: true,
+                    content: {
+                        "orderModuleId": dojo.byId("orderModuleIdIn").get("value"),
+                        "orderModuleName": dijit.byId("orderModuleNameIn").get("value"),
+                        "orderModuleBuild": dijit.byId("orderModuleBuildIn").get("value"),
+                        "orderModuleDescr": dijit.byId("orderModuleDescrIn").get("value")
+                    },
+                    error: function(crap) {
+                        alert("Failed to store module: " + crap.message);
+                    },
+                    load: function(data) {
+                        dijit.byId("orderModuleDialog").hide();
+                        window.location.href = window.location.href;
+                    }
+                }
             }
         }
     });
