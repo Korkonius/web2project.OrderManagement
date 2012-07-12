@@ -80,6 +80,13 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                         });
 
                         // Update file listings
+                        var fileList = dojo.byId("orderModuleFileUl");
+                        dojo.empty(fileList);
+                        dojo.forEach(data.files, function(file) {
+                        dojo.place("<li><a href=\"fileviewer.php?file_id="+ file.file_id + "\">" +
+                            file.file_description + " (" + file.file_type + ") " +
+                            "<span class=\"orderModuleFileDetails\">Size: " + Math.round((file.file_size /1024)*100)/100  + " Kb Changed: " + file.file_date + "</span></a></li>", fileList, "last");
+                        });
                     },
                     error: function(crap) {
                         alert(crap.message);
