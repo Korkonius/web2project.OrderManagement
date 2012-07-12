@@ -29,9 +29,21 @@ require(["dojo/behavior", "dijit/Dialog"], function(behavior, Dialog){
                         // Build child module list
                         dojo.empty("orderDetailsChildren");
                         var ul = dojo.byId("orderDetailsChildren");
-                        dojo.forEach(data.childModules, function(item, index) {
+                        dojo.forEach(data.childModules, function(item) {
                             var node = dojo.create("li", {innerHTML: item.name}, ul);
                         });
+
+                        // Build component list for this
+                        var componentTable = dojo.query(".orderModuleComponentTable")[0];
+                        var refNode = dojo.clone(componentTable);
+                        var headerNode = dojo.query(".tableHeader", componentTable)[0];
+                        var subTotal = 0;
+                        dojo.forEach(data.components, function(item){
+                            var total = item.local_price * item.amount;
+                            dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + " :: " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
+                            subTotal += total;
+                        });
+                        dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], subTotal + " NOK");
                     },
                     error: function(crap) {
                         alert(crap.message);
