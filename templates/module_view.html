@@ -63,7 +63,7 @@
     .orderModuleFileDetails {
         color: #999;
     }
-    .orderModuleComponentTable {
+    .orderModuleComponentTable, #orderComponentEditList {
         width: 100%;
         padding: 0;
         margin: 0;
@@ -109,6 +109,24 @@
                     <input type="hidden" name="dosql" value="do_moduleAddfile" />
                 </fieldset>
             </form>
+        </div>
+        <div id="orderModuleComponentEdit" style="width: 1024px" data-dojo-type="dijit.Dialog" data-dojo-props="title: 'Modify components'">
+            <table id="orderComponentEditList">
+                <tr class="tableHeader">
+                    <th width="5%" class="orderModuleCompHead"></th>
+                    <th width="5%" class="orderModuleCompHead">Amount</th>
+                    <th width="15%" class="orderModuleCompHead">Catalog #</th>
+                    <th width="75%" class="orderModuleCompHead">Description</th>
+                </tr>
+            </table>
+            <div id="orderComponentControls">
+                <div id="orderComponentSelect"></div>
+                <button class="dojoButton" id="orderComponentAddBtn" title="Add component">Add</button>
+            </div>
+            <div id="orderComponentDoneControls" style="text-align: right">
+                <button class="dojoButton" id="orderComponentCancelBtn" title="Discard all work and close">Cancel</button>
+                <button class="dojoButton" id="orderComponentDoneBtn" title="Save and close">Done</button>
+            </div>
         </div>
 <div id="orderModuleDetailContainer" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar',gutters:true">
     <div id="orderModuleList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'leading'" style="width: 250px">
@@ -159,7 +177,7 @@
     <div id="orderModuleComponentList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
         <h1>
             Components
-            <img src="./modules/ordermgmt/images/cog_edit.png" alt="Add components" title="Edit components" />
+            <img src="./modules/ordermgmt/images/cog_edit.png" alt="Add components" title="Edit components" id="orderComponentEditBtn"/>
         </h1>
         <hr />
         <h2>This module:</h2>

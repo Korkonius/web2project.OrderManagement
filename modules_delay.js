@@ -1,4 +1,5 @@
-require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor", "dojo/currency"], function(ready, behavior, Dialog, TextBox, Button, Editor, Currency){
+require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor", "dojo/currency", 'dojo/store/Memory', "dojo/data/ObjectStore", 'dijit/form/FilteringSelect', "dojo/_base/xhr"]
+    , function(ready, behavior, Dialog, TextBox, Button, Editor, Currency, Memory, ObjectStore, FilteringSelect, xhr){
 
     // Set body class to get styling right
     dojo.addClass(dojo.query("body")[0], "claro");
@@ -7,6 +8,26 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
     // Variable that determine the currently selected item
     var moduleId = undefined;
     var selectedModule = undefined;
+    var componentStore = undefined;
+
+        xhr.get({
+            url: "?m=ordermgmt&a=cedit&op=getfilterlist&suppressHeaders=true",
+            handleAs: "json"
+        }).then(function(data) {
+                componentStore = new ObjectStore({objectStore: new Memory({data: data.items})});
+                new FilteringSelect({
+                    id: dojo.attr("orderComponentSelect", "id"),
+                    name: dojo.attr("orderComponentSelect", "id"),
+                    queryExpr: "*${0}*",
+                    autoComplete: false,
+                    "store": componentStore,
+                    searchAttr: "list_name",
+                    labelAttr: "list_display",
+                    labelType: "html",
+                    onChange: function(item) {
+                    }
+                }, dojo.attr("orderComponentSelect", "id"));
+            });
 
     // Register listeners on items in the module list
     var loadDetailsDialog = new Dialog({
@@ -21,6 +42,19 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
             var total = item.local_price * item.amount;
             dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", reference, "after");
         });
+    }
+
+    // Render initial component editing view
+    function initComponentEditing(components, target) {
+
+    }
+
+    function removeComponent($componentId, $moduleId) {
+
+    }
+
+    function addComponent($componentId, $moduleId, $amount) {
+        alert("Adding component!");
     }
 
     behavior.add({
@@ -63,7 +97,6 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                         dojo.forEach(dojo.query("h2", dojo.byId("orderModuleComponentList")), function(node, num){
                             if(num != 0) dojo.destroy(node);
                         });
-
                         // Build component list for this
                         var componentTable = dojo.query(".orderModuleComponentTable")[0];
                         var refNode = dojo.clone(componentTable);
@@ -176,6 +209,16 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
 
                 dojo.attr("orderModuleId", "value", selectedModule.id);
                 dijit.byId("orderFileDialog").show();
+            }
+        },
+        "#orderComponentEditBtn": {
+            onclick: function(e) {
+
+                dijit.byId("orderModuleComponentEdit").show();
+            }
+        },
+        "#orderComponentSelect": {
+            found: function(node) {
             }
         }
     });
