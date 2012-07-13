@@ -14,6 +14,15 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         content: "Loading module details...",
         style: "width: 400px"
     });
+
+    // Renders components from component into table
+    function renderComponentTable(components, reference) {
+        dojo.forEach(components, function(item){
+            var total = item.local_price * item.amount;
+            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", reference, "after");
+        });
+    }
+
     behavior.add({
         "#orderModuleList ul li":{
             onclick: function(e) {
@@ -59,10 +68,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                         var componentTable = dojo.query(".orderModuleComponentTable")[0];
                         var refNode = dojo.clone(componentTable);
                         var headerNode = dojo.query(".tableHeader", componentTable)[0];
-                        dojo.forEach(data.components, function(item){
-                            var total = item.local_price * item.amount;
-                            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", headerNode, "after");
-                        });
+                        renderComponentTable(data.components, headerNode);
                         dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(data.modulePrice));
 
                         // Build component lists for all children
@@ -71,10 +77,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                             subTotal = 0;
                             componentTable = dojo.clone(refNode);
                             headerNode = dojo.query(".tableHeader", componentTable)[0];
-                            dojo.forEach(module.components, function(item){
-                                var total = item.local_price * item.amount;
-                                dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td> " + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", headerNode, "after");
-                            });
+                            renderComponentTable(module.components, headerNode);
                             dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(module.modulePrice));
                             dojo.place(componentTable, lastTable, "after");
                             dojo.place("<h2>From " + module.name + ":</h2>", lastTable, "after");
