@@ -167,6 +167,13 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                 }
                 dojo.xhrPost(xhrParam);
             }
+        },
+        "#orderModuleFileAddBtn": {
+            onclick: function(e) {
+
+                dojo.attr("orderModuleId", "value", selectedModule.id);
+                dijit.byId("orderFileDialog").show();
+            }
         }
     });
     behavior.apply();

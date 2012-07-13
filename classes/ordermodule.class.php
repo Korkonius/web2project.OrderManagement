@@ -163,6 +163,16 @@ class COrderModule
         return $query->updateArray(COrder::_TBL_PREFIKS_ . "_modules", $changed, "module_id");
     }
 
+    public static function attachFile($id, $fileId) {
+
+        $query = new w2p_Database_Query();
+        $new = array(
+            "file_id"   => $fileId,
+            "module_id" => $id
+        );
+        return $query->insertArray(COrder::_TBL_PREFIKS_ . "_module_files", $new);
+    }
+
     public static function getNextId() {
 
         $query = new w2p_Database_Query();
