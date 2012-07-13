@@ -1,4 +1,4 @@
-require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor"], function(ready, behavior, Dialog, TextBox, Button, Editor){
+require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor", "dojo/currency"], function(ready, behavior, Dialog, TextBox, Button, Editor, Currency){
 
     // Set body class to get styling right
     dojo.addClass(dojo.query("body")[0], "claro");
@@ -61,9 +61,9 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                         var headerNode = dojo.query(".tableHeader", componentTable)[0];
                         dojo.forEach(data.components, function(item){
                             var total = item.local_price * item.amount;
-                            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
+                            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", headerNode, "after");
                         });
-                        dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], data.modulePrice + " NOK");
+                        dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(data.modulePrice));
 
                         // Build component lists for all children
                         var lastTable = componentTable;
@@ -73,9 +73,9 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                             headerNode = dojo.query(".tableHeader", componentTable)[0];
                             dojo.forEach(module.components, function(item){
                                 var total = item.local_price * item.amount;
-                                dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td> " + item.description +"</td><td style=\"text-align: right\">" + total + " NOK</td></tr>", headerNode, "after");
+                                dojo.place("<tr><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td> " + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", headerNode, "after");
                             });
-                            dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], module.modulePrice + " NOK");
+                            dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(module.modulePrice));
                             dojo.place(componentTable, lastTable, "after");
                             dojo.place("<h2>From " + module.name + ":</h2>", lastTable, "after");
                             lastTable = componentTable;
@@ -83,7 +83,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
 
                         // Update module total prices
                         dojo.forEach(dojo.query(".orderModuleDetailPrice"), function(node) {
-                            dojo.html.set(node, data.totalPrice + " NOK");
+                            dojo.html.set(node, dojo.currency.format(data.totalPrice));
                         });
 
                         // Update file listings
