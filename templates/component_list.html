@@ -225,6 +225,10 @@
     require(["dojox/grid/DataGrid", "dojo/store/Memory","dojo/data/ObjectStore", "dojo/_base/xhr", "dojo/domReady!"],
             function(DataGrid, Memory, ObjectStore, xhr) {
 
+                // Add class to body to ensure correct styling
+                dojo.addClass(dojo.query("body")[0], "claro");
+                dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+
                 function createOptions(item, index) {
 
                     return "<button onclick=\"openEditDialog(" + index + ")\"><img src=\"./modules/ordermgmt/images/cog_edit.png\" title=\"Edit Component\" alt=\"Edit Component\"/></button>" +

@@ -1,5 +1,9 @@
 require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor"], function(ready, behavior, Dialog, TextBox, Button, Editor){
 
+    // Set body class to get styling right
+    dojo.addClass(dojo.query("body")[0], "claro");
+    dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+
     // Variable that determine the currently selected item
     var moduleId = undefined;
     var selectedModule = undefined;
