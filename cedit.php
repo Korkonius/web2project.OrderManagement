@@ -2,6 +2,7 @@
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/classes/order.class.php');
 require_once(dirname(__FILE__) . '/classes/orderstoredcomponent.class.php');
+require_once(dirname(__FILE__) . '/classes/ordermodule.class.php');
 require_once(dirname(__FILE__) . '/classes/inputfilter.class.php');
 
 // Check ACL to see if the user is allowed to view items in the order module
@@ -45,6 +46,8 @@ switch($op){
                 "list_name"     => "$number $description $brand $name",
                 "list_display"  => "<i>$number</i> :: <strong>$description</strong> :: <span style='color: silver'>$brand by $supplier</span>",
                 "list_short"    => "$number $description",
+                "catalog_number"   => "$number",
+                "description" => "$description",
                 "price"         => $component->localPrice
             );
         }
@@ -143,6 +146,20 @@ switch($op){
         // Reply to client
         echo json_encode(array(
             "message" => "Successfully removed #" . $id
+        ));
+        break;
+    case "addComp":
+
+        // Get and make vars safe
+        $id = intval(w2PgetParam($_POST, "moduleId"));
+        $componentId = intval(w2PgetParam($_POST, "componentId"));
+        $amount = intval(w2PgetParam($_POST, "amount"));
+
+        // Add components to order
+        COrderModule::attachComponent($id, $componentId, $amount);
+        // Reply to client
+        echo json_encode(array(
+            "message" => "Added component!"
         ));
         break;
 }

@@ -173,6 +173,18 @@ class COrderModule
         return $query->insertArray(COrder::_TBL_PREFIKS_ . "_module_files", $new);
     }
 
+    public static function attachComponent($id, $componentId, $amount) {
+
+        $query = new w2p_Database_Query();
+        $new = array(
+            "stored_component_id" => $componentId,
+            "module_id" => $id,
+            "amount" => $amount
+        );
+
+        return $query->insertArray(COrder::_TBL_PREFIKS_ . "_module_components", $new);
+    }
+
     public static function getNextId() {
 
         $query = new w2p_Database_Query();

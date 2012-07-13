@@ -9,6 +9,8 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
     var moduleId = undefined;
     var selectedModule = undefined;
     var componentStore = undefined;
+    var newComponents = undefined;
+    var removedComponents = undefined;
 
         xhr.get({
             url: "?m=ordermgmt&a=cedit&op=getfilterlist&suppressHeaders=true",
@@ -45,16 +47,71 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
     }
 
     // Render initial component editing view
-    function initComponentEditing(components, target) {
+    function initComponentEditing() {
+
+        // Reset component arrays
+        newComponents = new Array();
+        newAmounts = new Array();
+        removedComponents = new Array();
+
+        // Clear component table
+        dojo.forEach(dojo.query("tr", "orderComponentEditList"), function(item, index){
+            if(index != 0) dojo.destroy(item);
+        });
+
+        // Render component table
+        var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
+        dojo.forEach(selectedModule.components, function(item){
+            var total = item.local_price * item.amount;
+            dojo.place("<tr class=\"itemLine\"><td></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
+        });
+    }
+
+    function removeComponent($component) {
 
     }
 
-    function removeComponent($componentId, $moduleId) {
+    function addComponent(component, amount) {
+        component.amount = amount;
+        newComponents.push(component);
+        selectedModule.components.push(component)
 
+        // Clear component table
+        dojo.forEach(dojo.query("tr", "orderComponentEditList"), function(item, index){
+            if(index != 0) dojo.destroy(item);
+        });
+
+        // Render component table
+        var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
+        dojo.forEach(selectedModule.components, function(item){
+            var total = item.local_price * item.amount;
+            dojo.place("<tr class=\"itemLine\"><td></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
+        });
     }
 
-    function addComponent($componentId, $moduleId, $amount) {
-        alert("Adding component!");
+    function saveComponents(i) {
+
+        dojo.setStyle(dojo.query("body")[0], "cursor", "wait");
+        if(i==undefined) i = 0;
+
+        if(i < newComponents.length) {
+            var item = newComponents[i];
+            var xhrParam = {
+                url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=addComp",
+                handleAs: "json",
+                content: {
+                    moduleId: selectedModule.id,
+                    componentId: item.id,
+                    amount: item.amount
+                }
+            }
+            dojo.xhrPost(xhrParam).then(function(data){
+                saveComponents(i+1);
+            });
+        } else {
+            alert("All components sent to server!");
+            window.location.href = window.location.href;
+        }
     }
 
     behavior.add({
@@ -214,11 +271,21 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         "#orderComponentEditBtn": {
             onclick: function(e) {
 
+                initComponentEditing();
                 dijit.byId("orderModuleComponentEdit").show();
             }
         },
-        "#orderComponentSelect": {
-            found: function(node) {
+        "#orderComponentAddBtn": {
+            onclick: function(e) {
+
+                // Fetch item from datastore
+                var selection = dijit.byId("orderComponentSelect").get("item");
+                addComponent(selection, dojo.attr("orderComponentAmount", "value"));
+            }
+        },
+        "#orderComponentDoneBtn": {
+            onclick: function(e) {
+                saveComponents();
             }
         }
     });
