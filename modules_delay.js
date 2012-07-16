@@ -1,5 +1,7 @@
-require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button", "dijit/Editor", "dojo/currency", 'dojo/store/Memory', "dojo/data/ObjectStore", 'dijit/form/FilteringSelect', "dojo/_base/xhr"]
-    , function(ready, behavior, Dialog, TextBox, Button, Editor, Currency, Memory, ObjectStore, FilteringSelect, xhr){
+require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button",
+    "dijit/Editor", "dojo/currency", 'dojo/store/Memory', "dojo/data/ObjectStore", 'dijit/form/FilteringSelect', "dojo/_base/xhr",
+    "dojo/io-query", "dojo/back"]
+    , function(ready, behavior, Dialog, TextBox, Button, Editor, Currency, Memory, ObjectStore, FilteringSelect, xhr, ioquery, back){
 
     // Set body class to get styling right
     dojo.addClass(dojo.query("body")[0], "claro");
@@ -103,6 +105,10 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     moduleId: selectedModule.id,
                     componentId: item.id,
                     amount: item.amount
+                },
+                error: function(crap) {
+                    alert(crap.message);
+                    dojo.setStyle(dojo.query("body")[0], "cursor", "normal");
                 }
             }
             dojo.xhrPost(xhrParam).then(function(data){
@@ -110,9 +116,87 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
             });
         } else {
             alert("All components sent to server!");
-            window.location.href = window.location.href;
+            dijit.byId("orderModuleComponentEdit").hide();
+            dojo.setStyle(dojo.query("body")[0], "cursor", "normal");
+            loadModuleData();
         }
     }
+
+        function loadModuleData() {
+            var xhrParam = {
+                url: "?m=ordermgmt&a=moduleJson&suppressHeaders=true&id=" + moduleId,
+                handleAs: "json",
+                preventCache: true,
+                sync: true,
+                load: function(data) {
+
+                    selectedModule = data;
+
+                    // Set general module details
+                    dojo.html.set(dojo.byId("orderModuleDetailName"), data.name);
+                    dojo.html.set(dojo.byId("orderModuleDetailDescr"), data.description);
+                    dojo.html.set(dojo.byId("orderModuleDetailBuild"), data.buildtime);
+                    dojo.html.set(dojo.byId("orderModuleDetailDelivered"), data.delivered);
+
+                    // Build child module list
+                    dojo.empty("orderDetailsChildren");
+                    var ul = dojo.byId("orderDetailsChildren");
+                    dojo.forEach(data.childModules, function(item) {
+                        var node = dojo.create("li", {innerHTML: item.name}, ul);
+                    });
+
+                    // Clear all component tables
+                    dojo.forEach(dojo.query(".orderModuleComponentTable"), function(table, num){
+                        if(num == 0) {
+                            dojo.forEach(dojo.query(".itemLine"), function(line){
+                                dojo.destroy(line, table);
+                            });
+                        } else dojo.destroy(table);
+                    });
+                    dojo.forEach(dojo.query("h2", dojo.byId("orderModuleComponentList")), function(node, num){
+                        if(num != 0) dojo.destroy(node);
+                    });
+                    // Build component list for this
+                    var componentTable = dojo.query(".orderModuleComponentTable")[0];
+                    var refNode = dojo.clone(componentTable);
+                    var headerNode = dojo.query(".tableHeader", componentTable)[0];
+                    renderComponentTable(data.components, headerNode);
+                    dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(data.modulePrice));
+
+                    // Build component lists for all children
+                    var lastTable = componentTable;
+                    dojo.forEach(data.childModules, function(module){
+                        subTotal = 0;
+                        componentTable = dojo.clone(refNode);
+                        headerNode = dojo.query(".tableHeader", componentTable)[0];
+                        renderComponentTable(module.components, headerNode);
+                        dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(module.modulePrice));
+                        dojo.place(componentTable, lastTable, "after");
+                        dojo.place("<h2>From " + module.name + ":</h2>", lastTable, "after");
+                        lastTable = componentTable;
+                    });
+
+                    // Update module total prices
+                    dojo.forEach(dojo.query(".orderModuleDetailPrice"), function(node) {
+                        dojo.html.set(node, dojo.currency.format(data.totalPrice));
+                    });
+
+                    // Update file listings
+                    var fileList = dojo.byId("orderModuleFileUl");
+                    dojo.empty(fileList);
+                    dojo.forEach(data.files, function(file) {
+                        dojo.place("<li><a href=\"fileviewer.php?file_id="+ file.file_id + "\">" +
+                            file.file_description + " (" + file.file_type + ") " +
+                            "<span class=\"orderModuleFileDetails\">Size: " + Math.round((file.file_size /1024)*100)/100  + " Kb Changed: " + file.file_date + "</span></a></li>", fileList, "last");
+                    });
+                },
+                error: function(crap) {
+                    alert(crap.message);
+                }
+            }
+            dojo.xhrGet(xhrParam);
+            document.location.hash = "#id=" + moduleId;
+        }
 
     behavior.add({
         "#orderModuleList ul li":{
@@ -121,78 +205,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
 
                 // Fetch information about this object
                 moduleId = dojo.attr(e.target, "data-rss-module_id");
-                var xhrParam = {
-                    url: "?m=ordermgmt&a=moduleJson&suppressHeaders=true&id=" + moduleId,
-                    handleAs: "json",
-                    preventCache: true,
-                    sync: true,
-                    load: function(data) {
-
-                        selectedModule = data;
-
-                        // Set general module details
-                        dojo.html.set(dojo.byId("orderModuleDetailName"), data.name);
-                        dojo.html.set(dojo.byId("orderModuleDetailDescr"), data.description);
-                        dojo.html.set(dojo.byId("orderModuleDetailBuild"), data.buildtime);
-                        dojo.html.set(dojo.byId("orderModuleDetailDelivered"), data.delivered);
-
-                        // Build child module list
-                        dojo.empty("orderDetailsChildren");
-                        var ul = dojo.byId("orderDetailsChildren");
-                        dojo.forEach(data.childModules, function(item) {
-                            var node = dojo.create("li", {innerHTML: item.name}, ul);
-                        });
-
-                        // Clear all component tables
-                        dojo.forEach(dojo.query(".orderModuleComponentTable"), function(table, num){
-                            if(num == 0) {
-                                dojo.forEach(dojo.query(".itemLine"), function(line){
-                                    dojo.destroy(line, table);
-                                });
-                            } else dojo.destroy(table);
-                        });
-                        dojo.forEach(dojo.query("h2", dojo.byId("orderModuleComponentList")), function(node, num){
-                            if(num != 0) dojo.destroy(node);
-                        });
-                        // Build component list for this
-                        var componentTable = dojo.query(".orderModuleComponentTable")[0];
-                        var refNode = dojo.clone(componentTable);
-                        var headerNode = dojo.query(".tableHeader", componentTable)[0];
-                        renderComponentTable(data.components, headerNode);
-                        dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(data.modulePrice));
-
-                        // Build component lists for all children
-                        var lastTable = componentTable;
-                        dojo.forEach(data.childModules, function(module){
-                            subTotal = 0;
-                            componentTable = dojo.clone(refNode);
-                            headerNode = dojo.query(".tableHeader", componentTable)[0];
-                            renderComponentTable(module.components, headerNode);
-                            dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(module.modulePrice));
-                            dojo.place(componentTable, lastTable, "after");
-                            dojo.place("<h2>From " + module.name + ":</h2>", lastTable, "after");
-                            lastTable = componentTable;
-                        });
-
-                        // Update module total prices
-                        dojo.forEach(dojo.query(".orderModuleDetailPrice"), function(node) {
-                            dojo.html.set(node, dojo.currency.format(data.totalPrice));
-                        });
-
-                        // Update file listings
-                        var fileList = dojo.byId("orderModuleFileUl");
-                        dojo.empty(fileList);
-                        dojo.forEach(data.files, function(file) {
-                        dojo.place("<li><a href=\"fileviewer.php?file_id="+ file.file_id + "\">" +
-                            file.file_description + " (" + file.file_type + ") " +
-                            "<span class=\"orderModuleFileDetails\">Size: " + Math.round((file.file_size /1024)*100)/100  + " Kb Changed: " + file.file_date + "</span></a></li>", fileList, "last");
-                        });
-                    },
-                    error: function(crap) {
-                        alert(crap.message);
-                    }
-                }
-                dojo.xhrGet(xhrParam);
+                loadModuleData();
             }
         },
         ".dojoTextInput": {
@@ -255,7 +268,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     },
                     load: function(data) {
                         dijit.byId("orderModuleDialog").hide();
-                        window.location.href = window.location.href;
+                        loadModuleData();
                     }
                 }
                 dojo.xhrPost(xhrParam);
@@ -290,4 +303,18 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         }
     });
     behavior.apply();
+
+    // GUI should be ready populate based on fragment
+    ready(function(){
+
+        // Check the url fragment and use that to initialize the view
+        var objects = ioquery.queryToObject(document.location.hash.substr(1));
+        if(objects.id != undefined) {
+            moduleId = objects.id;
+            loadModuleData();
+        } else {
+            moduleId = 1;
+            loadModuleData();
+        }
+    })
 });
