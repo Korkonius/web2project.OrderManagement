@@ -175,4 +175,17 @@ switch($op){
             "message" => "Removed component!"
         ));
         break;
+
+    case "delModule":
+
+        // Get and make vars safe
+        $id = intval(w2PgetParam($_POST, "moduleId"));
+        $module = COrderModule::createFromDb($id);
+        $module->delete();
+
+        // Reply to client
+        echo json_encode(array(
+            "message" => "Removed module!"
+        ));
+        break;
 }

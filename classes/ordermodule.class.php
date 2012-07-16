@@ -14,6 +14,30 @@ class COrderModule
     public $totalPrice = 0;
     public $modulePrice = 0;
 
+    public function delete() {
+        $query = new w2p_Database_Query();
+
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_module_components");
+        $query->addWhere("module_id = $this->id");
+        $query->exec();
+        $query->clear();
+
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_module_files");
+        $query->addWhere("module_id = $this->id");
+        $query->exec();
+        $query->clear();
+
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_module_rel");
+        $query->addWhere("parent_id = $this->id OR child_id = $this->id");
+        $query->exec();
+        $query->clear();
+
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_modules");
+        $query->addWhere("module_id = $this->id");
+
+        return $query->exec();
+    }
+
     protected function __construct(array $values) {
 
         // Initialize object using the information in the parameters

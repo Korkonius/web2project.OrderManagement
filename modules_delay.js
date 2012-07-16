@@ -134,7 +134,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         dojo.forEach(removedComponents, function(item) {
             var xhrParam = {
                 url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=delComp",
-                handleAs: "text",
+                handleAs: "json",
                 sync: true,
                 content: {
                     moduleId: selectedModule.id,
@@ -152,7 +152,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         dojo.forEach(newComponents, function(item) {
             var xhrParam = {
                 url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=addComp",
-                handleAs: "text",
+                handleAs: "json",
                 sync: true,
                 content: {
                     moduleId: selectedModule.id,
@@ -350,6 +350,27 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         "#orderComponentDoneBtn": {
             onclick: function(e) {
                 saveComponents();
+            }
+        },
+        "#orderModuleDeleteBtn": {
+            onclick: function(e) {
+                if(confirm("Are you sure you want to delete this module?")) {
+                    var xhrParam = {
+                        url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=delModule",
+                        handleAs: "json",
+                        sync: true,
+                        content: {
+                            moduleId: selectedModule.id
+                        },
+                        error: function(crap) {
+                            alert(crap.message);
+                            dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
+                        }
+                    }
+                    dojo.xhrPost(xhrParam).then(function(data){
+                        window.location.href = window.location.href;
+                    });
+                }
             }
         }
     });
