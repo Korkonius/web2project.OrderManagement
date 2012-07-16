@@ -185,6 +185,14 @@ class COrderModule
         return $query->insertArray(COrder::_TBL_PREFIKS_ . "_module_components", $new);
     }
 
+    public static function deleteComponent($id, $componentId) {
+
+        $query = new w2p_Database_Query();
+        $query->setDelete(COrder::_TBL_PREFIKS_ . "_module_components");
+        $query->addWhere("stored_component_id = $componentId AND module_id = $id");
+        return $query->exec();
+    }
+
     public static function getNextId() {
 
         $query = new w2p_Database_Query();

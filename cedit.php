@@ -45,7 +45,7 @@ switch($op){
                 "id"            => $component->id,
                 "list_name"     => "$number $description $brand $name",
                 "list_display"  => "<i>$number</i> :: <strong>$description</strong> :: <span style='color: silver'>$brand by $supplier</span>",
-                "list_short"    => "$number $description",
+                "list_short"    => "$number $description $brand $name",
                 "catalog_number"=> "$number",
                 "description"   => "$description",
                 "price"         => $component->localPrice
@@ -160,6 +160,19 @@ switch($op){
         // Reply to client
         echo json_encode(array(
             "message" => "Added component!"
+        ));
+        break;
+    case "delComp":
+
+        // Get and make vars safe
+        $id = intval(w2PgetParam($_POST, "moduleId"));
+        $componentId = intval(w2PgetParam($_POST, "componentId"));
+
+        // Delete components from module
+        COrderModule::deleteComponent($id, $componentId);
+        // Reply to client
+        echo json_encode(array(
+            "message" => "Removed component!"
         ));
         break;
 }

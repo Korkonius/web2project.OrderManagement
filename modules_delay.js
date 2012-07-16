@@ -27,9 +27,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     "store": componentStore,
                     searchAttr: "list_display",
                     labelAttr: "list_display",
-                    labelType: "html",
-                    onChange: function(item) {
-                    }
+                    labelType: "html"
                 }, dojo.attr("orderComponentSelect", "id"));
             });
 
@@ -65,12 +63,47 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
         dojo.forEach(selectedModule.components, function(item){
             var total = item.local_price * item.amount;
-            dojo.place("<tr class=\"itemLine\"><td></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
+            dojo.place("<tr class=\"itemLine\"><td><img class=\"orderComponentRemoveBtn\" data-rss-orderComponentId=\"" + item.component_id + "\" src=\"./modules/ordermgmt/images/delete.png\" alt=\"Remove Component\" title=\"Remove Component\" /></td><td>" +
+                item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
         });
+
+        dojo.behavior.add({
+            ".orderComponentRemoveBtn": {
+                onclick: function(e) {
+                    var id = dojo.attr(e.target, "data-rss-orderComponentId");
+                    removeComponent(id);
+                }
+            }
+        });
+        dojo.behavior.apply();
     }
 
-    function removeComponent($component) {
+    function removeComponent(componentId) {
 
+        // Remove components and add it to the list
+        removedComponents.push(componentId);
+        dojo.forEach(selectedModule.components, function(item, index){
+            if(item != undefined) {
+                if(item.component_id == componentId) {
+                    selectedModule.components.splice(index, 1);
+
+                }
+            }
+        });
+
+        // Clear component table
+        dojo.forEach(dojo.query("tr", "orderComponentEditList"), function(item, index){
+            if(index != 0) dojo.destroy(item);
+        });
+
+        // Render component table
+        var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
+        dojo.forEach(selectedModule.components, function(item){
+            var total = item.local_price * item.amount;
+            dojo.place("<tr class=\"itemLine\"><td><img class=\"orderComponentRemoveBtn\" data-rss-orderComponentId=\"" + item.component_id + "\" src=\"./modules/ordermgmt/images/delete.png\" alt=\"Remove Component\" title=\"Remove Component\" /></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
+        });
+
+        dojo.behaviour.apply();
     }
 
     function addComponent(component, amount) {
@@ -87,20 +120,40 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
         dojo.forEach(selectedModule.components, function(item){
             var total = item.local_price * item.amount;
-            dojo.place("<tr class=\"itemLine\"><td></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
+            dojo.place("<tr class=\"itemLine\"><td><img class=\"orderComponentRemoveBtn\" data-rss-orderComponentId=\"" + item.component_id + "\" src=\"./modules/ordermgmt/images/delete.png\" alt=\"Remove Component\" title=\"Remove Component\" /></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
         });
+
+        dojo.behaviour.apply();
     }
 
     function saveComponents(i) {
 
         dojo.setStyle(dojo.query("body")[0], "cursor", "wait");
-        if(i==undefined) i = 0;
 
-        if(i < newComponents.length) {
-            var item = newComponents[i];
+        // Delete removed components
+        dojo.forEach(removedComponents, function(item) {
+            var xhrParam = {
+                url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=delComp",
+                handleAs: "text",
+                sync: true,
+                content: {
+                    moduleId: selectedModule.id,
+                    componentId: item
+                },
+                error: function(crap) {
+                    alert(crap.message);
+                    dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
+                }
+            }
+            dojo.xhrPost(xhrParam);
+        });
+
+        // Send added components
+        dojo.forEach(newComponents, function(item) {
             var xhrParam = {
                 url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=addComp",
-                handleAs: "json",
+                handleAs: "text",
+                sync: true,
                 content: {
                     moduleId: selectedModule.id,
                     componentId: item.id,
@@ -108,18 +161,16 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                 },
                 error: function(crap) {
                     alert(crap.message);
-                    dojo.setStyle(dojo.query("body")[0], "cursor", "normal");
+                    dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
                 }
             }
-            dojo.xhrPost(xhrParam).then(function(data){
-                saveComponents(i+1);
-            });
-        } else {
-            alert("All components sent to server!");
-            dijit.byId("orderModuleComponentEdit").hide();
-            dojo.setStyle(dojo.query("body")[0], "cursor", "normal");
-            loadModuleData();
-        }
+            dojo.xhrPost(xhrParam);
+        });
+
+        // Cleanup and update UI
+        dijit.byId("orderModuleComponentEdit").hide();
+        dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
+        loadModuleData();
     }
 
         function loadModuleData() {
