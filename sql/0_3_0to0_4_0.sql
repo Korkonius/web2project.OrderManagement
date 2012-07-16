@@ -10,7 +10,7 @@ CREATE TABLE `ordermgmt_module_components` (
 `stored_component_id` int(11) NOT NULL,
 `module_id` int(11) NOT NULL,
 `amount` varchar(255) NOT NULL COMMENT 'How many parts is part of this module',
-PRIMARY KEY (`stored_component_id`)
+PRIMARY KEY (`stored_component_id`, `module_id`)
 ) ENGINE=InnoDB
 DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci;
 
