@@ -247,6 +247,15 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
             }
             dojo.xhrGet(xhrParam);
             document.location.hash = "#id=" + moduleId;
+
+            dojo.forEach(dojo.query("#orderModuleList ul li"), function(item){
+                dojo.removeClass(item, "selected");
+            });
+
+            dojo.forEach(dojo.query("#orderModuleList ul li"), function(item){
+                var lineId = dojo.attr(item, "data-rss-module_id");
+                if(lineId == moduleId) dojo.addClass(item, "selected");
+            });
         }
 
     behavior.add({
