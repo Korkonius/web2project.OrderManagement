@@ -46,8 +46,8 @@ switch($op){
                 "list_name"     => "$number $description $brand $name",
                 "list_display"  => "<i>$number</i> :: <strong>$description</strong> :: <span style='color: silver'>$brand by $supplier</span>",
                 "list_short"    => "$number $description",
-                "catalog_number"   => "$number",
-                "description" => "$description",
+                "catalog_number"=> "$number",
+                "description"   => "$description",
                 "price"         => $component->localPrice
             );
         }

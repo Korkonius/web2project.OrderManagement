@@ -17,12 +17,6 @@ $(document).ready(function(){
     });
     $('#load_dialog')
         .hide()
-        .overlay({
-            modal: true,
-            closeOnEsc: true,
-            load: false,
-            mask: 'white'
-        });
 
     $('.paginate').each(function(index, value) {
 

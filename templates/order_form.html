@@ -62,8 +62,13 @@
 
     // Fetch dependencies and init select list
     var select;
-    require(['dojo/ready', 'dojo/dom', 'dojo/store/Memory', "dojo/data/ObjectStore", "dojo/_base/xhr", 'dijit/form/FilteringSelect'],
-    function(ready, dom, Memory, ObjectStore, xhr, FilteringSelect) {
+    require(['dojo/ready', 'dojo/parser', 'dojo/dom', 'dojo/store/Memory', "dojo/data/ObjectStore", "dojo/_base/xhr", 'dijit/form/FilteringSelect'],
+    function(ready, parser, dom, Memory, ObjectStore, xhr, FilteringSelect) {
+
+        // Set body class to get styling right
+        dojo.addClass(dojo.query("body")[0], "claro");
+        dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+
         xhr.get({
             url: "?m=ordermgmt&a=cedit&op=getfilterlist&suppressHeaders=true",
             handleAs: "json"
@@ -76,7 +81,7 @@
                 queryExpr: "*${0}*",
                 autoComplete: false,
                 "store": store,
-                searchAttr: "list_name",
+                searchAttr: "list_display",
                 labelAttr: "list_display",
                 labelType: "html",
                 onChange: function(item) {

@@ -25,7 +25,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     queryExpr: "*${0}*",
                     autoComplete: false,
                     "store": componentStore,
-                    searchAttr: "list_name",
+                    searchAttr: "list_display",
                     labelAttr: "list_display",
                     labelType: "html",
                     onChange: function(item) {
