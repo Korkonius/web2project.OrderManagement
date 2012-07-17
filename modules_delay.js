@@ -1,3 +1,14 @@
+// Configure dojo to include the custom package set
+var dojoConfig = {
+    baseUrl: "./modules/ordermgmt/js/",
+    tlmSiblingOfDojo: false,
+    packages: [
+        {name: "dojo", location: "dojo"},
+        {name: "dijit", location: "dijit"},
+        {name: "dojox", location: "dojox"},
+        {name: "w2porder", location: "w2porder"}
+    ]
+};
 require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button",
     "dijit/Editor", "dojo/currency", 'dojo/store/Memory', "dojo/data/ObjectStore", 'dijit/form/FilteringSelect', "dojo/_base/xhr",
     "dojo/io-query", "dojo/back"]
