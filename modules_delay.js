@@ -11,8 +11,8 @@ var dojoConfig = {
 };
 require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "dijit/form/Button",
     "dijit/Editor", "dojo/currency", 'dojo/store/Memory', "dojo/data/ObjectStore", 'dijit/form/FilteringSelect', "dojo/_base/xhr",
-    "dojo/io-query", "dojo/back"]
-    , function(ready, behavior, Dialog, TextBox, Button, Editor, Currency, Memory, ObjectStore, FilteringSelect, xhr, ioquery, back){
+    "dojo/io-query", "w2porder/OrderComponentStore"]
+    , function(ready, behavior, Dialog, TextBox, Button, Editor, Currency, Memory, ObjectStore, FilteringSelect, xhr, ioquery, OrderComponentStore){
 
     // Set body class to get styling right
     dojo.addClass(dojo.query("body")[0], "claro");
@@ -21,26 +21,9 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
     // Variable that determine the currently selected item
     var moduleId = undefined;
     var selectedModule = undefined;
-    var componentStore = undefined;
+    var componentStore = new OrderComponentStore();
     var newComponents = undefined;
     var removedComponents = undefined;
-
-        xhr.get({
-            url: "?m=ordermgmt&a=cedit&op=getfilterlist&suppressHeaders=true",
-            handleAs: "json"
-        }).then(function(data) {
-                componentStore = new ObjectStore({objectStore: new Memory({data: data.items})});
-                new FilteringSelect({
-                    id: dojo.attr("orderComponentSelect", "id"),
-                    name: dojo.attr("orderComponentSelect", "id"),
-                    queryExpr: "*${0}*",
-                    autoComplete: false,
-                    "store": componentStore,
-                    searchAttr: "list_display",
-                    labelAttr: "list_display",
-                    labelType: "html"
-                }, dojo.attr("orderComponentSelect", "id"));
-            });
 
     // Register listeners on items in the module list
     var loadDetailsDialog = new Dialog({
@@ -408,5 +391,17 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
             moduleId = 1;
             loadModuleData();
         }
+
+        // Setup filtering select
+        new FilteringSelect({
+            id: dojo.attr("orderComponentSelect", "id"),
+            name: dojo.attr("orderComponentSelect", "id"),
+            queryExpr: "*${0}*",
+            autoComplete: false,
+            "store": componentStore,
+            searchAttr: "list_display",
+            labelAttr: "list_display",
+            labelType: "html"
+        }, dojo.attr("orderComponentSelect", "id"));
     })
 });
