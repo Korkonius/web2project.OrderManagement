@@ -375,6 +375,11 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     });
                 }
             }
+        },
+        "#orderModuleExportExcelBtn": {
+            onclick: function(e) {
+                window.location.href = "?m=ordermgmt&a=excelviewer&suppressHeaders=true&module_id=" + selectedModule.id;
+            }
         }
     });
     behavior.apply();

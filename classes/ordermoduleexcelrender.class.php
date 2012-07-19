@@ -17,34 +17,47 @@ class COrderModuleExcelRender
 
     public function __construct(COrderModule $module) {
 
-        // Create required objects
-        $this->phpexcel = new PHPExcel();
+        // Load required template from template dir
+        $this->phpexcel = PHPExcel_IOFactory::load(dirname(__FILE__). "/../templates/module_workbook_template.xlsx");
         $this->mainSheet = $this->phpexcel->getActiveSheet();
 
         // Set module as this module
         $this->module = $module;
     }
 
-    public function processHeaders() {
+    public function writeModuleData() {
 
-        // Write module name and colour header cells
-        $this->mainSheet->mergeCells('B2:E2');
+        $sheet = $this->mainSheet;
+        $module = $this->module;
+        $sheet->setCellValue('B2', $module->name);
+        $sheet->setCellValue('B3', $module->description);
 
-        // Prepare module name cell
-        $nameStyle = $this->mainSheet->getStyle('B2');
-        $nameStyle->getFont()->getColor()->setARGB($this->headerFontColor);
-        $nameStyle->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB($this->headerBgColor);
-        $this->mainSheet->setCellValue('B2', $this->module->name);
-    }
+        // Write components
+        if(!empty($module->components)) {
 
-    public function processFooter() {
+            // Set first row in table manually
+            $row = 10;
+            foreach($module->components as $component) {
+                $sheet->insertNewRowBefore($row);
+                $sheet->setCellValue('B'.$row, $component['amount']);
+                $sheet->setCellValue('C'.$row, $component['catalog_number']);
+                $sheet->setCellValue('D'.$row, $component['description']);
+                $sheet->setCellValue('E'.$row, $component['local_price']*$component['amount']);
+                $sheet->getStyle('E'.$row)->getNumberFormat()->setFormatCode("kr #,##0.00");
+                $row++;
+            }
+        }
 
+        // Write total price formula
+        $sheet->setCellValue('E'.$row, "=SUM(E8:E".($row-1).")");
+        $sheet->getStyle('E'.$row)->getNumberFormat()->setFormatCode("kr #,##0.00");
+        $sheet->removeRow(9, 1); // Remove initial row in template
     }
 
     public function stream() {
 
         // Render file
-        $this->processHeaders();
+        $this->writeModuleData();
         $name = $this->module->name;
 
         // Set headers for the browser to recognise Excel spreadsheet
