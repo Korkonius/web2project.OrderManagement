@@ -1,5 +1,12 @@
 <?php
 require_once(dirname(__FILE__) . "/order.class.php");
+/**
+ * COrderModule is a representation of order modules. These modules are groupings of components that represent
+ * a module offered by the company. Modules are supposed to help users determine the cost of a common module
+ * configuration and options to create a strong relation between commonly used components, files such as drawings or
+ * specifications of a module and estimated completion time of the module. This helps project planners generate offers
+ * and keep track of important aspects of each module.
+ */
 class COrderModule
 {
     // Data members reflecting information stored in the database
@@ -7,13 +14,18 @@ class COrderModule
     public $name;
     public $description;
     public $buildtime;
-    public $delivered;
+    public $delivered = 0;
     public $childModules;
     public $components;
     public $files;
     public $totalPrice = 0;
     public $modulePrice = 0;
 
+    /**
+     * Removes this object from the database.
+     *
+     * @return Handle
+     */
     public function delete() {
         $query = new w2p_Database_Query();
 
@@ -38,6 +50,12 @@ class COrderModule
         return $query->exec();
     }
 
+    /**
+     * Protected constructor. Use static methods to create this object from different sources.
+     * Also loads related objects like components and files from the database.
+     *
+     * @param array $values Parameters used to initialize object attributes
+     */
     protected function __construct(array $values) {
 
         // Initialize object using the information in the parameters
@@ -55,6 +73,10 @@ class COrderModule
         $this->loadFiles();
     }
 
+    /**
+     * Loads child objects
+     * @deprecated Will be removed soon... Module inheretance is going to be removed
+     */
     protected function loadChildren() {
 
         // Load children
@@ -78,6 +100,9 @@ class COrderModule
         $this->childModules = $children;
     }
 
+    /**
+     * Loads components related to this ID from database
+     */
     protected function loadComponents() {
 
         // Load components
@@ -97,6 +122,9 @@ class COrderModule
         $this->components = $results;
     }
 
+    /**
+     * Load files related to this object from database
+     */
     protected function loadFiles() {
 
         // Query for file ID's and construct file array
@@ -115,6 +143,11 @@ class COrderModule
         $this->files = $files;
     }
 
+    /**
+     * Prepares an array recieved from the database and renames indices so the hash can be passed to the constructor.
+     *
+     * @param array $entry
+     */
     protected function fromPrepareDb(array & $entry) {
 
         // Array replacement values
@@ -131,6 +164,15 @@ class COrderModule
         }
     }
 
+    /**
+     * Fetches a list of COrderModules from the database. The filter can be used to specify a subset of modules.
+     *
+     * @static
+     * @param int $offset
+     * @param int $limit
+     * @param array $filter
+     * @return array
+     */
     public static function createListFromDb($offset=0, $limit=10, $filter=array()) {
 
         $query = new w2p_Database_Query();
@@ -148,6 +190,13 @@ class COrderModule
         return $modules;
     }
 
+    /**
+     * Initializes a single object with the given ID from the database
+     *
+     * @static
+     * @param $id
+     * @return COrderModule
+     */
     public static function createFromDb($id) {
 
         $query = new w2p_Database_Query();
@@ -160,6 +209,15 @@ class COrderModule
         return new COrderModule($result);
     }
 
+    /**
+     * Creates a new module object and stores it in the database
+     *
+     * @static
+     * @param $name
+     * @param $description
+     * @param $buildTime
+     * @return bool
+     */
     public static function createNewModule($name, $description, $buildTime) {
 
         // Send new data to database
@@ -175,6 +233,16 @@ class COrderModule
         return $query->insertArray(COrder::_TBL_PREFIKS_ . "_modules", $new);
     }
 
+    /**
+     * Alters an existing module
+     *
+     * @static
+     * @param $id
+     * @param $name
+     * @param $description
+     * @param $buildTime
+     * @return Handle
+     */
     public static function alterModule($id, $name, $description, $buildTime) {
 
         $query = new w2p_Database_Query();
@@ -187,6 +255,14 @@ class COrderModule
         return $query->updateArray(COrder::_TBL_PREFIKS_ . "_modules", $changed, "module_id");
     }
 
+    /**
+     * Attaches a file to the specified module module
+     *
+     * @static
+     * @param $id
+     * @param $fileId
+     * @return bool
+     */
     public static function attachFile($id, $fileId) {
 
         $query = new w2p_Database_Query();
@@ -197,6 +273,15 @@ class COrderModule
         return $query->insertArray(COrder::_TBL_PREFIKS_ . "_module_files", $new);
     }
 
+    /**
+     * Attaches a component to specified module
+     *
+     * @static
+     * @param $id
+     * @param $componentId
+     * @param $amount
+     * @return bool
+     */
     public static function attachComponent($id, $componentId, $amount) {
 
         $query = new w2p_Database_Query();
@@ -209,6 +294,14 @@ class COrderModule
         return $query->insertArray(COrder::_TBL_PREFIKS_ . "_module_components", $new);
     }
 
+    /**
+     * Deletes a component from the specified module
+     *
+     * @static
+     * @param $id
+     * @param $componentId
+     * @return Handle
+     */
     public static function deleteComponent($id, $componentId) {
 
         $query = new w2p_Database_Query();
@@ -217,6 +310,12 @@ class COrderModule
         return $query->exec();
     }
 
+    /**
+     * Calculates the next id based on the maximum id in the database
+     *
+     * @static
+     * @return mixed
+     */
     public static function getNextId() {
 
         $query = new w2p_Database_Query();
