@@ -160,12 +160,6 @@
             <strong>Est. build time: </strong> <span id="orderModuleDetailBuild">N/A</span> hours
             <hr />
         </div>
-        <h2>Consists of modules</h2>
-        <div id="orderSuperList">
-            <ul id="orderDetailsChildren">
-
-            </ul>
-        </div>
     </div>
     <div id="orderModuleFileList" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="height: 150px">
         <h1>
@@ -184,7 +178,7 @@
         </h1>
         <hr />
         <h2>This module:</h2>
-        <table class="orderModuleComponentTable">
+        <table id="orderModuleComponentTable">
             <tr class="tableHeader">
                 <th width="5%" class="orderModuleCompHead">Amount</th>
                 <th width="15%" class="orderModuleCompHead">Catalog #</th>

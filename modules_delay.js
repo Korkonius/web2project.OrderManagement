@@ -183,43 +183,21 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     dojo.html.set(dojo.byId("orderModuleDetailBuild"), data.buildtime);
                     dojo.html.set(dojo.byId("orderModuleDetailDelivered"), data.delivered);
 
-                    // Build child module list
-                    dojo.empty("orderDetailsChildren");
-                    var ul = dojo.byId("orderDetailsChildren");
-                    dojo.forEach(data.childModules, function(item) {
-                        var node = dojo.create("li", {innerHTML: item.name}, ul);
+                    // Remove non-header information
+                    var tableRows = dojo.query("#orderModuleComponentTable tr")
+                    dojo.forEach(tableRows, function(row, index){
+                        if(index == 0 || index == (tableRows.length-1)) {
+                            // Nothing, leave header and footer intact
+                        } else {
+                            dojo.destroy(row);
+                        }
                     });
 
-                    // Clear all component tables
-                    dojo.forEach(dojo.query(".orderModuleComponentTable"), function(table, num){
-                        if(num == 0) {
-                            dojo.forEach(dojo.query(".itemLine"), function(line){
-                                dojo.destroy(line, table);
-                            });
-                        } else dojo.destroy(table);
-                    });
-                    dojo.forEach(dojo.query("h2", dojo.byId("orderModuleComponentList")), function(node, num){
-                        if(num != 0) dojo.destroy(node);
-                    });
                     // Build component list for this
-                    var componentTable = dojo.query(".orderModuleComponentTable")[0];
-                    var refNode = dojo.clone(componentTable);
+                    var componentTable = dojo.byId("orderModuleComponentTable");
                     var headerNode = dojo.query(".tableHeader", componentTable)[0];
                     renderComponentTable(data.components, headerNode);
                     dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(data.modulePrice));
-
-                    // Build component lists for all children
-                    var lastTable = componentTable;
-                    dojo.forEach(data.childModules, function(module){
-                        subTotal = 0;
-                        componentTable = dojo.clone(refNode);
-                        headerNode = dojo.query(".tableHeader", componentTable)[0];
-                        renderComponentTable(module.components, headerNode);
-                        dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(module.modulePrice));
-                        dojo.place(componentTable, lastTable, "after");
-                        dojo.place("<h2>From " + module.name + ":</h2>", lastTable, "after");
-                        lastTable = componentTable;
-                    });
 
                     // Update module total prices
                     dojo.forEach(dojo.query(".orderModuleDetailPrice"), function(node) {

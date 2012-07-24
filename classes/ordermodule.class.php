@@ -15,7 +15,6 @@ class COrderModule
     public $description;
     public $buildtime;
     public $delivered = 0;
-    public $childModules;
     public $components;
     public $files;
     public $totalPrice = 0;
@@ -36,11 +35,6 @@ class COrderModule
 
         $query->setDelete(COrder::_TBL_PREFIKS_ . "_module_files");
         $query->addWhere("module_id = $this->id");
-        $query->exec();
-        $query->clear();
-
-        $query->setDelete(COrder::_TBL_PREFIKS_ . "_module_rel");
-        $query->addWhere("parent_id = $this->id OR child_id = $this->id");
         $query->exec();
         $query->clear();
 
@@ -66,38 +60,8 @@ class COrderModule
         // Load components related to this module, load before children to compute price!
         $this->loadComponents();
 
-        // Load children related to this module
-        $this->loadChildren();
-
         // Load all files related to this module
         $this->loadFiles();
-    }
-
-    /**
-     * Loads child objects
-     * @deprecated Will be removed soon... Module inheretance is going to be removed
-     */
-    protected function loadChildren() {
-
-        // Load children
-        $query = new w2p_Database_Query();
-        $query->addTable(COrder::_TBL_PREFIKS_ . "_module_rel", "r");
-        $query->addJoin(COrder::_TBL_PREFIKS_ . "_modules", "m", "m.module_id = r.child_id");
-        $query->addWhere("r.parent_id = $this->id");
-        $results = $query->loadList();
-
-        $children = array();
-        foreach($results as $row) {
-            self::fromPrepareDb($row);
-            $newChild = new COrderModule($row);
-
-            // Compute grand total of this module
-            $this->totalPrice += $newChild->modulePrice;
-
-            $children[] = $newChild;
-        }
-
-        $this->childModules = $children;
     }
 
     /**
