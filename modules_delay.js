@@ -22,6 +22,7 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
     var moduleId = undefined;
     var selectedModule = undefined;
     var componentStore = new OrderComponentStore();
+    var componentListWidget = undefined;
     var newComponents = undefined;
     var removedComponents = undefined;
 
@@ -184,20 +185,8 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                     dojo.html.set(dojo.byId("orderModuleDetailDelivered"), data.delivered);
 
                     // Remove non-header information
-                    var tableRows = dojo.query("#orderModuleComponentTable tr")
-                    dojo.forEach(tableRows, function(row, index){
-                        if(index == 0 || index == (tableRows.length-1)) {
-                            // Nothing, leave header and footer intact
-                        } else {
-                            dojo.destroy(row);
-                        }
-                    });
-
-                    // Build component list for this
-                    var componentTable = dojo.byId("orderModuleComponentTable");
-                    var headerNode = dojo.query(".tableHeader", componentTable)[0];
-                    renderComponentTable(data.components, headerNode);
-                    dojo.html.set(dojo.query(".orderModuleCompPrice", componentTable)[0], dojo.currency.format(data.modulePrice));
+                    var componentWidget = dijit.byId("componentList");
+                    componentWidget.set("Components", data.components);
 
                     // Update module total prices
                     dojo.forEach(dojo.query(".orderModuleDetailPrice"), function(node) {

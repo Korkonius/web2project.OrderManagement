@@ -64,7 +64,7 @@
     .orderModuleFileDetails {
         color: #999;
     }
-    #orderModuleComponentTable, #orderComponentEditList {
+    #orderModuleComponentTable, #orderComponentEditList, .ordermgmt.componentlist {
         width: 100%;
         padding: 0;
         margin: 0;
@@ -178,7 +178,7 @@
             <img src="./modules/ordermgmt/images/cog_edit.png" alt="Add components" title="Edit components" id="orderComponentEditBtn"/>
         </h1>
         <hr />
-        <table data-dojo-type="w2porder.ComponentList" id="orderModuleComponentTable">
+        <table data-dojo-type="w2porder.ComponentList" data-dojo-props="id: 'componentList'" id="orderModuleComponentTable">
         </table>
     </div>
     <div id="orderModuleSummaryBar" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
