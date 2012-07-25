@@ -33,14 +33,6 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         style: "width: 400px"
     });
 
-    // Renders components from component into table
-    function renderComponentTable(components, reference) {
-        dojo.forEach(components, function(item){
-            var total = item.local_price * item.amount;
-            dojo.place("<tr class=\"itemLine\"><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td><td style=\"text-align: right\">" + dojo.currency.format(total) + "</td></tr>", reference, "after");
-        });
-    }
-
     // Render initial component editing view
     function initComponentEditing() {
 
@@ -49,18 +41,8 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         newAmounts = new Array();
         removedComponents = new Array();
 
-        // Clear component table
-        dojo.forEach(dojo.query("tr", "orderComponentEditList"), function(item, index){
-            if(index != 0) dojo.destroy(item);
-        });
-
         // Render component table
-        var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
-        dojo.forEach(selectedModule.components, function(item){
-            var total = item.local_price * item.amount;
-            dojo.place("<tr class=\"itemLine\"><td><img class=\"orderComponentRemoveBtn\" data-rss-orderComponentId=\"" + item.component_id + "\" src=\"./modules/ordermgmt/images/delete.png\" alt=\"Remove Component\" title=\"Remove Component\" /></td><td>" +
-                item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
-        });
+        dijit.byId("componentEditList").set("Components", selectedModule.components);
 
         dojo.behavior.add({
             ".orderComponentRemoveBtn": {
@@ -70,7 +52,6 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                 }
             }
         });
-        dojo.behavior.apply();
     }
 
     function removeComponent(componentId) {
@@ -86,19 +67,9 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
             }
         });
 
-        // Clear component table
-        dojo.forEach(dojo.query("tr", "orderComponentEditList"), function(item, index){
-            if(index != 0) dojo.destroy(item);
-        });
-
         // Render component table
-        var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
-        dojo.forEach(selectedModule.components, function(item){
-            var total = item.local_price * item.amount;
-            dojo.place("<tr class=\"itemLine\"><td><img class=\"orderComponentRemoveBtn\" data-rss-orderComponentId=\"" + item.component_id + "\" src=\"./modules/ordermgmt/images/delete.png\" alt=\"Remove Component\" title=\"Remove Component\" /></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
-        });
-
-        dojo.behaviour.apply();
+        dijit.byId("componentEditList").set("Components", selectedModule.components);
+        dojo.behavior.apply();
     }
 
     function addComponent(component, amount) {
@@ -106,19 +77,9 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
         newComponents.push(component);
         selectedModule.components.push(component)
 
-        // Clear component table
-        dojo.forEach(dojo.query("tr", "orderComponentEditList"), function(item, index){
-            if(index != 0) dojo.destroy(item);
-        });
-
         // Render component table
-        var reference = dojo.query("tr.tableHeader", "orderComponentEditList")[0];
-        dojo.forEach(selectedModule.components, function(item){
-            var total = item.local_price * item.amount;
-            dojo.place("<tr class=\"itemLine\"><td><img class=\"orderComponentRemoveBtn\" data-rss-orderComponentId=\"" + item.component_id + "\" src=\"./modules/ordermgmt/images/delete.png\" alt=\"Remove Component\" title=\"Remove Component\" /></td><td>" + item.amount +"x </td><td>" + item.catalog_number + "</td><td>" + item.description +"</td>", reference, "after");
-        });
-
-        dojo.behaviour.apply();
+        dijit.byId("componentEditList").set("Components", selectedModule.components);
+        dojo.behavior.apply()
     }
 
     function saveComponents(i) {

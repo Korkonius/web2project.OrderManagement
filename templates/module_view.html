@@ -112,13 +112,7 @@
             </form>
         </div>
         <div id="orderModuleComponentEdit" style="width: 1024px" data-dojo-type="dijit.Dialog" data-dojo-props="title: 'Modify components'">
-            <table id="orderComponentEditList">
-                <tr class="tableHeader">
-                    <th width="5%" class="orderModuleCompHead"></th>
-                    <th width="5%" class="orderModuleCompHead">Amount</th>
-                    <th width="15%" class="orderModuleCompHead">Catalog #</th>
-                    <th width="75%" class="orderModuleCompHead">Description</th>
-                </tr>
+            <table id="orderComponentEditList" data-dojo-type="w2porder.ComponentList" data-dojo-props="id: 'componentEditList', editable: true">
             </table>
             <div id="orderComponentControls">
                 <input type="text" class="dojoTextInput" id="orderComponentAmount" title="Amount"/>
