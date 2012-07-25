@@ -19,11 +19,6 @@ CREATE TABLE `ordermgmt_module_files` (
 `module_id` int NULL,
 PRIMARY KEY (`file_id`, `module_id`));
 
-CREATE TABLE `ordermgmt_module_rel` (
-`parent_id` int NULL,
-`child_id` int NULL,
-PRIMARY KEY (`parent_id`, `child_id`));
-
 ALTER TABLE `ordermgmt_module_components` ADD CONSTRAINT `component_module_fk` FOREIGN KEY (`module_id`) REFERENCES `ordermgmt_modules` (`module_id`);
 ALTER TABLE `ordermgmt_module_files` ADD CONSTRAINT `module_file_fk` FOREIGN KEY (`module_id`) REFERENCES `ordermgmt_modules` (`module_id`);
 ALTER TABLE `ordermgmt_module_rel` ADD CONSTRAINT `parent_module_fk` FOREIGN KEY (`parent_id`) REFERENCES `ordermgmt_modules` (`module_id`);
