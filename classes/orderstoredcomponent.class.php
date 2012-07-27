@@ -69,4 +69,52 @@ class COrderStoredComponent
         }
 
     }
+
+    public static function updateAllExchangeRates() {
+
+        // Fetch JSON data from OpenExchangeRates.org if CURL is enabled
+        if(!function_exists("curl_init")){
+            throw new Exception("cURL extension must be enabled to use this feature...");
+        }
+
+        // Set up and fetch rates
+        $url = "http://openexchangerates.org/latest.json";
+        $curlSession = curl_init($url);
+        $curlOpt = array(
+            CURLOPT_RETURNTRANSFER  => true,
+            CURLOPT_USERAGENT       => $_SERVER['HTTP_USER_AGENT'],
+            CURLOPT_FAILONERROR     => true
+        );
+        curl_setopt_array($curlSession, $curlOpt);
+        $rawData = curl_exec($curlSession);
+        curl_close($curlSession);
+
+        if(!rawData) {
+            echo("Request failed! Curl error: " . curl_error($curlSession));
+        }
+
+        $jsonResult = json_decode($rawData, true);
+        $newRates = $jsonResult['rates'];
+        $local = $newRates[COrder::createFromDatabase(1)->currency]; // TODO Fix this when the currency is available from some config
+
+        // Fetch all currencies in database
+        $query = new w2p_Database_Query();
+        $query->addQuery("DISTINCT(`vendor_currency`) as curr");
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_default_components");
+        $result = $query->loadList();
+
+        foreach($result as $row) {
+            $vendorCurr = $row['curr'];
+            $vendor = $newRates[$vendorCurr];
+            if($vendor != 0) {
+
+                $newCurr = $local/$vendor;
+                $query->clear();
+                $query->addTable(COrder::_TBL_PREFIKS_ . "_default_components");
+                $query->addUpdate("exchange_rate", $newCurr);
+                $query->addWhere("vendor_currency = '$vendorCurr'");
+                $query->exec();
+            }
+        }
+    }
 }

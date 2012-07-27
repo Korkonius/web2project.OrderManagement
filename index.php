@@ -225,6 +225,10 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                             '<a class="button" href="?m=ordermgmt&newOrder=1"><span>New Order</span></a>', '', '',
                             ''
                         );
+                        $titleBlock->addCell(
+                            '<a class="button" href="?m=ordermgmt&a=cedit&op=currency"><span>Update Exchange Rates</span></a>', '', '',
+                            ''
+                        );
                     }
                     $titleBlock->addCrumb('?m=ordermgmt&a=components', 'Component View');
                     $titleBlock->addCrumb('?m=ordermgmt&a=modules', 'Module View');

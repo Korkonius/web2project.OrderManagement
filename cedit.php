@@ -188,4 +188,12 @@ switch($op){
             "message" => "Removed module!"
         ));
         break;
+
+    case "currency":
+
+        // Test fetching currency
+        COrderStoredComponent::updateAllExchangeRates();
+        $AppUI->setMsg("Component exchange rates updated!", UI_MSG_OK);
+        $AppUI->redirect('m=ordermgmt');
+        break;
 }
