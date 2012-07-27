@@ -1,12 +1,80 @@
-define (["dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "dojo/text!./templates/componentList.html"],
-    function (declare, _WidgetBase, _TemplatedMixin, template) {
+define (["dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin",
+    "dojo/_base/lang","dojo/text!./templates/componentList.html"],
+    function (declare, _WidgetBase, _TemplatedMixin, lang, template) {
     return declare([ _WidgetBase, _TemplatedMixin], {
         editable: false,
         components: [],
-        removeFunc: function(){
-            alert('Not defined!');
+        removedCache: [],
+        addedCache: [],
+        removeFunc: function(e){
+            var id = dojo.attr(e.target, "data-rss-orderComponentId");
+            this.removeComponent(id);
         },
         templateString: template,
+        addComponent: function(component, amount) {
+            component.amount = amount;
+            this.addedCache.push(component);
+            this.components.push(component);
+
+            this.refresh();
+        },
+        removeComponent: function(id) {
+
+            // Locate component and remove it from the cache
+            this.removedCache.push(id);
+            dojo.forEach(this.components, lang.hitch(this, function(item, index){
+                if(item != undefined) {
+                    if(item.component_id == id) {
+                        this.components.splice(index, 1);
+                    }
+                }
+            }));
+
+            this.refresh();
+        },
+        saveChanges: function(moduleId) {
+
+            dojo.setStyle(dojo.query("body")[0], "cursor", "wait");
+
+            // Delete the removed components
+            dojo.forEach(this.removedCache, function(item){
+               dojo.xhrPost({
+                   url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=delComp",
+                   handleAs: "json",
+                   sync: true,
+                   content: {
+                       moduleId: moduleId,
+                       componentId: item
+                   },
+                   error: function(crap){
+                       alert(crap.message);
+                       dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
+                   }
+               });
+            });
+
+            // Send added components
+            dojo.forEach(this.addedCache, function(item){
+                dojo.xhrPost({
+                    url: "?m=ordermgmt&a=cedit&suppressHeaders=true&op=addComp",
+                    handleAs: "json",
+                    sync: true,
+                    content: {
+                        moduleId: moduleId,
+                        componentId: item.id,
+                        amount: item.amount
+                    },
+                    error: function(crap) {
+                        alert(crap.message);
+                        dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
+                    }
+                })
+            });
+
+            this._clearCache();
+            this.refresh();
+            dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
+        },
         postCreate: function() {
 
             // Set up inheritance chain
@@ -54,6 +122,7 @@ define (["dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
         },
         _setComponentsAttr: function(value) {
             this.components = value;
+            this._clearCache();
             this.refresh();
         },
         _getComponentsAttr: function() {
@@ -61,7 +130,11 @@ define (["dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
         },
         _connectListener: function() {
                 var nodes = dojo.query(".orderComponentRemoveBtn", this.domNode);
-                dojo.query(".orderComponentRemoveBtn", this.domNode).on("click", this.removeFunc);
+                dojo.query(".orderComponentRemoveBtn", this.domNode).on("click", lang.hitch(this, "removeFunc"));
+        },
+        _clearCache: function() {
+            this.addedCache = [];
+            this.removedCache = [];
         }
     });
 });
