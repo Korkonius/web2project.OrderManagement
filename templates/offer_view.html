@@ -107,23 +107,23 @@
             </table>
         </div>
         <div id="offeringCompanyDetails">
-            <h3>From: Company name</h3>
+            <h3>From: [offer.offeredBy.company_name]</h3>
             <hr />
-            Address line 1<br />
-            Address line 2<br />
-            Postcode<br />
+            [offer.offeredBy.company_address1]<br />
+            [offer.offeredBy.company_address2]<br />
+            [offer.offeredBy.company_zip] [offer.offeredBy.company_city]<br />
             <hr />
-            <strong>Offer owner:</strong> <a href="mailto:dummy@mail.com">Eirik E. Ottesen</a> +00 876 54 391
+            <strong>Offer owner:</strong> <a href="mailto:[offer.owner.contact_email]">[offer.owner.contact_display_name]</a> [offer.owner.contact_phone]
             <hr />
         </div>
         <div id="receivingCompany">
-            <h3>To: Dummy Company</h3>
+            <h3>To: [offer.offeredTo.company_name]</h3>
             <hr />
-            Address line 1<br />
-            Address line 2<br />
-            Postcode<br />
+            [offer.offeredTo.company_address1]<br />
+            [offer.offeredTo.company_address2]<br />
+            [offer.offeredTo.company_zip] [offer.offeredTo.company_city]<br />
             <hr />
-            <strong>Company contact:</strong> <a href="mailto:dummy@mail.no">Incog Nito</a> +00 987 57 987
+            <strong>Company contact:</strong> <a href="mailto:[offer.contact.contact_email]">[offer.contact.contact_display_name]</a> [offer.contact.contact_phone]
             <hr />
         </div>
     </div>

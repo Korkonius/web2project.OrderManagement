@@ -38,9 +38,21 @@ class COrderOffer
         }
 
         // Load dependencies
+        $this->loadMemberObjects();
     }
 
     protected function loadMemberObjects() {
+
+        // Load contact information
+        $this->owner = new CContact();
+        $this->owner->load($this->contactId);
+        $this->contact = new CContact();
+        $this->contact->load($this->contactId);
+
+        $this->offeredBy = new CCompany();
+        $this->offeredBy->load($this->offeredById);
+        $this->offeredTo = new CCompany();
+        $this->offeredTo->load($this->offeredToId);
 
     }
 
