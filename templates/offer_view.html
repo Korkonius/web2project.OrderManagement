@@ -84,29 +84,25 @@
 </style>
 <div id="offerContainer">
     <div id="offerDetails">
-        <h1>Offer title</h1>
+        <h1>[offer.getFormattedId]</h1>
         <hr />
         <div id="offerSummary">
             <table id="offerSummaryTbl">
                 <tr>
-                    <td>Created:</td><td>24/7-2012</td>
+                    <td>Created:</td><td>[offer.created]</td>
                     <td>Project:</td><td><a href="">Example project</a></td>
                 </tr>
                 <tr>
-                    <td>Cost (NOK):</td><td>90,000.00 NOK</td>
-                    <td>Cost (hours):</td><td>4d 8h</td>
-                </tr>
-                <tr>
-                    <td>Delivery date:</td>
-                    <td colspan="3">1/11-2012</td>
+                    <td>Delivery date:</td><td>[offer.targetDate]</td>
+                    <td>Estimated work hours:</td><td>[offer.buildTime]</td>
                 </tr>
                 <tr>
                     <td>Notes:</td>
-                    <td colspan="3">Any custom notes and related information to this offer</td>
+                    <td colspan="3">[offer.notes]</td>
                 </tr>
                 <tr class="summaryRow">
                     <td colspan="3"></td>
-                    <td id="offerTotal">Est. total cost: 130,000.00 NOK</td>
+                    <td id="offerTotal">Est. total cost: [offer.totalCost] NOK</td>
                 </tr>
             </table>
         </div>
