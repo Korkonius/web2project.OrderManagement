@@ -147,7 +147,9 @@
         <h2>Files</h2>
         <hr />
         <ul id="offerFileList">
-            <li><a href="fileviewer.php?file_id=1">Contract (Jun. 2012) (application/pdf) <span class="offerFileDetails">Size: 158.54 Kb Changed: 27/08 - 2012</span></a></li>
+            [files; block=begin]
+            <li><a href="fileviewer.php?file_id=1">[files.file_description] ([files.file_type]) <span class="offerFileDetails">Size: [files.file_size] bytes Changed: [files.file_date]</span></a></li>
+            [files; block=end]
         </ul>
     </div>
     <div id="offerModuleListContainer">

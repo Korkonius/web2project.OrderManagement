@@ -14,4 +14,5 @@ $tbs->MergeField('offer', $offer);
 $tbs->MergeBlock('history', $offer->history);
 $tbs->MergeBlock('modules', $offer->modules);
 $tbs->MergeBlock('components', $offer->components);
+$tbs->MergeBlock('files', $offer->files);
 $tbs->Show(TBS_OUTPUT);

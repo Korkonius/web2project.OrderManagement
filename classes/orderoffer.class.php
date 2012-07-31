@@ -25,6 +25,7 @@ class COrderOffer
     public $offeredTo; // CCompany object with receiving company information
     public $modules;    // COrderModule array with modules associated with this object
     public $components = array(); // COrderStoredComponent array with a list of all components in this offer
+    public $files;      // CFile array with files associated with this object
 
     const ID_FORMAT = "RSS-O-%1$04d";
 
@@ -78,6 +79,21 @@ class COrderOffer
                 }
             }
         }
+
+        // Load files
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_offer_files");
+        $query->addWhere("offer_id=$this->id");
+        $results = $query->loadList();
+
+        $files = array();
+        foreach($results as $row) {
+            $file = new CFile();
+            $file->load($row["file_id"]);
+            $files[] = $file;
+        }
+
+        $this->files = $files;
     }
 
     protected function loadHistory() {
