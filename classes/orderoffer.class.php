@@ -59,6 +59,9 @@ class COrderOffer
         $this->offeredTo = new CCompany();
         $this->offeredTo->load($this->offeredToId);
 
+        $this->project = new CProject();
+        $this->project->load($this->projectId);
+
         // Load modules
         $this->modules = COrderModule::createFromOfferId($this->id);
         foreach($this->modules as $module) {
