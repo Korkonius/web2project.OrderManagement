@@ -10,6 +10,7 @@
         margin: 0;
         padding: 0;
         list-style-position: inside;
+        list-style: none;
     }
     #offerContainer ul li {
         padding: 8px 0px 4px 0;
@@ -111,7 +112,7 @@
                 </tr>
                 <tr class="summaryRow">
                     <td colspan="3"></td>
-                    <td id="offerTotal">Est. total cost: [offer.totalCost] NOK</td>
+                    <td id="offerTotal">Est. total cost: [offer.totalCost;frm='0,000.00'] NOK</td>
                 </tr>
             </table>
         </div>
@@ -148,7 +149,8 @@
         <hr />
         <ul id="offerFileList">
             [files; block=begin]
-            <li><a href="fileviewer.php?file_id=1">[files.file_description] ([files.file_type]) <span class="offerFileDetails">Size: [files.file_size] bytes Changed: [files.file_date]</span></a></li>
+            <li><a href="fileviewer.php?file_id=[files.file_id]">[files.file_description] ([files.file_type]) <span class="offerFileDetails">Size: [files.file_size] bytes Changed: [files.file_date]</span></a></li>
+            <li class="divider"></li>
             [files; block=end]
         </ul>
     </div>
@@ -157,7 +159,7 @@
         <hr />
         <ul id="offerModuleList">
             [modules; block=begin]
-            <li>[modules.amount]x [modules.name]<span class="modulePrice">([modules.amount]x[modules.totalPrice] NOK) [modules.totalCost] NOK</span></li>
+            <li>[modules.amount]x [modules.name]<span class="modulePrice">([modules.amount]x[modules.totalPrice;frm='0,000.00'] NOK) [modules.totalCost;frm='0,000.00'] NOK</span></li>
             <li class="divider"></li>
             [modules; block=end]
         </ul>
