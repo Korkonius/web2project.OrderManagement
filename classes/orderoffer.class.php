@@ -22,6 +22,7 @@ class COrderOffer
     public $contact;   // CContact object with contact information
     public $offeredBy; // CCompany object with owning company information
     public $offeredTo; // CCompany object with receiving company information
+    public $modules;    // COrderModule array with modules associated with this object
 
     const ID_FORMAT = "RSS-O-%1$04d";
 
@@ -56,6 +57,8 @@ class COrderOffer
         $this->offeredTo = new CCompany();
         $this->offeredTo->load($this->offeredToId);
 
+        // Load modules
+        $this->modules
     }
 
     protected function loadHistory() {
@@ -67,7 +70,8 @@ class COrderOffer
         $query->addOrder("history_id DESC");
         $this->history = $query->loadList();
 
-        for($i = 0; $i < count($this->history); $i++) {
+        // Buffer user identities when loading the history
+        for($i = 0; $i < count($this->history); $i++) { // TODO Consider cache scheme when doing this?
             $user = new CContact();
             $user->load($this->history[$i]['user_id']);
             $this->history[$i]['user'] = $user;
