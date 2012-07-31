@@ -11,6 +11,14 @@
         padding: 0;
         list-style-position: inside;
     }
+    #offerContainer ul li {
+        padding: 8px 0px 4px 0;
+    }
+    #offerContainer ul li.divider {
+        height: 1px;
+        padding: 0;
+        background: -webkit-gradient(linear, 0 0, 100% 0, from(rgba(217, 232, 249,0)), to(rgba(217, 232, 249,0)), color-stop(33%, rgba(167, 172, 199, 0.5)), color-stop(66%, rgba(167, 172, 199, 0.5)));
+    }
     #offerContainer h1, #offerContainer h2, #offerContainer h3 {
         background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(237,242,247)), to(rgb(208, 223, 234)));
         border-bottom: white 1px solid;
@@ -145,7 +153,10 @@
         <h2>Modules</h2>
         <hr />
         <ul id="offerModuleList">
-            <li>[modules.amount; block=li]x [modules.name; block=li]<span class="modulePrice">([modules.amount; block=li]x[modules.totalPrice; block=li] NOK) [modules.totalCost; block=li] NOK</span></li>
+            [modules; block=begin]
+            <li>[modules.amount]x [modules.name]<span class="modulePrice">([modules.amount]x[modules.totalPrice] NOK) [modules.totalCost] NOK</span></li>
+            <li class="divider"></li>
+            [modules; block=end]
         </ul>
     </div>
     <div id="offerComponentListContainer">
