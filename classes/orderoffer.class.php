@@ -11,7 +11,7 @@ class COrderOffer
     public $buildTime;
     public $targetDate;
     public $notes;
-    public $totalCost;
+    public $totalCost = 0;
     public $history;
 
     // Id's referring to external fields
@@ -24,6 +24,7 @@ class COrderOffer
     public $offeredBy; // CCompany object with owning company information
     public $offeredTo; // CCompany object with receiving company information
     public $modules;    // COrderModule array with modules associated with this object
+    public $components = array(); // COrderStoredComponent array with a list of all components in this offer
 
     const ID_FORMAT = "RSS-O-%1$04d";
 
@@ -60,6 +61,20 @@ class COrderOffer
 
         // Load modules
         $this->modules = COrderModule::createFromOfferId($this->id);
+        foreach($this->modules as $module) {
+            $this->totalCost += $module->totalPrice;
+
+            // Loop through modules and add components from each module
+            foreach($module->components as $component) {
+                $id = $component['stored_component_id'];
+                if(isset($this->components[$id])) {
+                    $this->components[$id]['amount'] += $module->amount * $component['amount'];
+                } else {
+                    $this->components[$id] = $component;
+                    $this->components[$id]['amount'] = $module->amount * $component['amount'];
+                }
+            }
+        }
     }
 
     protected function loadHistory() {

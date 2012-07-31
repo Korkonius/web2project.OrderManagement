@@ -164,7 +164,10 @@
         <h2>Components</h2>
         <hr />
         <ul id="offerComponentList">
-            <li>2x CB08996-598 Test-component</li>
+            [components; block=begin]
+            <li>[components.amount]x [components.catalog_number] [components.description]</li>
+            <li class="divider"></li>
+            [components; block=end]
         </ul>
     </div>
 </div>
