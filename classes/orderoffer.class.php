@@ -11,6 +11,7 @@ class COrderOffer
     public $targetDate;
     public $notes;
     public $totalCost;
+    public $history;
 
     // Id's referring to external fields
     public $ownerId, $contactId, $offeredById, $offeredToId, $projectId;
@@ -39,6 +40,7 @@ class COrderOffer
 
         // Load dependencies
         $this->loadMemberObjects();
+        $this->loadHistory();
     }
 
     protected function loadMemberObjects() {
@@ -54,6 +56,22 @@ class COrderOffer
         $this->offeredTo = new CCompany();
         $this->offeredTo->load($this->offeredToId);
 
+    }
+
+    protected function loadHistory() {
+
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_offers_history");
+        $query->addQuery("*");
+        $query->addWhere("offer_id = $this->id");
+        $query->addOrder("history_id DESC");
+        $this->history = $query->loadList();
+
+        for($i = 0; $i < count($this->history); $i++) {
+            $user = new CContact();
+            $user->load($this->history[$i]['user_id']);
+            $this->history[$i]['user'] = $user;
+        }
     }
 
     public function getFormattedId() {
