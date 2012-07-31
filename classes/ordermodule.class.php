@@ -45,6 +45,21 @@ class COrderModule
     }
 
     /**
+     * Increments the delivered value of this object by one. Also updates the database with the new value
+     */
+    public function addDelivery() {
+
+        // Query the database and set a new value
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_modules");
+        $query->addUpdate("module_delivered", $this->delivered+1);
+        $query->addWhere("module_id = $this->id");
+        $query->exec();
+
+        $this->delivered++;
+    }
+
+    /**
      * Protected constructor. Use static methods to create this object from different sources.
      * Also loads related objects like components and files from the database.
      *

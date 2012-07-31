@@ -34,6 +34,16 @@ switch($op) {
         ));
         break;
 
+    // Increment instruction recieved
+    case "deliverAdd":
+        $id = intval(w2PgetParam($_POST, "orderModuleId"));
+        $module = COrderModule::createFromDb($id);
+        $module->addDelivery();
+        echo json_encode(array(
+            "error" => ""
+        ));
+        break;
+
     default:
         $id = intval(w2PgetParam($_GET, "id"));
         $module = COrderModule::createFromDb($id);

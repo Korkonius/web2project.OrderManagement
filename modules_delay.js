@@ -223,11 +223,30 @@ require(["dojo/ready", "dojo/behavior", "dijit/Dialog", "dijit/form/TextBox", "d
                         error: function(crap) {
                             alert(crap.message);
                             dojo.setStyle(dojo.query("body")[0], "cursor", "auto");
-                        }
+                        },
                     }
                     dojo.xhrPost(xhrParam).then(function(data){
                         window.location.href = window.location.href;
                     });
+                }
+            }
+        },
+        "#orderModuleDeliveryAddBtn": {
+            onclick: function(e) {
+                if(confirm("Are you sure you want to add a delivery to this module?")) {
+                    var xhrParam = {
+                        url: "?m=ordermgmt&a=moduleJson&suppressHeaders=true&op=deliverAdd",
+                        handleAs: "json",
+                        sync: true,
+                        content: {
+                            orderModuleId: selectedModule.id
+                        },
+                        error: function(crap) {
+                            alert(crap.message);
+                        }
+                    }
+                    dojo.xhrPost(xhrParam);
+                    loadModuleData();
                 }
             }
         },
