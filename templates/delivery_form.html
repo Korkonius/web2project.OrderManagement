@@ -1,7 +1,12 @@
-<link rel="stylesheet" type="text/css" media="all" href="lib/jscalendar/calendar-system.css"/>
-<script type="text/javascript" src="lib/jscalendar/calendar.js"></script>
-<script type="text/javascript" src="lib/jscalendar/lang/calendar-en.js"></script>
-<script type="text/javascript" src="lib/jscalendar/calendar-setup.js"></script>
+<script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+<script type="text/javascript">
+    dojo.require("dijit.form.DateTextBox")
+    dojo.ready(function(){
+        // Set body class to get styling right
+        dojo.addClass(dojo.query("body")[0], "claro");
+        dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+    });
+</script>
 <div id="formContainer">
     <form id="orderForm" action="?m=ordermgmt&addDelivery=[orderId]" method="POST" accept-charset="utf-8">
         <table id="deliveryFormTable">
@@ -18,38 +23,13 @@
                     </select>
                 </td>
                 <td>
-                    <div id="startDateContainer">
-                        <script type="text/javascript">
-                            function startDateChanged(calendar) {
-                                var startDate = calendar.date.getFullYear() + "-" + (calendar.date.getMonth()+1) + "-" + calendar.date.getDate();
-                                $('#startDate').val(encodeURIComponent(startDate));
-                            }
-                            Calendar.setup({
-                                flat:"startDateContainer",
-                                flatCallback: startDateChanged
-                            });
-                        </script>
-                    </div>
+                    <input id="startDate" name="startDate" placeholder="Start date..." data-dojo-type="dijit.form.DateTextBox"/>
                 </td>
                 <td>
-                    <div id="endDateContainer">
-                        <script type="text/javascript">
-                            function endDateChanged(calendar) {
-                                var endDate = calendar.date.getFullYear() + "-" + (calendar.date.getMonth()+1) + "-" + calendar.date.getDate();
-                                $('#endDate').val(encodeURIComponent(endDate));
-                            }
-                            Calendar.setup({
-                                flat:"endDateContainer",
-                                flatCallback: endDateChanged
-                            });
-                        </script>
-                    </div>
+                    <input id="endDate" name="endDate" placeholder="End date..." data-dojo-type="dijit.form.DateTextBox"/>
                 </td>
             </tr>
         </table>
-
-        <input type="hidden" id="startDate" name="startDate" value=""/>
-        <input type="hidden" id="endDate" name="endDate" value=""/>
         <input type="hidden" name="orderId" value="[orderId]"/>
         <button type="submit" name="deliverySubmit" id="deliverySubmit" value="1"/>
         <img src="./modules/ordermgmt/images/accept.png" alt="New Delivery"/>New Delivery</button>
