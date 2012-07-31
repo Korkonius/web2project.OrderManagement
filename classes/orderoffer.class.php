@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__) . "/order.class.php");
+require_once(dirname(__FILE__) . "/ordermodule.class.php");
 class COrderOffer
 {
 
@@ -58,7 +59,7 @@ class COrderOffer
         $this->offeredTo->load($this->offeredToId);
 
         // Load modules
-        $this->modules
+        $this->modules = COrderModule::createFromOfferId($this->id);
     }
 
     protected function loadHistory() {

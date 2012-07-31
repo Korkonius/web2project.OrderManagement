@@ -12,4 +12,5 @@ $offer = COrderOffer::createFromDb(1);
 $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_view.html");
 $tbs->MergeField('offer', $offer);
 $tbs->MergeBlock('history', $offer->history);
+$tbs->MergeBlock('modules', $offer->modules);
 $tbs->Show(TBS_OUTPUT);

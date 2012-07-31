@@ -188,6 +188,25 @@ class COrderModule
         return new COrderModule($result);
     }
 
+    public static function createFromOfferId($id) {
+
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_offer_modules", "om");
+        $query->addJoin(COrder::_TBL_PREFIKS_ . "_modules", "m", "m.module_id = om.module_id", "INNER");
+        $query->addQuery("*");
+        $query->addWhere("om.offer_id = $id");
+
+        $results = $query->loadList();
+        $modules = array();
+        foreach($results as $row) {
+            self::fromPrepareDb($row);
+            $newModule = new COrderModule($row);
+            $newModule->totalCost = $row['amount'] * $newModule->totalPrice;
+            $modules[] = $newModule;
+        }
+        return $modules;
+    }
+
     /**
      * Creates a new module object and stores it in the database
      *
