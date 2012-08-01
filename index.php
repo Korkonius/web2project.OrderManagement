@@ -232,6 +232,7 @@ if ($acl->checkModule('ordermgmt', 'view')) {
                     }
                     $titleBlock->addCrumb('?m=ordermgmt&a=components', 'Component View');
                     $titleBlock->addCrumb('?m=ordermgmt&a=modules', 'Module View');
+                    $titleBlock->addCrumb('?m=ordermgmt&a=offers', 'Offer View');
                     $titleBlock->show();
 
                     $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);
