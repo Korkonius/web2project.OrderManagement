@@ -1,0 +1,53 @@
+<style type="text/css">
+    table#offerList {
+        width: 100%;
+        border: 0px;
+        border-collapse: collapse;
+    }
+
+    table#offerList td {
+        background-color: transparent;
+    }
+
+    table#offerList tr th {
+        background: transparent;
+        border: inherit;
+        font-weight: bold;
+    }
+
+    table#offerList tr {
+        background: white;
+        border: #E8E4D8 1px solid;
+        border-collapse: separate;
+        color: #333;
+        font-weight: normal;
+    }
+
+    table#offerList tr:nth-child(odd) {
+        background-color: #F7FCFF;
+    }
+
+    table#offerList tr th {
+        background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(237,242,247)), to(rgb(208, 223, 234)));
+        background-origin: padding-box;
+        border-bottom: white 1px solid;
+        border-left: white 1px solid;
+        border-top: white 1px solid;
+        border-right: #333 0px solid;
+        color: #333;
+        font-weight: bold;
+    }
+
+</style>
+<table id="offerList" class="tbl">
+    <tr><th colspan="5">Offers</th></tr>
+    [offers; block=begin]
+    <tr>
+        <td><strong>ID: </strong>[offers.getFormattedId]</td>
+        <td><strong>Owner: </strong><a href="?m=companies&a=view&company_id=[offers.offeredBy.company_id]">[offers.offeredBy.company_name]</a></td>
+        <td><strong>To:</strong><a href="?m=companies&a=view&company_id=[offers.offeredTo.company_id]">[offers.offeredTo.company_name]</a></td>
+        <td><strong>Project: </strong><a href="?m=projects&a=view&project_id=[offers.project.project_id]">[offers.project.project_name]</a></td>
+        <td><strong>Est. Cost: </strong>[offers.totalCost; frm='0,000.00']</td>
+    </tr>
+    [offers; block=end]
+</table>

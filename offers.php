@@ -8,11 +8,7 @@ if (!$acl->checkModule('ordermgmt', 'view')) {
     $AppUI->redirect('index.php');
 }
 $tbs = & new clsTinyButStrong();
-$offer = COrderOffer::createFromDb(1);
-$tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_view.html");
-$tbs->MergeField('offer', $offer);
-$tbs->MergeBlock('history', $offer->history);
-$tbs->MergeBlock('modules', $offer->modules);
-$tbs->MergeBlock('components', $offer->components);
-$tbs->MergeBlock('files', $offer->files);
+$offers = COrderOffer::createListFromDb(0, 1000);
+$tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_list.html");
+$tbs->MergeBlock('offers', $offers);
 $tbs->Show(TBS_OUTPUT);

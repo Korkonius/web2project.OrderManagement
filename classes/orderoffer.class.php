@@ -154,4 +154,22 @@ class COrderOffer
 
         return new COrderOffer($result);
     }
+
+    public static function createListFromDb($start=0, $limit=10, $filter=array()){
+
+        // Open database connection and tell the database it looks nice...
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_offers");
+        $query->addQuery("*");
+        $query->setLimit($limit, $start);
+        $results = $query->loadList();
+
+        $offers = array();
+        foreach($results as $row) {
+            self::fromPrepareDb($row);
+            $offers[] = new COrderOffer($row);
+        }
+
+        return $offers;
+    }
 }
