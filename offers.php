@@ -15,8 +15,19 @@ $titleBlock->addCrumb("?m=ordermgmt&a=modules", "Module View");
 $titleBlock->show();
 
 // Output main content
+$offerId = w2PgetParam($_GET, 'offerId');
 $tbs = & new clsTinyButStrong();
-$offers = COrderOffer::createListFromDb(0, 1000);
-$tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_list.html");
-$tbs->MergeBlock('offers', $offers);
+if(!empty($offerId)) {
+    $offer = COrderOffer::createFromDb($offerId);
+    $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_view.html");
+    $tbs->MergeField('offer', $offer);
+    $tbs->MergeBlock('history', $offer->history);
+    $tbs->MergeBlock('modules', $offer->modules);
+    $tbs->MergeBlock('components', $offer->components);
+    $tbs->MergeBlock('files', $offer->files);
+} else {
+    $offers = COrderOffer::createListFromDb(0, 1000);
+    $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_list.html");
+    $tbs->MergeBlock('offers', $offers);
+}
 $tbs->Show(TBS_OUTPUT);

@@ -43,7 +43,7 @@
     <tr><th colspan="5">Offers</th></tr>
     [offers; block=begin]
     <tr>
-        <td><strong>ID: </strong>[offers.getFormattedId]</td>
+        <td><strong>ID: </strong><a href="?m=ordermgmt&a=offers&offerId=[offers.id]">[offers.getFormattedId]</a></td>
         <td><strong>Owner: </strong><a href="?m=companies&a=view&company_id=[offers.offeredBy.company_id]">[offers.offeredBy.company_name]</a></td>
         <td><strong>To:</strong><a href="?m=companies&a=view&company_id=[offers.offeredTo.company_id]">[offers.offeredTo.company_name]</a></td>
         <td><strong>Project: </strong><a href="?m=projects&a=view&project_id=[offers.project.project_id]">[offers.project.project_name]</a></td>
