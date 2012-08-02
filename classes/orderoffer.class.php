@@ -51,7 +51,7 @@ class COrderOffer
 
         // Load contact information
         $this->owner = new CContact();
-        $this->owner->load($this->contactId);
+        $this->owner->load($this->ownerId);
         $this->contact = new CContact();
         $this->contact->load($this->contactId);
 
