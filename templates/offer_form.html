@@ -1,7 +1,7 @@
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <script type="text/javascript">
-require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore"],
-function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore, CCompanyStore){
+require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore"],
+function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjectStore, CCompanyStore){
     ready(function(){
 
         // Set body class to get styling right
@@ -32,6 +32,25 @@ function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore, CCom
             searchAttr: "display"
         }, "offeredTo");
 
+        new FilteringSelect({
+            id: "offerOwner",
+            name: "offerOwner",
+            store: contactStore,
+            searchAttr: "display"
+        }, "offerOwner");
+
+        new FilteringSelect({
+            id: "offerContact",
+            name: "offerContact",
+            store: contactStore,
+            searchAttr: "display"
+        }, "offerContact");
+
+        new dijit.Editor({
+            height: "200px",
+            placeholder: "Additional offer notes..."
+        }, dojo.byId("offerNotes"));
+
         new DateTextBox({
             id: "estDeliveryDate",
             name: "estDeliveryDate"
@@ -53,6 +72,15 @@ function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore, CCom
             <td><input type="text" name="offeredBy" id="offeredBy" /></td>
             <td><label for="offeredTo">Receiving company:</label></td>
             <td><input type="text" name="offeredTo" id="offeredTo" /></td>
+        </tr>
+        <tr>
+            <td><label for="offerOwner">Offer owner:</label></td>
+            <td><input type="text" name="offerOwner" id="offerOwner" /></td>
+            <td><label for="offerContact">Offer contact:</label></td>
+            <td><input type="text" name="offerContact" id="offerContact" /></td>
+        </tr>
+        <tr>
+            <td colspan="4"><div id="offerNotes" name="offerNotes"></div></td>
         </tr>
     </table>
 </form>
