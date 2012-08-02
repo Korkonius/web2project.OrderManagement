@@ -196,4 +196,39 @@ switch($op){
         $AppUI->setMsg("Component exchange rates updated!", UI_MSG_OK);
         $AppUI->redirect('m=ordermgmt');
         break;
+
+    case "getContacts":
+
+        // Fetch contacts and create suitable array for Dojo's filteringselect
+        $contact = new CContact();
+        $contacts = $contact->loadAll();
+
+        $contactList = array();
+        foreach($contacts as $person) {
+            //if($person['contact_id'] == 4) print_r($person);
+            $contactList[] = array(
+                "id" => $person['contact_id'],
+                "display" => utf8_encode($person['contact_display_name'])
+            );
+        }
+
+        // Output and break
+        echo json_encode($contactList);
+        break;
+
+    case "getProjects":
+
+        // Fetch projects and make a suitable array for Dojo's filteringselect
+        $project = new CProject();
+        $projects = $project->loadAll();
+
+        $projectList = array();
+        foreach($projects as $project) {
+            $projectList[] = array(
+                "id" => $project['project_id'],
+                "display" => utf8_encode($project['project_name'])
+            );
+        }
+        echo json_encode($projectList);
+        break;
 }

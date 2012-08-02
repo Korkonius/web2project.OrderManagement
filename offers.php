@@ -16,8 +16,9 @@ $titleBlock->show();
 
 // Output main content
 $offerId = w2PgetParam($_GET, 'offerId');
+$aeOffer = w2PgetParam($_GET, 'edit');
 $tbs = & new clsTinyButStrong();
-if(!empty($offerId)) {
+if(!empty($offerId)) { // Show order listing
     $offer = COrderOffer::createFromDb($offerId);
     $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_view.html");
     $tbs->MergeField('offer', $offer);
@@ -25,7 +26,9 @@ if(!empty($offerId)) {
     $tbs->MergeBlock('modules', $offer->modules);
     $tbs->MergeBlock('components', $offer->components);
     $tbs->MergeBlock('files', $offer->files);
-} else {
+} else if(!empty($aeOffer)) { // Show order form
+    $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_form.html");
+} else { // Show order details
     $offers = COrderOffer::createListFromDb(0, 1000);
     $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_list.html");
     $tbs->MergeBlock('offers', $offers);

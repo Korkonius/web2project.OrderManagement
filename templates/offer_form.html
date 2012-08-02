@@ -1,0 +1,37 @@
+<script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+<script type="text/javascript">
+require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "w2porder/CContactStore", "w2porder/CProjectStore"],
+function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore){
+    ready(function(){
+
+        // Set body class to get styling right
+        dojo.addClass(dojo.query("body")[0], "claro");
+        dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+
+        var contactStore = new CContactStore();
+        var projectStore = new CProjectStore();
+        new FilteringSelect({
+            id: "offerProject",
+            name: "offerProject",
+            store: projectStore,
+            searchAttr: "display"
+        }, "offerProject");
+
+        new DateTextBox({
+            id: "estDeliveryDate",
+            name: "estDeliveryDate"
+        }, "estDeliveryDate");
+    });
+});
+</script>
+<form id="offerForm" action="" method="post" autocomplete="off">
+    <table id="orderFormTable">
+        <tr><th>New Offer :: [offerId]</th></tr>
+        <tr>
+            <td><label for="estDeliveryDate">Estimated delivery: </label></td>
+            <td><input type="date" name="estDeliveryDate" id="estDeliveryDate" /></td>
+            <td><label for="offerProject">Project: </label></td>
+            <td><input type="text" name="offerProject" id="offerProject" /></td>
+        </tr>
+    </table>
+</form>
