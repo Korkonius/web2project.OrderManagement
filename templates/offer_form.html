@@ -1,7 +1,7 @@
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <script type="text/javascript">
-require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "w2porder/CContactStore", "w2porder/CProjectStore"],
-function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore){
+require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore"],
+function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore, CCompanyStore){
     ready(function(){
 
         // Set body class to get styling right
@@ -9,6 +9,7 @@ function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore){
         dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
 
         var contactStore = new CContactStore();
+        var companyStore = new CCompanyStore();
         var projectStore = new CProjectStore();
         new FilteringSelect({
             id: "offerProject",
@@ -16,6 +17,20 @@ function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore){
             store: projectStore,
             searchAttr: "display"
         }, "offerProject");
+
+        new FilteringSelect({
+            id: "offeredBy",
+            name: "offeredBy",
+            store: companyStore,
+            searchAttr: "display"
+        }, "offeredBy");
+
+        new FilteringSelect({
+            id: "offeredTo",
+            name: "offeredTo",
+            store: companyStore,
+            searchAttr: "display"
+        }, "offeredTo");
 
         new DateTextBox({
             id: "estDeliveryDate",
@@ -32,6 +47,12 @@ function(ready, FilteringSelect, DateTextBox, CContactStore, CProjectStore){
             <td><input type="date" name="estDeliveryDate" id="estDeliveryDate" /></td>
             <td><label for="offerProject">Project: </label></td>
             <td><input type="text" name="offerProject" id="offerProject" /></td>
+        </tr>
+        <tr>
+            <td><label for="offeredBy">Offering company: </label></td>
+            <td><input type="text" name="offeredBy" id="offeredBy" /></td>
+            <td><label for="offeredTo">Receiving company:</label></td>
+            <td><input type="text" name="offeredTo" id="offeredTo" /></td>
         </tr>
     </table>
 </form>

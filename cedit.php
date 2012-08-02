@@ -231,4 +231,20 @@ switch($op){
         }
         echo json_encode($projectList);
         break;
+
+    case "getCompanies":
+
+        // Fetch companies and make a suitable array for Dojo's filteringselect
+        $company = new CCompany();
+        $companies = $company->loadAll();
+
+        $companyList = array();
+        foreach($companies as $company) {
+            $companyList[] = array(
+                "id" => $company['company_id'],
+                "display" => utf8_encode($company['company_name'])
+            );
+        }
+        echo json_encode($companyList);
+        break;
 }
