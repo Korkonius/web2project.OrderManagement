@@ -12,6 +12,11 @@ if (!$acl->checkModule('ordermgmt', 'view')) {
 $titleBlock = new w2p_Theme_TitleBlock('Offer Management', 'folder5.png', $m, "$m.$a");
 $titleBlock->addCrumb("?m=ordermgmt", "Back to orders");
 $titleBlock->addCrumb("?m=ordermgmt&a=modules", "Module View");
+$titleBlock->addCell(
+    "<a class=\"button\" href=\"?m=ordermgmt&a=offers&edit=-1\"><span>New Offer</span></a>", // NOTE edit 0 would fail check further down
+    '', '',
+    ''
+);
 $titleBlock->show();
 
 // Output main content
