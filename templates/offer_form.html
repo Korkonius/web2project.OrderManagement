@@ -1,66 +1,86 @@
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <script type="text/javascript">
-require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore"],
-function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjectStore, CCompanyStore){
-    ready(function(){
+    require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore"],
+            function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjectStore, CCompanyStore){
+                ready(function(){
 
-        // Set body class to get styling right
-        dojo.addClass(dojo.query("body")[0], "claro");
-        dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+                    // Set body class to get styling right
+                    dojo.addClass(dojo.query("body")[0], "claro");
+                    dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
 
-        var contactStore = new CContactStore();
-        var companyStore = new CCompanyStore();
-        var projectStore = new CProjectStore();
-        new FilteringSelect({
-            id: "offerProject",
-            name: "offerProject",
-            store: projectStore,
-            searchAttr: "display"
-        }, "offerProject");
+                    var contactStore = new CContactStore();
+                    var companyStore = new CCompanyStore();
+                    var projectStore = new CProjectStore();
+                    new FilteringSelect({
+                        id: "offerProject",
+                        name: "offerProject",
+                        store: projectStore,
+                        searchAttr: "display"
+                    }, "offerProject");
 
-        new FilteringSelect({
-            id: "offeredBy",
-            name: "offeredBy",
-            store: companyStore,
-            searchAttr: "display"
-        }, "offeredBy");
+                    new FilteringSelect({
+                        id: "offeredBy",
+                        name: "offeredBy",
+                        store: companyStore,
+                        searchAttr: "display"
+                    }, "offeredBy");
 
-        new FilteringSelect({
-            id: "offeredTo",
-            name: "offeredTo",
-            store: companyStore,
-            searchAttr: "display"
-        }, "offeredTo");
+                    new FilteringSelect({
+                        id: "offeredTo",
+                        name: "offeredTo",
+                        store: companyStore,
+                        searchAttr: "display"
+                    }, "offeredTo");
 
-        new FilteringSelect({
-            id: "offerOwner",
-            name: "offerOwner",
-            store: contactStore,
-            searchAttr: "display"
-        }, "offerOwner");
+                    new FilteringSelect({
+                        id: "offerOwner",
+                        name: "offerOwner",
+                        store: contactStore,
+                        searchAttr: "display"
+                    }, "offerOwner");
 
-        new FilteringSelect({
-            id: "offerContact",
-            name: "offerContact",
-            store: contactStore,
-            searchAttr: "display"
-        }, "offerContact");
+                    new FilteringSelect({
+                        id: "offerContact",
+                        name: "offerContact",
+                        store: contactStore,
+                        searchAttr: "display"
+                    }, "offerContact");
 
-        new dijit.Editor({
-            height: "200px",
-            placeholder: "Additional offer notes..."
-        }, dojo.byId("offerNotes"));
+                    new dijit.Editor({
+                        height: "200px",
+                        placeholder: "Additional offer notes..."
+                    }, dojo.byId("offerNotes"));
 
-        new DateTextBox({
-            id: "estDeliveryDate",
-            name: "estDeliveryDate"
-        }, "estDeliveryDate");
-    });
-});
+                    new DateTextBox({
+                        id: "estDeliveryDate",
+                        name: "estDeliveryDate"
+                    }, "estDeliveryDate");
+                });
+            });
 </script>
+<style type="text/css">
+    #orderFormTable h1, #orderFormTable h2, #orderFormTable h3 {
+        background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(237,242,247)), to(rgb(208, 223, 234)));
+        border-bottom: white 1px solid;
+        border-left: white 1px solid;
+        border-top: white 1px solid;
+        border-right: #333 0px solid;
+        color: #333;
+        font-weight: bold;
+        margin: 0px;
+        padding: 8px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    #orderFormTable {
+        width: 100%;
+        background: white;
+    }
+</style>
 <form id="offerForm" action="" method="post" autocomplete="off">
     <table id="orderFormTable">
-        <tr><th>New Offer :: [offerId]</th></tr>
+        <tr><th colspan="4"><h2>New Offer :: [offerId]</h2></th></tr>
         <tr>
             <td><label for="estDeliveryDate">Estimated delivery: </label></td>
             <td><input type="date" name="estDeliveryDate" id="estDeliveryDate" /></td>
@@ -81,6 +101,15 @@ function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjec
         </tr>
         <tr>
             <td colspan="4"><div id="offerNotes" name="offerNotes"></div></td>
+        </tr>
+        <tr>
+            <td class="divider"><hr /></td>
+        </tr>
+        <tr>
+            <td colspan="4"><h2>Module Selection</h2></td>
+        </tr>
+        <tr>
+            <td colspan="4">Module list</td>
         </tr>
     </table>
 </form>
