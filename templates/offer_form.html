@@ -1,7 +1,7 @@
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <script type="text/javascript">
-    require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore", "w2porder/ModuleSelect"],
-            function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjectStore, CCompanyStore, ModuleSelect){
+    require(["dojo/ready", "dojo/_base/xhr", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/form/Button", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore", "w2porder/ModuleSelect"],
+            function(ready, xhr, FilteringSelect, DateTextBox, Button, TextEditor, CContactStore, CProjectStore, CCompanyStore, ModuleSelect){
                 ready(function(){
 
                     // Set body class to get styling right
@@ -59,7 +59,38 @@
                     new ModuleSelect({
 
                     }, "offerModuleList");
+
+                    new Button({
+                        onClick: saveOffer
+                    }, "offerFormSubmit");
                 });
+            function saveOffer() {
+                var xhrParam = {
+                    url: "?m=ordermgmt&a=cedit&suppressHeaders=true",
+                    handleAs: "json",
+                    sync: false,
+                    content: {
+                        "do_sql": "do_offer_aed",
+                        "offerId": -1,
+                        "estDeliveryDate": dijit.byId("estDeliveryDate").get("value"),
+                        "projectId": dijit.byId("offerProject").get("value"),
+                        "offeredBy": dijit.byId("offeredBy").get("value"),
+                        "offeredTo": dijit.byId("offeredTo").get("value"),
+                        "offerOwner": dijit.byId("offerOwner").get("value"),
+                        "offerContact": dijit.byId("offerContact").get("value"),
+                        "offerNotes": dijit.byId("offerNotes").get("value"),
+                        "offerAmounts": dojo.toJson(dijit.byId("offerModuleList").amounts),
+                        "offerModules": dojo.toJson(dijit.byId("offerModuleList").modules)
+                    },
+                    error: function(crap) {
+                        alert(crap.message);
+                    },
+                    load: function(data) {
+                        alert("Something wonderfull happened!");
+                    }
+                }
+                dojo.xhrPost(xhrParam);
+            }
             });
 </script>
 <style type="text/css">
@@ -119,7 +150,8 @@
             <td colspan="4"><h2>Module Selection</h2></td>
         </tr>
         <tr>
-            <td colspan="4"><div id="offerModuleList">Module list</div></td>
+            <td colspan="3"><div id="offerModuleList">Module list</div></td>
+            <td><div id="offerFormSubmit">Save Offer</div></td>
         </tr>
     </table>
 </form>

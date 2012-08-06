@@ -33,6 +33,7 @@ if(!empty($offerId)) { // Show order listing
     $tbs->MergeBlock('files', $offer->files);
 } else if(!empty($aeOffer)) { // Show order form
     $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_form.html");
+    $tbs->MergeField('offerId', COrderOffer::getNextId(true));
 } else { // Show order details
     $offers = COrderOffer::createListFromDb(0, 1000);
     $tbs->LoadTemplate(dirname(__FILE__) . "/templates/offer_list.html");

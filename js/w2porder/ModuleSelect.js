@@ -34,11 +34,25 @@ define (["dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin",
                 }, dojo.query("input.moduleSelect", this.domNode)[0]);
 
                 this.submitBtn = new Button({
-
+                    onClick: lang.hitch(this, this.addModule)
                 }, dojo.query("div.moduleAdd", this.domNode)[0]);
+            },
+            addModule: function() {
+
+                this.amounts.push(this.amountInput.value);
+                this.modules.push(this.moduleInput.item);
+                console.info("Module added!");
+                this._updateModuleList();
             },
             _updateModuleList: function() {
 
+                var listNode = dojo.query("ul.moduleListing", this.domNode)[0];
+                dojo.empty(listNode);
+                for(var i = 0; i < this.amounts.length; i++) {
+                    dojo.create("li", {
+                        innerHTML: this.amounts[i] + "x " + this.modules[i]['display']
+                    }, listNode);
+                }
             }
         });
     });
