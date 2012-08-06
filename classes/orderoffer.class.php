@@ -66,7 +66,7 @@ class COrderOffer
         // Load modules
         $this->modules = COrderModule::createFromOfferId($this->id);
         foreach($this->modules as $module) {
-            $this->totalCost += $module->totalPrice;
+            $this->totalCost += $module->totalPrice * $module->amount;
 
             // Loop through modules and add components from each module
             foreach($module->components as $component) {
