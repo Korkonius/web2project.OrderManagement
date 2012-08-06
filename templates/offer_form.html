@@ -1,7 +1,7 @@
 <script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
 <script type="text/javascript">
-    require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore"],
-            function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjectStore, CCompanyStore){
+    require(["dojo/ready", "dijit/form/FilteringSelect", "dijit/form/DateTextBox", "dijit/editor", "w2porder/CContactStore", "w2porder/CProjectStore", "w2porder/CCompanyStore", "w2porder/ModuleSelect"],
+            function(ready, FilteringSelect, DateTextBox, TextEditor, CContactStore, CProjectStore, CCompanyStore, ModuleSelect){
                 ready(function(){
 
                     // Set body class to get styling right
@@ -55,6 +55,10 @@
                         id: "estDeliveryDate",
                         name: "estDeliveryDate"
                     }, "estDeliveryDate");
+
+                    new ModuleSelect({
+
+                    }, "offerModuleList");
                 });
             });
 </script>
@@ -76,6 +80,12 @@
     #orderFormTable {
         width: 100%;
         background: white;
+    }
+    #orderFormTable hr {
+        height: 1px;
+        border: 0;
+        background: black;
+        background: -webkit-gradient(linear, 0 0, 100% 0, from(rgba(217, 232, 249,0)), to(rgba(217, 232, 249,0)), color-stop(33%, rgba(167, 172, 199, 255)), color-stop(66%, rgba(167, 172, 199, 255)));
     }
 </style>
 <form id="offerForm" action="" method="post" autocomplete="off">
@@ -103,13 +113,13 @@
             <td colspan="4"><div id="offerNotes" name="offerNotes"></div></td>
         </tr>
         <tr>
-            <td class="divider"><hr /></td>
+            <td colspan="4" class="divider"><hr /></td>
         </tr>
         <tr>
             <td colspan="4"><h2>Module Selection</h2></td>
         </tr>
         <tr>
-            <td colspan="4">Module list</td>
+            <td colspan="4"><div id="offerModuleList">Module list</div></td>
         </tr>
     </table>
 </form>

@@ -247,4 +247,19 @@ switch($op){
         }
         echo json_encode($companyList);
         break;
+
+    case "getModules":
+
+        // Fetch modules and make an array for Dojo's filteringselect
+        $modules = COrderModule::createListFromDb(0, 100000);
+
+        $moduleList = array();
+            foreach($modules as $module) {
+                $moduleList[] = array(
+                  "id" => $module->id,
+                  "display" => $module->name
+                );
+            }
+        echo json_encode($moduleList);
+        break;
 }
