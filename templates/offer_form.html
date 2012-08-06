@@ -67,12 +67,12 @@
             function saveOffer() {
                 var xhrParam = {
                     url: "?m=ordermgmt&a=cedit&suppressHeaders=true",
-                    handleAs: "json",
+                    handleAs: "text",
                     sync: false,
                     content: {
-                        "do_sql": "do_offer_aed",
+                        "dosql": "do_offer_aed",
                         "offerId": -1,
-                        "estDeliveryDate": dijit.byId("estDeliveryDate").get("value"),
+                        "estDeliveryDate": dojo.date.locale.format(dijit.byId("estDeliveryDate").get("value"), {datePattern: "yyyy-MM-dd", selector:"date"}),
                         "projectId": dijit.byId("offerProject").get("value"),
                         "offeredBy": dijit.byId("offeredBy").get("value"),
                         "offeredTo": dijit.byId("offeredTo").get("value"),
@@ -86,7 +86,7 @@
                         alert(crap.message);
                     },
                     load: function(data) {
-                        alert("Something wonderfull happened!");
+                        alert("Something wonderfull happened! " + data);
                     }
                 }
                 dojo.xhrPost(xhrParam);

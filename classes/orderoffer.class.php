@@ -153,6 +153,28 @@ class COrderOffer
         }
     }
 
+    public static function createNewOffer($projectId, $ownerId, $contactId, $offeredById, $offeredToId, $targetDate, $notes) {
+
+        // Insert the new values into the database
+        $hash = array(
+            "offer_id"      => self::getNextId(false),
+            "created"       => date("Y-m-d H:i:s"),
+            "owner"         => $ownerId,
+            "contact"       => $contactId,
+            "project"       => $projectId,
+            "offered_by"    => $offeredById,
+            "offered_to"    => $offeredToId,
+            "build_time"    => 1, // TODO Implement support for build times
+            "notes"         => $notes,
+            "target_date"   => $targetDate
+        );
+        $query = new w2p_Database_Query();
+        $id = $query->insertArray(COrder::_TBL_PREFIKS_ . "_offers", $hash);
+
+        // Return the recently created object
+        return COrderOffer::createFromDb($id);
+    }
+
     public static function createFromDb($offerId){
 
         // Open database connection and ask it nicely for information
