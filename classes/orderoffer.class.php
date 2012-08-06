@@ -117,6 +117,22 @@ class COrderOffer
         return sprintf(self::ID_FORMAT, $this->id);
     }
 
+    public function addModules(array $amounts, array $ids) {
+
+        // Create a new query and insert modules and amounts
+        $query = new w2p_Database_Query();
+
+        $length = count($amounts);
+        for($i = 0; $length > $i; $i++) {
+            $row = array(
+                "offer_id"      => $this->id,
+                "module_id"     => $ids[$i],
+                "amount"        => $amounts[$i]
+            );
+            $query->insertArray(COrder::_TBL_PREFIKS_ . "_offer_modules", $row);
+        }
+    }
+
     public static function getNextId($formatted=false) {
 
         // Query database for largest current ID
@@ -168,8 +184,9 @@ class COrderOffer
             "notes"         => $notes,
             "target_date"   => $targetDate
         );
+        $id = COrderOffer::getNextId(false);
         $query = new w2p_Database_Query();
-        $id = $query->insertArray(COrder::_TBL_PREFIKS_ . "_offers", $hash);
+        $query->insertArray(COrder::_TBL_PREFIKS_ . "_offers", $hash);
 
         // Return the recently created object
         return COrderOffer::createFromDb($id);

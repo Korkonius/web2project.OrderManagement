@@ -15,8 +15,16 @@ $offeredTo      = w2PgetParam($_POST, "offeredTo");
 $ownerId        = w2PgetParam($_POST, "offerOwner");
 $contactId      = w2PgetParam($_POST, "offerContact");
 $notes          = w2PgetParam($_POST, "offerNotes");
+$moduleIds      = json_decode(w2PgetParam($_POST, "offerModules"), true);
+$moduleAmounts  = json_decode(w2PgetParam($_POST, "offerAmounts"), true);
 
-COrderOffer::createNewOffer($projectId, $ownerId, $contactId, $offeredBy, $offeredTo, $deliveryDate, $notes);
+$offer = COrderOffer::createNewOffer($projectId, $ownerId, $contactId, $offeredBy, $offeredTo, $deliveryDate, $notes);
+
+$ids = array();
+foreach($moduleIds as $mId) {
+    $ids[] = $mId['id'];
+}
+$offer->addModules($moduleAmounts, $ids);
 
 echo json_encode(array(
     "message" => "Routing ok!"
