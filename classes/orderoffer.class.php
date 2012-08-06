@@ -117,6 +117,18 @@ class COrderOffer
         return sprintf(self::ID_FORMAT, $this->id);
     }
 
+    public static function getNextId($formatted=false) {
+
+        // Query database for largest current ID
+        $query = new w2p_Database_Query();
+        $query->addTable(COrder::_TBL_PREFIKS_ . "_offers");
+        $query->addQuery("MAX(offer_id) as max");
+        $result = $query->loadHash();
+        $nextId = intval($result['max']) + 1;
+
+        return ($formatted) ? sprintf(self::ID_FORMAT, $nextId) : $nextId;
+    }
+
     /**
      * Prepares an array recieved from the database and renames indices so the hash can be passed to the constructor.
      *
