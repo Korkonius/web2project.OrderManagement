@@ -11,7 +11,7 @@ define(["dojo/store/util/QueryResults", "dojo/_base/declare", "dojo/_base/xhr", 
                 var xhrParam = {
                     "url": "?m=ordermgmt&a=cedit&op=getProjects&suppressHeaders=true",
                     handleAs: "json",
-                    sync: true,
+                    sync: false,
                     error: function(crap) {
                         alert(crap.message);
                     }
