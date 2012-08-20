@@ -72,6 +72,7 @@ switch($op){
         $vendorDiscount = w2PgetParam($_POST, 'componentDiscount');
         $vendorRate = w2PgetParam($_POST, 'componentRate');
         $vendorNotes = w2PgetParam($_POST, 'componentNotes');
+        $inStock = w2PgetParam($_POST, 'componentStock');
 
         // Make sure all input is clean
         $number = $filter->removeUnsafeAttributes($number);
@@ -79,6 +80,7 @@ switch($op){
         $material = $filter->removeUnsafeAttributes($material);
         $brand = $filter->removeUnsafeAttributes($brand);
         $supplier = $filter->removeUnsafeAttributes($supplier);
+        $inStock = intval($inStock);
         $filter->patternVerification($vendorPrice, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($currency, CInputFilter::W2P_FILTER_LETTERS);
         $filter->patternVerification($vendorDiscount, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
@@ -106,6 +108,7 @@ switch($op){
                 'vendor_currency'   => $currency,
                 'exchange_rate'     => $vendorRate,
                 'discount'          => $vendorDiscount,
+                'in_stock'          => $inStock,
                 'local_price'       => $localPrice,
                 'notes'             => $vendorNotes
             );
@@ -126,6 +129,7 @@ switch($op){
                 'vendor_currency'   => $currency,
                 'exchange_rate'     => $vendorRate,
                 'discount'          => $vendorDiscount,
+                'in_stock'          => $inStock,
                 'local_price'       => $localPrice,
                 'notes'             => $vendorNotes
             );

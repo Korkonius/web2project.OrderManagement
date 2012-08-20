@@ -20,9 +20,9 @@ class COrderStoredComponent
     public $vendorCurrency;
     public $exchangeRate;
     public $localPrice;
+    public $inStock;
     public $quoteDate;
     public $notes;
-
 
     protected function __construct(array $params) {
 
@@ -61,7 +61,8 @@ class COrderStoredComponent
             "vendor_currency"   => "vendorCurrency",
             "exchange_rate"     => "exchangeRate",
             "local_price"       => "localPrice",
-            "quote_date"        => "quoteDate"
+            "quote_date"        => "quoteDate",
+            "in_stock"          => "inStock"
         );
         foreach($colNames as $old => $new) { // Change entries that need changing
             $row[$new] = $row[$old];
