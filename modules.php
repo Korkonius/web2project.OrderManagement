@@ -5,6 +5,10 @@ require_once(dirname(__FILE__) . '/classes/ordermodule.class.php');
 require_once(dirname(__FILE__) . '/classes/orderstoredcomponent.class.php');
 require_once(dirname(__FILE__) . '/classes/inputfilter.class.php');
 
+if (!defined('W2P_BASE_DIR')) {
+    die('You should not access this file directly');
+}
+
 // Check ACL to see if the user is allowed to view items in the order module
 if (!$acl->checkModule('ordermgmt', 'view')) {
     $AppUI->setMsg("Access denied: Insufficient privilegies to access module view", UI_MSG_ERROR);

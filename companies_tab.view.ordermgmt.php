@@ -3,6 +3,10 @@
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/classes/order.class.php');
 
+if (!defined('W2P_BASE_DIR')) {
+    die('You should not access this file directly');
+}
+
 $filter = array(
     "company" => w2PgetParam($_GET, 'company_id')
 );

@@ -2,6 +2,10 @@
 require_once(dirname(__FILE__) . '/lib/tbs_class.php');
 require_once(dirname(__FILE__) . '/classes/order.class.php');
 
+if (!defined('W2P_BASE_DIR')) {
+    die('You should not access this file directly');
+}
+
 // Parse data to determine the page to create
 $offset = w2PgetConfig('page_size', 50) * (w2pgetParam($_POST, 'page')-1);
 $filter = w2PgetCleanParam($_POST, 'filter', 'open');

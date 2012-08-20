@@ -2,6 +2,10 @@
 
 require_once(dirname(__FILE__) . '/classes/inputfilter.class.php');
 
+if (!defined('W2P_BASE_DIR')) {
+    die('You should not access this file directly');
+}
+
 /* $Id$ $URL$ */
 if (!defined('W2P_BASE_DIR')) {
     die('You should not access this file directly.');

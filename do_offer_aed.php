@@ -1,6 +1,10 @@
 <?php
 require_once(dirname(__FILE__) . "/classes/orderoffer.class.php");
 
+if (!defined('W2P_BASE_DIR')) {
+    die('You should not access this file directly');
+}
+
 // Check permissions
 $acl = $AppUI->acl();
 if (!$acl->checkModule('files', 'add')) {
