@@ -21,6 +21,8 @@
             <td><input id="componentEditBrand" class="textbutton" title="Brand"/></td>
             <td><label for="componentEditSupplier">Supplier: </label></td>
             <td><input id="componentEditSupplier" class="textbutton" title="Supplier"/></td>
+            <td><label for="componentEditInStore">In storage:</label></td>
+            <td><input id="componentEditInStore" class="textbutton" title="# in storage" /></td>
         </tr>
         <tr>
             <td><label for="componentEditPrice">Price:</label></td>
@@ -96,7 +98,8 @@
                                     componentDiscount: dijit.byId("componentEditDiscount").get('value'),
                                     componentRate: dijit.byId("componentEditRate").get('value'),
                                     componentNotes: dijit.byId("componentEditNotes").get('value'),
-                                    componentId: dijit.byId("componentEditSubmit").get('value')
+                                    componentId: dijit.byId("componentEditSubmit").get('value'),
+                                    componentStock: dijit.byId("componentEditInStore").get('value')
                                 },
                                 error: function(error) {
                                     alert("Failed to store data! Server said: " + error);
@@ -150,6 +153,7 @@
         dijit.byId("componentEditPrice").set('value', row["vendorPrice"]);
         dijit.byId("componentEditCurrency").set('value', row["vendorCurrency"]);
         dijit.byId("componentEditDiscount").set('value', row["discount"]);
+        dijit.byId("componentEditInStore").set('value', row["inStore"]);
         dijit.byId("componentEditNotes").set('value', row["notes"]);
         dijit.byId("componentEditRate").set('value', row["exchangeRate"]);
         dijit.byId("componentEditSubmit").set('value', row["id"]);
@@ -169,6 +173,7 @@
         dijit.byId("componentEditDiscount").set('value', '');
         dijit.byId("componentEditNotes").set('value', '');
         dijit.byId("componentEditRate").set('value', '');
+        dijit.byId("componentEditInStore").set('value', '');
         dijit.byId("componentEditSubmit").set('value', '0');
         editDialog.set('title', "New component");
         editDialog.show();
@@ -249,7 +254,7 @@
                             store: dataStore,
                             query: {id: "*"},
                             queryOptions: {},
-                            sortInfo: -8,
+                            sortInfo: -9,
                             structure: [
                                 {name: "Options", field: "id", width: "3%", formatter: createOptions},
                                 {name: "Catalog Number", field: "catalogNumber", width: "5%"},
