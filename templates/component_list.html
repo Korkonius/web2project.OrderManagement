@@ -181,7 +181,7 @@
 
     function removeItem(item) {
         var row = grid.getItem(item);
-        var id = row['component_id'];
+        var id = row['id'];
 
         // Confirm removal of item!
         if(!confirm("Are you sure you want to remove item #" + id)) return false;
