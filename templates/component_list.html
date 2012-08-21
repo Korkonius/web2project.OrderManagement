@@ -170,7 +170,7 @@
     // Populate the dialog with values from the row that was selected
     function openEditDialog(item) {
         var row = grid.getItem(item);
-        var id = row["component_id"];
+        var id = row["id"];
         dijit.byId("componentEditNumber").set('value', row["catalogNumber"]);
         dijit.byId("componentEditName").set('value', row["description"]);
         dijit.byId("componentEditMaterial").set('value', row["wetMaterial"]);
