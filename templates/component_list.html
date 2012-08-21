@@ -123,6 +123,32 @@
                         onClick: openNewDialog
                     }, dojo.getAttr(button, 'id'));
                 }
+            },
+            '#componentSearchGo': {
+                found: function(button) {
+                    new dijit.form.Button({
+                        label: "Search"
+                    }, dojo.getAttr(button, 'id'));
+                }
+            },
+            '.searchfield': {
+                found: function(box) {
+                    new dijit.form.TextBox({
+                        name: dojo.getAttr(box, 'id'),
+                        placeholder: dojo.getAttr(box, 'title'),
+                        title: dojo.getAttr(box, 'title'),
+                        onChange: function(field) {
+                            var queryObj = {
+                                catalogNumber:  "*" + dijit.byId("componentCatalogSearch").get("value") + "*",
+                                description:    "*" + dijit.byId("componentDescSearch").get("value") + "*",
+                                supplier:       "*" + dijit.byId("componentSupplierSearch").get("value") + "*",
+                                brand:          "*" + dijit.byId("componentBrandSearch").get("value") + "*"
+                            }
+                            grid.query = queryObj;
+                            grid._refresh(true);
+                        }
+                    }, dojo.getAttr(box, 'id'));
+                }
             }
         });
 
@@ -277,9 +303,26 @@
     });
 
 </script>
+        <form id="searchForm" onsubmit="return false">
+            <fieldset>
+                <legend>Search options</legend>
+                <label for="componentCatalogSearch">Catalog number:</label>
+                <input id="componentCatalogSearch" type="text" class="searchfield" title="Search catalog num." />
+                <label for="componentDescSearch">Description:</label>
+                <input id="componentDescSearch" type="text" class="searchfield" title="Search description"/>
+                <label for="componentBrandSearch">Brand:</label>
+                <input id="componentBrandSearch" type="text" class="searchfield" title="Search brand" />
+                <label for="componentSupplierSearch">Supplier:</label>
+                <input id="componentSupplierSearch" type="text" class="searchfield" title="Search supplier" />
+                <button id="componentSearchGo">
+                    Search
+                </button>
+            </fieldset>
+        </form>
         <button id="componentNewButton">
             New Component
         </button>
+
         <div id="componentContainer">
             <div id="componenttable">
             </div>
