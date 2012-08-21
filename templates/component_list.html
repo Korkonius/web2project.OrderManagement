@@ -279,7 +279,7 @@
                         grid = new DataGrid({
                             store: dataStore,
                             query: {id: "*"},
-                            queryOptions: {},
+                            queryOptions: {ignoreCase: true},
                             sortInfo: -9,
                             structure: [
                                 {name: "Options", field: "id", width: "3%", formatter: createOptions},
