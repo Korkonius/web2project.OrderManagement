@@ -15,6 +15,11 @@ if (!$acl->checkModule('ordermgmt', 'view')) {
     $AppUI->redirect('index.php');
 }
 
+// This file will only ever return JSON data
+header('Content-type: text/json; charset=utf-8');
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+
 $filter = new CInputFilter();
 $componentId = w2PgetParam($_GET, 'cid', null);
 
@@ -80,7 +85,7 @@ switch($op){
         $material = $filter->removeUnsafeAttributes($material);
         $brand = $filter->removeUnsafeAttributes($brand);
         $supplier = $filter->removeUnsafeAttributes($supplier);
-        $inStock = intval($inStock);
+        $filter->patternVerification($inStock, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($vendorPrice, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
         $filter->patternVerification($currency, CInputFilter::W2P_FILTER_LETTERS);
         $filter->patternVerification($vendorDiscount, CInputFilter::W2P_FILTER_LETTERS_OR_NUMBERS);
@@ -216,7 +221,7 @@ switch($op){
             //if($person['contact_id'] == 4) print_r($person);
             $contactList[] = array(
                 "id" => $person['contact_id'],
-                "display" => utf8_encode($person['contact_display_name'])
+                "display" => $person['contact_display_name']
             );
         }
 
@@ -234,7 +239,7 @@ switch($op){
         foreach($projects as $project) {
             $projectList[] = array(
                 "id" => $project['project_id'],
-                "display" => utf8_encode($project['project_name'])
+                "display" => $project['project_name']
             );
         }
         echo json_encode($projectList);
@@ -250,7 +255,7 @@ switch($op){
         foreach($companies as $company) {
             $companyList[] = array(
                 "id" => $company['company_id'],
-                "display" => utf8_encode($company['company_name'])
+                "display" => $company['company_name']
             );
         }
         echo json_encode($companyList);
