@@ -22,33 +22,66 @@
         margin: 6px;
     }
 </style>
+<script type="text/javascript" src="./modules/ordermgmt/js/dojo/dojo.js" data-dojo-config="parseOnLoad: true, isDebug: true"></script>
+        <script type="text/javascript">
+            require(["dojo/dom", "dojo/dom-class", "dojo/behavior", "dojo/ready", "w2porder/OrderComponentStore", 'dijit/form/ComboBox'],
+                    function(dom, domClass, behavior, ready, componentStore, ComboBox){
+
+                        // Set body class to get styling right
+                        dojo.addClass(dojo.query("body")[0], "claro");
+                        dojo.place("<link type=\"text/css\" rel=\"stylesheet\" href=\"./modules/ordermgmt/js/dijit/themes/claro/claro.css\" />", dojo.query('head')[0], "last");
+
+                        var components = new componentStore();
+
+                        behavior.add({
+                            ".completeMe": {
+                                found: function(item) {
+                                    // Setup filtering select
+                                    new ComboBox({
+                                        name: dojo.attr(item, 'name'),
+                                        queryExpr: "*${0}*",
+                                        autoComplete: false,
+                                        "store": components,
+                                        searchAttr: "list_short",
+                                        labelAttr: "list_display",
+                                        labelType: "html"
+                                    }, item);
+                                }
+                            }
+                        });
+
+                        ready(function(){
+                            behavior.apply();
+                        });
+                    });
+        </script>
 <div id="orderFormContainer">
     <form id="orderForm" action="?m=ordermgmt&orderId=[orderid]" method="POST" accept-charset="utf-8">
         <div class="componentFormList">
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
+                <input class="componentLabel completeMe" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
+                <input class="componentLabel completeMe" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
+                <input class="componentLabel completeMe" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
+                <input class="componentLabel completeMe" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
             <div class="componentFormLine">
                 <input class="componentAmount" type="text" name="componentAmount[]" placeholder="Amount"/>
                 <input class="componentPrice" type="text" name="componentPrice[]" placeholder="Price"/>
-                <input class="componentLabel" type="text" name="componentLabel[]" placeholder="Description"/>
+                <input class="componentLabel completeMe" type="text" name="componentLabel[]" placeholder="Description"/>
             </div>
         </div>
         <input class="button" type="submit" name="componentSubmit" id="componentSubmit" value="Submit Components" />
