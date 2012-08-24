@@ -102,7 +102,7 @@
                                     componentStock: dijit.byId("componentEditInStore").get('value')
                                 },
                                 error: function(error) {
-                                    alert("Failed to store data! Server said: " + error);
+                                    alert("Failed to store data!\nCheck that all values except 'Notes' are set and are valid");
                                 },
                                 load: function(data) {
                                     editDialog.hide();
