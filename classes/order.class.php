@@ -373,8 +373,13 @@ class COrder {
         $filter = array(
             'order_id' => $openOrderIds
         );
-
-        return self::createListFromDatabase($start, $limit, $filter);
+        
+        if(count($openOrderIds) > 0) {
+            return self::createListFromDatabase($start, $limit, $filter);
+        }
+        else {
+            return array();
+        }
     }
 
     /**
