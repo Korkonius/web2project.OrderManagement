@@ -19,6 +19,8 @@ CREATE TABLE `ordermgmt_module_files` (
 `module_id` int NULL,
 PRIMARY KEY (`file_id`, `module_id`));
 
+ALTER TABLE `ordermgmt_components` ADD `in_stock` SMALLINT NOT NULL DEFAULT '0';
+
 ALTER TABLE `ordermgmt_module_components` ADD CONSTRAINT `component_module_fk` FOREIGN KEY (`module_id`) REFERENCES `ordermgmt_modules` (`module_id`);
 ALTER TABLE `ordermgmt_module_files` ADD CONSTRAINT `module_file_fk` FOREIGN KEY (`module_id`) REFERENCES `ordermgmt_modules` (`module_id`);
 ALTER TABLE `ordermgmt_module_rel` ADD CONSTRAINT `parent_module_fk` FOREIGN KEY (`parent_id`) REFERENCES `ordermgmt_modules` (`module_id`);
