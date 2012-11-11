@@ -1,3 +1,6 @@
 js/dojo/*
 js/dijit/*
 js/dojox/*
+js/put-selector/*
+js/xstyle/*
+js/dgrid/*
